@@ -14,6 +14,7 @@ import Avatar from '@material-ui/core/Avatar'
 import MemoryIcon from '@material-ui/icons/Memory'
 import MoreIcon from '@material-ui/icons/MoreVert'
 import ListItemText from '@material-ui/core/ListItemText'
+import Typography from '@material-ui/core/Typography'
 
 import { makeStyles } from '@material-ui/styles'
 
@@ -21,9 +22,15 @@ import './layout.scss'
 
 const useStyles = makeStyles({
   avatarList: {
-    color: '#444',
-    backgroundColor: 'white',
+    color: 'white',
+    backgroundColor: 'var(--statusColor, white)',
     boxShadow: '0px 2px 2px #444'
+  },
+  summary: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridColumnGap: '15px',
+    marginBottom: '15px'
   },
   mapMarkerTransform: {
     transform: 'translate(-50%, -100%)',
@@ -182,11 +189,11 @@ export default function ECNViewer () {
         'name': 'ioFog Agent3',
         'location': null,
         'gpsMode': 'auto',
-        'latitude': -36.8486 + 0.020,
-        'longitude': 174.754,
+        'latitude': null,
+        'longitude': null,
         'description': null,
         'lastActive': 1560983352565,
-        'daemonStatus': 'RUNNING',
+        'daemonStatus': 'UNKNOWN',
         'daemonOperatingDuration': 593583,
         'daemonLastStart': 1560982726513,
         'memoryUsage': 197.0137939453125,
@@ -243,7 +250,7 @@ export default function ECNViewer () {
         'longitude': 174.754,
         'description': null,
         'lastActive': 1560983352565,
-        'daemonStatus': 'RUNNING',
+        'daemonStatus': 'OFFLINE',
         'daemonOperatingDuration': 593583,
         'daemonLastStart': 1560982726513,
         'memoryUsage': 197.0137939453125,
@@ -372,12 +379,36 @@ export default function ECNViewer () {
     zoom: 9
   }
 
+  const activeAgents = controller.agents.filter(a => a.daemonStatus === 'RUNNING')
+  const activeFlows = controller.flows.filter(f => f.isActivated === true)
+  const activeMsvcs = activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid] || []), [])
+  console.log({ activeMsvcs })
+
+  const statusColor = {
+    'RUNNING': 'green',
+    'UNKNOWN': 'gray',
+    'OFFLINE': 'red'
+  }
+
   return (
     <div className='wrapper'>
       <div className='box header'>Header</div>
       <div className='box sidebar'>
+        <Typography variant='h5'>Active resources</Typography>
+        <br />
         <div className={classes.summary}>
-          <Paper />
+          <Paper>
+            <Typography variant='h3'>{activeFlows.length}</Typography>
+            <Typography variant='subtitle1'>Flows</Typography>
+          </Paper>
+          <Paper>
+            <Typography variant='h3'>{activeAgents.length}</Typography>
+            <Typography variant='subtitle1'>Agents</Typography>
+          </Paper>
+          <Paper>
+            <Typography variant='h3'>{activeMsvcs.length}</Typography>
+            <Typography variant='subtitle1'>Microservices</Typography>
+          </Paper>
         </div>
         <Divider />
         <List
@@ -390,7 +421,7 @@ export default function ECNViewer () {
           {controller.agents.map(a => (
             <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
               <ListItemAvatar>
-                <Avatar className={classes.avatarList}>
+                <Avatar style={{ '--statusColor': statusColor[a.daemonStatus] }} className={classes.avatarList}>
                   <MemoryIcon />
                 </Avatar>
               </ListItemAvatar>
@@ -404,13 +435,13 @@ export default function ECNViewer () {
         <GoogleMapReact
           {...map}
         >
-          {controller.agents.map(a =>
+          {controller.agents.filter(a => (_.isFinite(a.latitude) && _.isFinite(a.longitude))).map(a =>
             <div
               lat={a.latitude} lng={a.longitude}
               className={classes.mapMarkerTransform}
               onClick={() => setAgent(a)}
             >
-              <Badge color='secondary' badgeContent={(msvcsPerAgent[a.uuid] || []).length} invisible={a.uuid !== agent.uuid} className={classes.margin}>
+              <Badge color='primary' badgeContent={(msvcsPerAgent[a.uuid] || []).length} invisible={a.uuid !== agent.uuid} className={classes.margin}>
                 <Avatar
                   style={a.uuid === agent.uuid ? { '--markerColor': 'blue' } : {}}
                   className={classes.mapMarker}>
