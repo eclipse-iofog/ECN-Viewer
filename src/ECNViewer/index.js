@@ -390,7 +390,6 @@ export default function ECNViewer () {
   const activeAgents = controller.agents.filter(a => a.daemonStatus === 'RUNNING')
   const activeFlows = controller.flows.filter(f => f.isActivated === true)
   const activeMsvcs = activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid] || []), [])
-  console.log({ activeMsvcs })
 
   const statusColor = {
     'RUNNING': 'green',

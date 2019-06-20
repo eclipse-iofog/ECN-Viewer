@@ -55,7 +55,7 @@ const runPoll = (token) => {
         .get(controllerConfig.address + 'api/v3/microservices')
         .set({ Authorization: token })
         .query({ flowId: flow.id })
-      newController.microservices = newController.microservices.concat(microservicesResponse.body)
+      newController.microservices = newController.microservices.concat(microservicesResponse.body.microservices)
     }
 
     controller.agents = newController.agents
