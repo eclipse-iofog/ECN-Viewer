@@ -402,8 +402,8 @@ export default function ECNViewer () {
   return (
     <div className='wrapper'>
       <div className='box header'>
-        <nav className='navbar navbar-expand-lg navbar-light'>
-          <a className='navbar-brand logo' href='/'><img src={logo} alt='Edgeworx logo' /></a>
+        <nav>
+          <a href='/'><img src={logo} alt='Edgeworx logo' /></a>
         </nav>
       </div>
       <div className='box sidebar'>
@@ -426,7 +426,7 @@ export default function ECNViewer () {
         <Divider />
         <List
           subheader={
-            <ListSubheader component='div' id='agent-list-subheader'>
+            <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }}>
               Agents - <small>{controller.agents.length} nodes</small>
             </ListSubheader>
           }
@@ -465,7 +465,7 @@ export default function ECNViewer () {
           )}
         </GoogleMapReact>
       </div>
-      <div className='box footer' />
+      <div className='box footer' style={{ display: 'none' }} />
     </div>
   )
 }
