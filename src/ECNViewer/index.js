@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useInterval } from '../hooks/useInterval'
 import _ from 'lodash'
 
 import GoogleMapReact from 'google-map-react'
@@ -51,6 +52,7 @@ export default function ECNViewer () {
   const classes = useStyles()
   const [flow, setFlow] = useState(1)
   const [msvc, setMicroservice] = useState()
+  const [token, setToken] = useState('')
 
   const controller = {
     flows: [
@@ -364,6 +366,12 @@ export default function ECNViewer () {
       }
     ]
   }
+
+  useInterval(() => {
+    window.fetch('/api/data')
+      .then(res => res.json())
+      .then(console.log)
+  }, [1000])
 
   const [agent, setAgent] = useState(() => controller.agents[0])
 
