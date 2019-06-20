@@ -19,6 +19,7 @@ import Typography from '@material-ui/core/Typography'
 
 import { makeStyles } from '@material-ui/styles'
 
+import logo from '../assets/logo.png'
 import './layout.scss'
 
 const useStyles = makeStyles({
@@ -31,7 +32,8 @@ const useStyles = makeStyles({
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
     gridColumnGap: '15px',
-    marginBottom: '15px'
+    marginBottom: '15px',
+    textAlign: 'center'
   },
   mapMarkerTransform: {
     transform: 'translate(-50%, -100%)',
@@ -399,7 +401,11 @@ export default function ECNViewer () {
 
   return (
     <div className='wrapper'>
-      <div className='box header'>Header</div>
+      <div className='box header'>
+        <nav className='navbar navbar-expand-lg navbar-light'>
+          <a className='navbar-brand logo' href='/'><img src={logo} alt='Edgeworx logo' /></a>
+        </nav>
+      </div>
       <div className='box sidebar'>
         <Typography variant='h5'>Active resources</Typography>
         <br />
@@ -459,7 +465,7 @@ export default function ECNViewer () {
           )}
         </GoogleMapReact>
       </div>
-      <div className='box footer'>Footer</div>
+      <div className='box footer' />
     </div>
   )
 }

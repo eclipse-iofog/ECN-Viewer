@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "ECN Viewer",
+  "name": "Edge Cloud Network Viewer",
   "icons": [
     {
       "src": "favicon.ico",
