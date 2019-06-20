@@ -65,7 +65,7 @@ const runPoll = (token) => {
 }
 
 const runServer = async () => {
-  app.use('/', express.static(path.join(__dirname, 'build')))
+  app.use('/', express.static(path.join(__dirname, '../build')))
 
   app.get('/api/data', (req, res) => {
     res.status(200).json(controller)
