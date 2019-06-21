@@ -27,11 +27,9 @@ body {
     display: grid;
     grid-gap: 10px;
     grid-template-columns: 40% 1fr;
-    grid-template-rows: 1fr minmax(600px, auto) 1fr;
+    grid-template-rows: minmax(600px, auto);
     grid-template-areas:
-      "sidebar content"
-      "sidebar content"
-      "footer  footer";
+      "sidebar content";
     background-color: #fff;
     color: #444;
 }

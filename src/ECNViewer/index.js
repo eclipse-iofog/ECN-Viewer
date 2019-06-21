@@ -93,7 +93,6 @@ export default function ECNViewer () {
       <div className='content'>
         <Map {...{ controller, agent, setAgent, msvcsPerAgent, map }} />
       </div>
-      <div className='box footer' style={{ display: 'none' }} />
     </div>
   )
 }
