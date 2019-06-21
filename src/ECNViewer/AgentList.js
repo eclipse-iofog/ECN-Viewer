@@ -40,7 +40,11 @@ const statusColor = {
 
 export default function AgentList (props) {
   const classes = useStyles()
-  const { msvcsPerAgent, agents, agent, setAgent } = props
+  const { msvcsPerAgent, agents, agent, setAgent, centerMap } = props
+  const selectAgent = (a) => {
+    setAgent(a)
+    centerMap([a.latitude, a.longitude])
+  }
   return (
     <List
       subheader={
@@ -52,7 +56,7 @@ export default function AgentList (props) {
       {agents.map(a => {
         const msvcs = msvcsPerAgent[a.uuid] || []
         return (
-          <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
+          <ListItem button key={a.uuid} onClick={() => selectAgent(a)} selected={a.uuid === agent.uuid}>
             <ListItemAvatar>
               <Avatar style={{ '--statusColor': statusColor[a.daemonStatus] }} className={classes.avatarList}>
                 <MemoryIcon />

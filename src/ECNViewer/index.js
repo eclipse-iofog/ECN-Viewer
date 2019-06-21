@@ -47,6 +47,13 @@ export default function ECNViewer () {
   const [activeAgents, setActiveAgents] = useState([])
   const [activeFlows, setActiveFlows] = useState([])
   const [activeMsvcs, setActiveMsvcs] = useState([])
+  const [map, setMap] = useState({
+    center: [0, 0],
+    zoom: 15,
+    options: {
+      styles: mapStyle
+    }
+  })
 
   useInterval(() => {
     window.fetch('/api/data')
@@ -57,6 +64,9 @@ export default function ECNViewer () {
   useEffect(() => {
     if (!agent || !agent.uuid) {
       setAgent(controller.agents[0] || {})
+      if (controller.agents[0]) {
+        centerMap([controller.agents[0].latitude, controller.agents[0].longitude])
+      }
     }
     // setAgentsPerFlow(_.mapValues(
     //   _.groupBy(controller.microservices, 'flowId'),
@@ -69,13 +79,7 @@ export default function ECNViewer () {
     setActiveMsvcs(activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid] || []), []))
   }, [controller])
 
-  const map = {
-    center: agent ? [agent.latitude, agent.longitude] : [0, 0],
-    zoom: 15,
-    options: {
-      styles: mapStyle
-    }
-  }
+  const centerMap = (coordinates) => { setMap({ ...map, center: coordinates }) }
 
   return (
     <div className='wrapper'>
@@ -84,11 +88,11 @@ export default function ECNViewer () {
         <nav className={classes.nav}>
           <a href='/'><img src={logo} alt='Edgeworx logo' /></a>
         </nav>
-        <ControllerInfo controller={controller} />
+        <ControllerInfo controller={controller} centerMap={centerMap} />
         <Divider className={classes.divider} />
         <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
         <Divider className={classes.divider} />
-        <AgentList {...{ msvcsPerAgent, agents: controller.agents, agent, setAgent }} />
+        <AgentList {...{ msvcsPerAgent, agents: controller.agents, agent, setAgent, centerMap }} />
       </div>
       <div className='content'>
         <Map {...{ controller, agent, setAgent, msvcsPerAgent, map }} />
