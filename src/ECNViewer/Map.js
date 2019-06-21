@@ -25,6 +25,10 @@ const useStyles = makeStyles({
   }
 })
 
+const hasValidCoordinates = (coordinates) => {
+  return _.isFinite(coordinates[0]) && _.isFinite(coordinates[1])
+}
+
 export default function Map (props) {
   const classes = useStyles()
   const { controller, agent, setAgent, msvcsPerAgent, map } = props
@@ -35,8 +39,9 @@ export default function Map (props) {
         key: 'AIzaSyChp_fUXiK05ulRl_ewRGKWsQ1k0ULIFkA'
       }}
     >
-      {controller.agents.filter(a => (_.isFinite(a.latitude) && _.isFinite(a.longitude))).map(a =>
+      {controller.agents.filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
         <div
+          key={a.uuid}
           lat={a.latitude} lng={a.longitude}
           className={classes.mapMarkerTransform}
           onClick={() => setAgent(a)}
@@ -50,13 +55,13 @@ export default function Map (props) {
           </Badge>
         </div>
       )}
-      <Avatar
+      {controller.info && hasValidCoordinates([controller.info.lat, controller.info.lon]) && <Avatar
         lat={controller.info.lat}
         lng={controller.info.lon}
         style={{ '--markerColor': '#7A3BFF' }}
         className={classes.mapMarker}>
         <CtrlIcon />
-      </Avatar>
+      </Avatar>}
     </GoogleMapReact>
   )
 }

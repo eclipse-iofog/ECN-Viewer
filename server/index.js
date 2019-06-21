@@ -12,8 +12,8 @@
 
 const express = require('express')
 const app = express()
-const _ = require('lodash')
 const path = require('path')
+const _ = require('lodash')
 const request = require('superagent')
 const PORT = process.env.PORT || 80
 
@@ -339,53 +339,70 @@ const controller = process.env.MOCK
   }
 
 const controllerConfig = require('./config/controller.json')
-controllerConfig.address = `http://${controller.ip}:${controller.port || 80}/`
+controllerConfig.address = `http://${controllerConfig.ip}:${controllerConfig.port || 80}/`
 
 const lookUpController = async () => {
-  const response = await request(IPLookUp + controllerConfig.ip)
-  console.log(response.body)
+  const localhost = new RegExp('(0\.0\.0\.0|localhost|127\.0\.0\.1|192\.168\.)')
+  const ip = localhost.test(controllerConfig.ip) ? '8.8.8.8' : controllerConfig.ip
+  const response = await request(IPLookUp + ip)
   controller.info = response.body
 }
 
 const connectToController = async () => {
   if (process.env.MOCK) return
-  const response = await request
-    .post(controllerConfig.address + 'api/v3/user/login')
-    .send({ ...controllerConfig.user })
-
-  return response.body.accessToken
+  try {
+    const response = await request
+      .post(controllerConfig.address + 'api/v3/user/login')
+      .send({ ...controllerConfig.user })
+    return response.body.accessToken
+  } catch (e) {
+    return connectToController()
+  }
 }
 
-const runPoll = (token) => {
+const runPoll = async () => {
   if (process.env.MOCK) return
-  setInterval(async () => {
+
+  let token = await connectToController()
+
+  const interval = setInterval(async () => {
     const newController = {
       agents: [],
       flows: [],
       microservices: []
     }
-    const agentResponse = await request
-      .get(controllerConfig.address + 'api/v3/iofog-list')
-      .set({ Authorization: token })
-    newController.agents = agentResponse.body.fogs
-
-    const flowResponse = await request
-      .get(controllerConfig.address + 'api/v3/flow')
-      .set({ Authorization: token })
-    newController.flows = flowResponse.body.flows
-
-    newController.microservices = []
-    for (const flow of controller.flows) {
-      const microservicesResponse = await request
-        .get(controllerConfig.address + 'api/v3/microservices')
+    try {
+      const agentResponse = await request
+        .get(controllerConfig.address + 'api/v3/iofog-list')
         .set({ Authorization: token })
-        .query({ flowId: flow.id })
-      newController.microservices = newController.microservices.concat(microservicesResponse.body.microservices)
-    }
+      newController.agents = agentResponse.body.fogs
 
-    controller.agents = newController.agents
-    controller.microservices = newController.microservices
-    controller.flows = newController.flows
+      const flowResponse = await request
+        .get(controllerConfig.address + 'api/v3/flow')
+        .set({ Authorization: token })
+      newController.flows = flowResponse.body.flows
+
+      newController.microservices = []
+      for (const flow of controller.flows) {
+        const microservicesResponse = await request
+          .get(controllerConfig.address + 'api/v3/microservices')
+          .set({ Authorization: token })
+          .query({ flowId: flow.id })
+        newController.microservices = newController.microservices.concat(microservicesResponse.body.microservices)
+      }
+
+      controller.agents = newController.agents
+      controller.microservices = newController.microservices
+      controller.flows = newController.flows
+      controller.info.error = null
+    } catch (e) {
+      console.log({ e })
+      controller.info.error = _.get(e, 'response.body', e)
+      if (e.status === 401) {
+        clearInterval(interval)
+        runPoll()
+      }
+    }
   }, 5000)
 }
 
@@ -396,9 +413,17 @@ const runServer = async () => {
     res.status(200).json(controller)
   })
 
-  await lookUpController()
-  const token = await connectToController()
-  runPoll(token)
+  try {
+    await lookUpController()
+  } catch (e) {
+    controller.info = {
+      lat: 'Unknown',
+      lon: 'Unknown',
+      query: controllerConfig.ip
+    }
+  }
+
+  runPoll()
 
   app.listen(PORT)
 }

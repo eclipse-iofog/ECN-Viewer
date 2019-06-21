@@ -61,7 +61,7 @@ export default function AgentList (props) {
             <ListItemText primary={a.name} secondary={`${msvcs.length} Microservices`} />
             <div className={classes.msvcChipList}>
               {msvcs.map((m, idx) => (
-                <React.Fragment>
+                <React.Fragment key={m.uuid}>
                   <Chip
                     size='small'
                     label={m.name}

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Typography, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
+import { Typography, List, ListItem, ListItemIcon, ListItemText, Chip, Tooltip } from '@material-ui/core'
 
 import LocationCityIcon from '@material-ui/icons/LocationCity'
 import GPSFixedIcon from '@material-ui/icons/GpsFixed'
@@ -13,6 +13,14 @@ const useStyles = makeStyles({
     '& .paper': {
       padding: '5px'
     }
+  },
+  warningChip: {
+    backgroundColor: 'var(--color, #F5A623)',
+    color: 'white'
+  },
+  controllerTitle: {
+    display: 'flex',
+    justifyContent: 'space-between'
   }
 })
 
@@ -21,7 +29,14 @@ export default function ControllerInfo (props) {
   const controller = props.controller
   return (
     <div className={classes.controllerInfo}>
-      <Typography variant='h5'>Controller</Typography>
+      <div className={classes.controllerTitle}>
+        <Typography variant='h5'>Controller</Typography>
+        {controller.info.error &&
+          <Tooltip title={controller.info.error.message} aria-label='Error'>
+            <Chip label={'The controller is not reachable'} style={{ '--color': '#F5A623' }} className={classes.warningChip} />
+          </Tooltip>
+        }
+      </div>
       <List>
         <ListItem>
           <ListItemIcon><LocationCityIcon /></ListItemIcon>
