@@ -351,11 +351,13 @@ const lookUpController = async () => {
 const connectToController = async () => {
   if (process.env.MOCK) return
   try {
+    console.log('====> Login in ...')
     const response = await request
       .post(controllerConfig.address + 'api/v3/user/login')
       .send({ ...controllerConfig.user })
     return response.body.accessToken
   } catch (e) {
+    console.log('====> Failed to login')
     return connectToController()
   }
 }
@@ -372,6 +374,8 @@ const runPoll = async () => {
       microservices: []
     }
     try {
+      console.log('====> Updating controller data...')
+
       const agentResponse = await request
         .get(controllerConfig.address + 'api/v3/iofog-list')
         .set({ Authorization: token })
@@ -395,6 +399,7 @@ const runPoll = async () => {
       controller.microservices = newController.microservices
       controller.flows = newController.flows
       controller.info.error = null
+      console.log('====> Controller data updated')
     } catch (e) {
       console.log({ e })
       controller.info.error = _.get(e, 'response.body', e)
