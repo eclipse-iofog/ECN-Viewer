@@ -117,7 +117,7 @@ export default function ECNViewer () {
       <div className='topnav'>
         <SearchIcon className={classes.topIcons} />
         <NotificationsIcon className={classes.topIcons} />
-        <Avatar className={classes.avatarContainer} >KH</Avatar>
+        <Avatar className={classes.avatarContainer} >M</Avatar>
       </div>
       <div className='latnav'>
         <Avatar className={classes.latIcons + ' selected'} >
