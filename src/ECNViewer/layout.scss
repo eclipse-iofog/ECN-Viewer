@@ -48,10 +48,10 @@
     max-width: 2048px;
     margin: auto;
     display: grid;
-    height: 100vh;
+    min-height: 100vh;
     grid-gap: 10px;
     grid-template-columns: 60px 40% 1fr;
-    grid-template-rows: 60px minmax(600px, auto) 1fr;
+    grid-template-rows: 60px minmax(600px, auto) minmax(50px, 1fr);
     grid-row-gap: 0;
     grid-template-areas:
       "logo topnav topnav"

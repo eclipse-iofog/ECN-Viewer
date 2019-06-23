@@ -55,14 +55,17 @@ const useStyles = makeStyles({
       }
     }
   },
+  footerContainer: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    justifyItems: 'center',
+    padding: '20px 10px 20px 0px'
+  },
   footer: {
-    position: 'absolute',
-    bottom: '15px',
-    left: '60px',
-    right: 0,
-    margin: 'auto',
-    textAlign: 'center',
     color: '#ACB5C6',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
     fontSize: '9pt'
   }
 })
@@ -186,7 +189,7 @@ export default function ECNViewer () {
         <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
 
       </div>
-      <div className='footer'>
+      <div className={`${classes.footerContainer} footer`}>
         <span className={classes.footer}>Copyright © 2019 Edgeworx, Inc. All Rights Reserved.</span>
       </div>
 

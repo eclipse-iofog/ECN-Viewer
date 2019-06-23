@@ -29,6 +29,9 @@ const useStyles = makeStyles({
     borderRadius: '4px',
     width: '100%',
     height: '100%',
+    maxHeight: '700px',
+    position: 'sticky',
+    top: '25px',
     borderColor: '#ACB5C6',
     '& div': {
       borderRadius: '4px',
