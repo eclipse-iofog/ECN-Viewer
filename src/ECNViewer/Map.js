@@ -15,9 +15,9 @@ const useStyles = makeStyles({
     position: 'absolute'
   },
   mapMarker: {
-    backgroundColor: 'var(--markerColor, #ACB5C6)',
+    backgroundColor: 'var(--markerColor, #00C0A9)',
     borderRadius: '50% 50% 50% 0',
-    border: '4px solid var(--markerColor, #ACB5C6)',
+    border: '2px solid var(--markerColor, #00C0A9)',
     transform: 'rotate(-45deg)',
     '& .MuiSvgIcon-root': {
       transform: 'rotate(-45deg)'
@@ -48,7 +48,7 @@ export default function Map (props) {
         >
           <Badge color='primary' badgeContent={(msvcsPerAgent[a.uuid] || []).length} invisible={a.uuid !== agent.uuid} className={classes.margin}>
             <Avatar
-              style={a.uuid === agent.uuid ? { '--markerColor': '#5064EC' } : {}}
+              style={a.uuid === agent.uuid ? { '--markerColor': '#00C0A9' } : {}}
               className={classes.mapMarker}>
               <MemoryIcon />
             </Avatar>

@@ -20,8 +20,13 @@ const useStyles = makeStyles({
     paddingRight: '15px'
   },
   msvcChip: {
-    backgroundColor: 'var(--color, #5064EC)',
     marginTop: 'var(--mTop, 0px)',
+    backgroundColor: 'var(--color, #5064EC)',
+    fontSize: '10px',
+    borderRadius: '5px',
+    height: '20px',
+    margin: '2px',
+    width: '100px',
     color: 'white',
     '& .MuiChip-label': {
       textOverflow: 'ellipsis',
