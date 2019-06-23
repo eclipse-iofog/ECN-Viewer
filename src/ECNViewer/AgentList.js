@@ -1,9 +1,11 @@
 import React from 'react'
+import ReactJson from 'react-json-view'
 
 import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Modal, Paper, Typography } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
+import CloseIcon from '@material-ui/icons/Close'
 
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
@@ -45,13 +47,19 @@ const useStyles = makeStyles({
   modalTitle: {
     backgroundColor: '#002E43',
     color: 'white',
-    padding: '5px'
+    padding: '5px',
+    display: 'flex',
+    justifyContent: 'space-between'
   },
   modal: {
     width: '60%',
-    top: '20%',
+    top: '15%',
     left: '20%',
     position: 'absolute'
+  },
+  modalContent: {
+    maxHeight: '600px',
+    overflowY: 'scroll'
   },
   listTitle: {
     display: 'flex',
@@ -124,10 +132,13 @@ export default function AgentList (props) {
         onClose={() => setOpen(false)}
       >
         <Paper className={classes.modal}>
-          <Typography variant='h5' className={classes.modalTitle}>{agent.name} details</Typography>
-          <textarea className={classes.jsonDisplay}>
-            {JSON.stringify(agent, null, 4)}
-          </textarea>
+          <div className={classes.modalTitle}>
+            <Typography variant='h5'>{agent.name} details</Typography>
+            <CloseIcon style={{ cursor: 'pointer' }} onClick={() => setOpen(false)} />
+          </div>
+          <div className={classes.modalContent}>
+            <ReactJson src={agent} name={false} />
+          </div>
         </Paper>
       </Modal>
     </React.Fragment>
