@@ -94,11 +94,6 @@ const updateData = (state, newController) => {
 
   if (!state.agent || !state.agent.uuid) {
     state.agent = newController.agents[0] || {}
-    // if (_.isFinite(state.agent.latitude) && _.isFinite(state.agent.longitude)) {
-    //   centerMap([newController.agents[0].latitude, newController.agents[0].longitude])
-    // } else if (_.isFinite(newController.info.lat) && _.isFinite(newController.info.lon)) {
-    //   centerMap([newController.info.lat, newController.info.lon])
-    // }
   }
 
   return {
