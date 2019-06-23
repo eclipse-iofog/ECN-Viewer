@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useInterval } from '../hooks/useInterval'
 import _ from 'lodash'
 
@@ -67,22 +67,67 @@ const useStyles = makeStyles({
   }
 })
 
-const initController = {
-  info: {},
-  agents: [],
-  flows: [],
-  msvcs: []
+const initState = {
+  controller: {
+    info: {},
+    agents: [],
+    flows: [],
+    msvcs: []
+  },
+  agent: {},
+  activeAgents: [],
+  activeFlows: [],
+  activeMsvcs: [],
+  msvcsPerAgent: []
+}
+
+export const actions = {
+  UPDATE: 'UPDATE',
+  SET_AGENT: 'SET_AGENT'
+}
+
+const updateData = (state, newController) => {
+  const activeFlows = newController.flows.filter(f => f.isActivated === true)
+  const activeAgents = newController.agents.filter(a => a.daemonStatus === 'RUNNING')
+  const msvcsPerAgent = _.groupBy(newController.microservices, 'iofogUuid')
+  const activeMsvcs = activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid] || []), [])
+
+  if (!state.agent || !state.agent.uuid) {
+    state.agent = newController.agents[0] || {}
+    // if (_.isFinite(state.agent.latitude) && _.isFinite(state.agent.longitude)) {
+    //   centerMap([newController.agents[0].latitude, newController.agents[0].longitude])
+    // } else if (_.isFinite(newController.info.lat) && _.isFinite(newController.info.lon)) {
+    //   centerMap([newController.info.lat, newController.info.lon])
+    // }
+  }
+
+  return {
+    ...state,
+    controller: newController,
+    activeFlows,
+    activeAgents,
+    activeMsvcs,
+    msvcsPerAgent
+  }
+}
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case actions.UPDATE:
+      return updateData(state, action.data)
+    case actions.SET_AGENT:
+      return {
+        ...state,
+        agent: action.data
+      }
+    default:
+      return state
+  }
 }
 
 export default function ECNViewer () {
   const classes = useStyles()
-  const [controller, setController] = useState(initController)
-  const [agent, setAgent] = useState([])
-  // const [agentsPerFlow, setAgentsPerFlow] = useState({})
-  const [msvcsPerAgent, setMsvcsPerAgent] = useState({})
-  const [activeAgents, setActiveAgents] = useState([])
-  const [activeFlows, setActiveFlows] = useState([])
-  const [activeMsvcs, setActiveMsvcs] = useState([])
+  const [state, dispatch] = React.useReducer(reducer, initState)
   const [autozoom, setAutozoom] = useState(true)
   const [map, setMap] = useState({
     center: [0, 0],
@@ -95,42 +140,25 @@ export default function ECNViewer () {
   useInterval(() => {
     window.fetch('/api/data')
       .then(res => res.json())
-      .then(setController)
+      .then(data => dispatch({ type: actions.UPDATE, data }))
   }, [1000])
 
-  useEffect(() => {
-    if (!agent || !agent.uuid) {
-      setAgent(controller.agents[0] || {})
-      if (controller.agents[0]) {
-        centerMap([controller.agents[0].latitude, controller.agents[0].longitude])
-      } else {
-        centerMap([controller.info.lat, controller.info.lon])
-      }
-    }
-    // setAgentsPerFlow(_.mapValues(
-    //   _.groupBy(controller.microservices, 'flowId'),
-    //   msvcs => _.uniqBy(msvcs, 'iofogUuid').map(msvc => _.find(controller.agents, a => a.uuid === msvc.iofogUuid))
-    // ))
-    setMsvcsPerAgent(_.groupBy(controller.microservices, 'iofogUuid'))
-
-    setActiveAgents(controller.agents.filter(a => a.daemonStatus === 'RUNNING'))
-    setActiveFlows(controller.flows.filter(f => f.isActivated === true))
-    setActiveMsvcs(activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid] || []), []))
-  }, [controller])
+  const setAgent = a => dispatch({ action: actions.SET_AGENT, data: a })
 
   const selectAgent = (a) => {
     setAgent(a)
-    setMap({ ...map, center: [controller.agents[0].latitude, controller.agents[0].longitude], zoom: 15 })
+    setMap({ ...map, center: [a.latitude, a.longitude], zoom: 15 })
     setAutozoom(false)
   }
 
   const selectController = () => {
-    setMap({ ...map, center: [controller.info.lat, controller.info.lon], zoom: 15 })
+    setMap({ ...map, center: [state.controller.info.lat, state.controller.info.lon], zoom: 15 })
     setAutozoom(false)
   }
 
   const centerMap = (coordinates) => { setMap({ ...map, center: coordinates }) }
 
+  const { controller, activeAgents, activeFlows, activeMsvcs, agent, msvcsPerAgent } = state
   return (
     <div className='wrapper'>
       <div className='logo'>
