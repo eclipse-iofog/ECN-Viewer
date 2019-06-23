@@ -3,6 +3,12 @@ import { useInterval } from '../hooks/useInterval'
 import _ from 'lodash'
 
 import Divider from '@material-ui/core/Divider'
+import Avatar from '@material-ui/core/Avatar'
+import SearchIcon from '@material-ui/icons/Search'
+import NotificationsIcon from '@material-ui/icons/NotificationsOutlined'
+import HomeIcon from '@material-ui/icons/HomeOutlined'
+import FakeIcon1 from '@material-ui/icons/GraphicEqOutlined'
+import SettingsIcon from '@material-ui/icons/SettingsOutlined'
 import { makeStyles } from '@material-ui/styles'
 
 import ControllerInfo from './ControllerInfo'
@@ -11,6 +17,7 @@ import AgentList from './AgentList'
 import Map from './Map'
 
 import logo from '../assets/logo.png'
+import logomark from '../assets/logomark.svg'
 import './layout.scss'
 
 import mapStyle from './mapStyle.json'
@@ -18,6 +25,25 @@ import mapStyle from './mapStyle.json'
 const useStyles = makeStyles({
   divider: {
     margin: '15px 0'
+  },
+  avatarContainer: {
+    backgroundColor: '#002E43',
+    marginRight: '50px'
+  },
+  latIcons: {
+    margin: 'auto',
+    marginTop: '15px',
+    cursor: 'pointer',
+    backgroundColor: '#002E43',
+    '&.selected': {
+      backgroundColor: '#ACB5C6'
+    }
+  },
+  topIcons: {
+    height: '100%',
+    width: '25px',
+    marginRight: '25px',
+    cursor: 'pointer'
   },
   nav: {
     marginBottom: '15px',
@@ -66,6 +92,8 @@ export default function ECNViewer () {
       setAgent(controller.agents[0] || {})
       if (controller.agents[0]) {
         centerMap([controller.agents[0].latitude, controller.agents[0].longitude])
+      } else {
+        centerMap([controller.info.lat, controller.info.lon])
       }
     }
     // setAgentsPerFlow(_.mapValues(
@@ -83,11 +111,26 @@ export default function ECNViewer () {
 
   return (
     <div className='wrapper'>
-      <div className='header' />
+      <div className='logo'>
+        <img src={logomark} alt='Edgeworx logomark' />
+      </div>
+      <div className='topnav'>
+        <SearchIcon className={classes.topIcons} />
+        <NotificationsIcon className={classes.topIcons} />
+        <Avatar className={classes.avatarContainer} >KH</Avatar>
+      </div>
+      <div className='latnav'>
+        <Avatar className={classes.latIcons + ' selected'} >
+          <HomeIcon />
+        </Avatar>
+        <Avatar className={classes.latIcons} >
+          <FakeIcon1 />
+        </Avatar>
+        <Avatar className={classes.latIcons} >
+          <SettingsIcon />
+        </Avatar>
+      </div>
       <div className='box sidebar'>
-        <nav className={classes.nav}>
-          <a href='/'><img src={logo} alt='Edgeworx logo' /></a>
-        </nav>
         <ControllerInfo controller={controller} centerMap={centerMap} />
         <Divider className={classes.divider} />
         <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
@@ -97,6 +140,7 @@ export default function ECNViewer () {
       <div className='content'>
         <Map {...{ controller, agent, setAgent, msvcsPerAgent, map }} />
       </div>
+      <div className='footer' />
     </div>
   )
 }

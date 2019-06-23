@@ -387,7 +387,7 @@ const runPoll = async () => {
       newController.flows = flowResponse.body.flows
 
       newController.microservices = []
-      for (const flow of controller.flows) {
+      for (const flow of newController.flows) {
         const microservicesResponse = await request
           .get(controllerConfig.address + 'api/v3/microservices')
           .set({ Authorization: token })
