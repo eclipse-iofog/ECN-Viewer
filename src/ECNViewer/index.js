@@ -16,7 +16,7 @@ import ActiveResources from './ActiveResources'
 import AgentList from './AgentList'
 import Map from './Map'
 
-//import logo from '../assets/logo.png'
+// import logo from '../assets/logo.png'
 import logomark from '../assets/logomark.svg'
 import './layout.scss'
 
@@ -55,14 +55,10 @@ const useStyles = makeStyles({
       }
     }
   },
-  mapWrapper : {
-    border: '1px',
-    borderColor: '#ACB5C6'
-  },
   footer: {
     align: 'center',
     fontColor: '#ACB5C6',
-    fontSize: '10pt',
+    fontSize: '10pt'
   }
 })
 
@@ -147,13 +143,12 @@ export default function ECNViewer () {
         <AgentList {...{ msvcsPerAgent, agents: controller.agents, agent, setAgent, centerMap }} />
       </div>
       <div className='content'>
-        <Map className={classes.mapWrapper} {...{ controller, agent, setAgent, msvcsPerAgent, map }} />
+        <Map {...{ controller, agent, setAgent, msvcsPerAgent, map }} />
 
       </div>
       <div className={classes.footer}>
         Copyright © 2019 Edgeworx, Inc. All Rights Reserved.
       </div>
-
 
     </div>
   )
