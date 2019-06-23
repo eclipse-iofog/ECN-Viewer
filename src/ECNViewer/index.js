@@ -28,7 +28,7 @@ const useStyles = makeStyles({
   },
   avatarContainer: {
     backgroundColor: '#FF585D',
-    marginRight: '50px'
+    marginRight: '45px'
   },
   latIcons: {
     margin: 'auto',
@@ -56,9 +56,14 @@ const useStyles = makeStyles({
     }
   },
   footer: {
-    align: 'center',
-    fontColor: '#ACB5C6',
-    fontSize: '10pt'
+    position: 'absolute',
+    bottom: '15px',
+    left: '60px',
+    right: 0,
+    margin: 'auto',
+    textAlign: 'center',
+    color: '#ACB5C6',
+    fontSize: '9pt'
   }
 })
 
@@ -146,8 +151,8 @@ export default function ECNViewer () {
         <Map {...{ controller, agent, setAgent, msvcsPerAgent, map }} />
 
       </div>
-      <div className={classes.footer}>
-        Copyright © 2019 Edgeworx, Inc. All Rights Reserved.
+      <div className='footer'>
+        <span className={classes.footer}>Copyright © 2019 Edgeworx, Inc. All Rights Reserved.</span>
       </div>
 
     </div>

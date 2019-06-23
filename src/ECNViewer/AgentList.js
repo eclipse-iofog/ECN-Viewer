@@ -98,6 +98,7 @@ export default function AgentList (props) {
                         '--mTop': idx ? '2px' : '0px'
                       }}
                       className={classes.msvcChip}
+                      title={m.name}
                     />
                   </React.Fragment>
                 ))}
