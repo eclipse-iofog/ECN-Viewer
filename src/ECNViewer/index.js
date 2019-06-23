@@ -60,9 +60,10 @@ const useStyles = makeStyles({
     borderColor: '#ACB5C6'
   },
   footer: {
-    align: 'center',
-    fontColor: '#ACB5C6',
-    fontSize: '10pt',
+    textAlign: 'center',
+    color: '#ACB5C6',
+    marginTop: '40px',
+    fontSize: '9pt'
   }
 })
 
