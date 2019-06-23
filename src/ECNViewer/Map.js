@@ -2,6 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 
 import GoogleMapReact from 'google-map-react'
+import { fitBounds } from 'google-map-react/utils'
 
 import { Badge, Avatar } from '@material-ui/core'
 
@@ -16,7 +17,7 @@ const useStyles = makeStyles({
   },
   mapMarker: {
     backgroundColor: 'var(--markerColor, #00C0A9)',
-    borderRadius: '50% 50% 50% 0',
+    borderRadius: '50% 50% 50% 0 !important',
     border: '2px solid var(--markerColor, #00C0A9)',
     transform: 'rotate(-45deg)',
     '& .MuiSvgIcon-root': {
@@ -28,7 +29,13 @@ const useStyles = makeStyles({
     borderRadius: '4px',
     width: '100%',
     height: '100%',
-    borderColor: '#ACB5C6'
+    borderColor: '#ACB5C6',
+    '& div': {
+      borderRadius: '4px',
+      '& div': {
+        borderRadius: '4px'
+      }
+    }
   }
 })
 
@@ -38,9 +45,42 @@ const hasValidCoordinates = (coordinates) => {
 
 export default function Map (props) {
   const classes = useStyles()
-  const { controller, agent, setAgent, msvcsPerAgent, map } = props
+  const DomElementRef = React.useRef()
+  const { controller, agent, setAgent, msvcsPerAgent, map, autozoom } = props
+
+  if (autozoom && window.google) {
+    const bounds = new window.google.maps.LatLngBounds() // need handler incase `google` not yet available
+
+    const agents = controller.agents || []
+    agents.forEach(marker => {
+      bounds.extend(new window.google.maps.LatLng(marker.latitude, marker.longitude))
+    })
+
+    bounds.extend(new window.google.maps.LatLng(controller.info.lat, controller.info.lon))
+
+    const newBounds = {
+      ne: {
+        lat: bounds.getNorthEast().lat(),
+        lng: bounds.getNorthEast().lng()
+      },
+      sw: {
+        lat: bounds.getSouthWest().lat(),
+        lng: bounds.getSouthWest().lng()
+      }
+    }
+
+    const size = {
+      width: DomElementRef.current.offsetWidth,
+      height: DomElementRef.current.offsetHeight
+    }
+
+    const { center, zoom } = fitBounds(newBounds, size)
+    map.center = center
+    map.zoom = zoom
+  }
+
   return (
-    <div className={classes.mapWrapper}>
+    <div className={classes.mapWrapper} ref={DomElementRef}>
       <GoogleMapReact
         {...map}
         bootstrapURLKeys={{

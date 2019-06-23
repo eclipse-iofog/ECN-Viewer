@@ -83,6 +83,7 @@ export default function ECNViewer () {
   const [activeAgents, setActiveAgents] = useState([])
   const [activeFlows, setActiveFlows] = useState([])
   const [activeMsvcs, setActiveMsvcs] = useState([])
+  const [autozoom, setAutozoom] = useState(true)
   const [map, setMap] = useState({
     center: [0, 0],
     zoom: 15,
@@ -117,6 +118,17 @@ export default function ECNViewer () {
     setActiveMsvcs(activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid] || []), []))
   }, [controller])
 
+  const selectAgent = (a) => {
+    setAgent(a)
+    setMap({ ...map, center: [controller.agents[0].latitude, controller.agents[0].longitude], zoom: 15 })
+    setAutozoom(false)
+  }
+
+  const selectController = () => {
+    setMap({ ...map, center: [controller.info.lat, controller.info.lon], zoom: 15 })
+    setAutozoom(false)
+  }
+
   const centerMap = (coordinates) => { setMap({ ...map, center: coordinates }) }
 
   return (
@@ -141,14 +153,14 @@ export default function ECNViewer () {
         </Avatar>
       </div>
       <div className='box sidebar'>
-        <ControllerInfo controller={controller} centerMap={centerMap} />
+        <ControllerInfo {...{ controller, selectController }} />
         <Divider className={classes.divider} />
         <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
         <Divider className={classes.divider} />
-        <AgentList {...{ msvcsPerAgent, agents: controller.agents, agent, setAgent, centerMap }} />
+        <AgentList {...{ msvcsPerAgent, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom }} />
       </div>
       <div className='content'>
-        <Map {...{ controller, agent, setAgent, msvcsPerAgent, map }} />
+        <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
 
       </div>
       <div className='footer'>

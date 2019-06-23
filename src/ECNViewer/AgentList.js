@@ -52,6 +52,16 @@ const useStyles = makeStyles({
     top: '20%',
     left: '20%',
     position: 'absolute'
+  },
+  listTitle: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
+  link: {
+    cursor: 'pointer',
+    '&:hover': {
+      textDecoration: 'underline'
+    }
   }
 })
 
@@ -64,24 +74,24 @@ const statusColor = {
 export default function AgentList (props) {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
-  const { msvcsPerAgent, agents, agent, setAgent, centerMap } = props
-  const selectAgent = (a) => {
-    setAgent(a)
-    centerMap([a.latitude, a.longitude])
-  }
+  const { msvcsPerAgent, agents, agent, setAgent, setAutozoom } = props
+
   return (
     <React.Fragment>
       <List
         subheader={
           <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }}>
-            Agents - <small>{agents.length} nodes</small>
+            <div className={classes.listTitle}>
+              <div>Agents - <small>{agents.length} nodes</small></div>
+              <div><small className={classes.link} onClick={() => setAutozoom(true)}>See all ECN</small></div>
+            </div>
           </ListSubheader>
         }
       >
         {agents.map(a => {
           const msvcs = msvcsPerAgent[a.uuid] || []
           return (
-            <ListItem button key={a.uuid} onClick={() => selectAgent(a)} selected={a.uuid === agent.uuid}>
+            <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
               <ListItemAvatar>
                 <Avatar style={{ '--statusColor': statusColor[a.daemonStatus] }} className={classes.avatarList}>
                   <MemoryIcon />

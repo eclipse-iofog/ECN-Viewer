@@ -42,7 +42,7 @@ export default function ControllerInfo (props) {
           <ListItemIcon><LocationCityIcon /></ListItemIcon>
           <ListItemText primary={`${controller.info.city}, ${controller.info.country}`} />
         </ListItem>
-        <ListItem style={{ cursor: 'pointer' }} onClick={() => props.centerMap([controller.info.lat, controller.info.lon])} >
+        <ListItem style={{ cursor: 'pointer' }} onClick={() => props.selectController()} >
           <ListItemIcon><GPSFixedIcon /></ListItemIcon>
           <ListItemText primary={`${controller.info.lat}, ${controller.info.lon}`} />
         </ListItem>
