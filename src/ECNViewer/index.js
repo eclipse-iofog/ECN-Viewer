@@ -141,7 +141,7 @@ export default function ECNViewer () {
       .then(data => dispatch({ type: actions.UPDATE, data }))
   }, [1000])
 
-  const setAgent = a => dispatch({ action: actions.SET_AGENT, data: a })
+  const setAgent = a => dispatch({ type: actions.SET_AGENT, data: a })
 
   const selectAgent = (a) => {
     setAgent(a)
