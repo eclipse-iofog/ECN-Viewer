@@ -355,6 +355,7 @@ const connectToController = async () => {
     const response = await request
       .post(controllerConfig.address + 'api/v3/user/login')
       .send({ ...controllerConfig.user })
+    console.log('====> Logged in')
     return response.body.accessToken
   } catch (e) {
     console.log('====> Failed to login')
