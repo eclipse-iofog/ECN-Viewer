@@ -10,10 +10,18 @@ import MemoryIcon from '@material-ui/icons/Memory'
 import CtrlIcon from '@material-ui/icons/DeveloperBoard'
 
 import { makeStyles } from '@material-ui/styles'
+
+import { statusColor, msvcStatusColor } from './utils'
+
 const useStyles = makeStyles({
   mapMarkerTransform: {
     transform: 'translate(-50%, -100%)',
     position: 'absolute'
+  },
+  msvcBadge: {
+    '& .MuiBadge-badge': {
+      backgroundColor: 'var(--color, #5064EC)'
+    }
   },
   mapMarker: {
     backgroundColor: 'var(--markerColor, #00C0A9)',
@@ -97,9 +105,9 @@ export default function Map (props) {
             className={classes.mapMarkerTransform}
             onClick={() => setAgent(a)}
           >
-            <Badge color='primary' badgeContent={(msvcsPerAgent[a.uuid] || []).length} invisible={a.uuid !== agent.uuid} className={classes.margin}>
+            <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).length} invisible={a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
               <Avatar
-                style={a.uuid === agent.uuid ? { '--markerColor': '#00C0A9' } : {}}
+                style={{ '--markerColor': statusColor[a.daemonStatus] }}
                 className={classes.mapMarker}>
                 <MemoryIcon />
               </Avatar>

@@ -8,6 +8,9 @@ import MemoryIcon from '@material-ui/icons/Memory'
 import CloseIcon from '@material-ui/icons/Close'
 
 import { makeStyles } from '@material-ui/styles'
+
+import { statusColor, msvcStatusColor } from './utils'
+
 const useStyles = makeStyles({
   avatarList: {
     color: 'white',
@@ -73,12 +76,6 @@ const useStyles = makeStyles({
   }
 })
 
-const statusColor = {
-  'RUNNING': '#00C0A9',
-  'UNKNOWN': '#ACB5C6',
-  'OFFLINE': '#FF585D'
-}
-
 export default function AgentList (props) {
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
@@ -113,7 +110,8 @@ export default function AgentList (props) {
                       size='small'
                       label={m.name}
                       style={{
-                        '--mTop': idx ? '2px' : '0px'
+                        '--mTop': idx ? '2px' : '0px',
+                        '--color': msvcStatusColor[a.daemonStatus]
                       }}
                       className={classes.msvcChip}
                       title={m.name}
