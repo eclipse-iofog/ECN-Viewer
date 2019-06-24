@@ -364,10 +364,12 @@ const connectToController = async () => {
 
 const runPoll = async () => {
   if (process.env.MOCK) return
-
-  let token = await connectToController()
+  let token = null
 
   const interval = setInterval(async () => {
+    if (!token) {
+      token = await connectToController()
+    }
     const newController = {
       agents: [],
       flows: [],
