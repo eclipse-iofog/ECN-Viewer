@@ -67,7 +67,7 @@ export default function Map (props) {
       bounds.extend(new window.google.maps.LatLng(marker.latitude, marker.longitude))
     })
 
-    bounds.extend(new window.google.maps.LatLng(controller.info.lat, controller.info.lon))
+    bounds.extend(new window.google.maps.LatLng(controller.info.location.lat, controller.info.location.lon))
 
     const newBounds = {
       ne: {
@@ -114,9 +114,9 @@ export default function Map (props) {
             </Badge>
           </div>
         )}
-        {controller.info && hasValidCoordinates([controller.info.lat, controller.info.lon]) && <Avatar
-          lat={controller.info.lat}
-          lng={controller.info.lon}
+        {controller.info && hasValidCoordinates([controller.info.location.lat, controller.info.location.lon]) && <Avatar
+          lat={controller.info.location.lat}
+          lng={controller.info.location.lon}
           style={{ '--markerColor': '#7A3BFF' }}
           className={classes.mapMarker}>
           <CtrlIcon />

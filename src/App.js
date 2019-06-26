@@ -1,14 +1,17 @@
 import React from 'react'
 
+import CssBaseline from '@material-ui/core/CssBaseline'
+
 import ECNViewer from './ECNViewer'
 
 import './App.css'
 
 function App () {
   return (
-    <div className='App'>
+    <React.Fragment>
+      <CssBaseline />
       <ECNViewer />
-    </div>
+    </React.Fragment>
   )
 }
 

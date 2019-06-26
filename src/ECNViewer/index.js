@@ -15,6 +15,8 @@ import ControllerInfo from './ControllerInfo'
 import ActiveResources from './ActiveResources'
 import AgentList from './AgentList'
 import Map from './Map'
+import Modal from '../Utils/Modal'
+import Config from '../Config'
 
 // import logo from '../assets/logo.png'
 import logomark from '../assets/logomark.svg'
@@ -72,7 +74,10 @@ const useStyles = makeStyles({
 
 const initState = {
   controller: {
-    info: {},
+    info: {
+      location: {},
+      user: {}
+    },
     agents: [],
     flows: [],
     msvcs: []
@@ -134,12 +139,13 @@ export default function ECNViewer () {
       styles: mapStyle
     }
   })
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   useInterval(() => {
-    window.fetch('/api/data')
+    window.fetch('/api/controller')
       .then(res => res.json())
       .then(data => dispatch({ type: actions.UPDATE, data }))
-  }, [1000])
+  }, [3000])
 
   const setAgent = a => dispatch({ type: actions.SET_AGENT, data: a })
 
@@ -150,7 +156,7 @@ export default function ECNViewer () {
   }
 
   const selectController = () => {
-    setMap({ ...map, center: [state.controller.info.lat, state.controller.info.lon], zoom: 15 })
+    setMap({ ...map, center: [state.controller.info.location.lat, state.controller.info.location.lon], zoom: 15 })
     setAutozoom(false)
   }
 
@@ -158,41 +164,59 @@ export default function ECNViewer () {
 
   const { controller, activeAgents, activeFlows, activeMsvcs, agent, msvcsPerAgent } = state
   return (
-    <div className='wrapper'>
-      <div className='logo'>
-        <img src={logomark} alt='Edgeworx logomark' />
-      </div>
-      <div className='topnav'>
-        <SearchIcon className={classes.topIcons} />
-        <NotificationsIcon className={classes.topIcons} />
-        <Avatar className={classes.avatarContainer} >M</Avatar>
-      </div>
-      <div className='latnav'>
-        <Avatar className={classes.latIcons + ' selected'} >
-          <HomeIcon />
-        </Avatar>
-        <Avatar className={classes.latIcons} >
-          <FakeIcon1 />
-        </Avatar>
-        <Avatar className={classes.latIcons} >
-          <SettingsIcon />
-        </Avatar>
-      </div>
-      <div className='box sidebar'>
-        <ControllerInfo {...{ controller, selectController }} />
-        <Divider className={classes.divider} />
-        <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
-        <Divider className={classes.divider} />
-        <AgentList {...{ msvcsPerAgent, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom }} />
-      </div>
-      <div className='content'>
-        <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
+    <React.Fragment>
+      <div className='wrapper'>
+        <div className='logo'>
+          <img src={logomark} alt='Edgeworx logomark' />
+        </div>
+        <div className='topnav'>
+          <SearchIcon className={classes.topIcons} />
+          <NotificationsIcon className={classes.topIcons} />
+          <Avatar className={classes.avatarContainer} >M</Avatar>
+        </div>
+        <div className='latnav'>
+          <Avatar className={classes.latIcons + ' selected'} >
+            <HomeIcon />
+          </Avatar>
+          <Avatar className={classes.latIcons} >
+            <FakeIcon1 />
+          </Avatar>
+          <Avatar className={classes.latIcons} >
+            <SettingsIcon onClick={() => setSettingsOpen(!settingsOpen)} />
+          </Avatar>
+        </div>
+        <div className='box sidebar'>
+          <ControllerInfo {...{ controller, selectController }} />
+          <Divider className={classes.divider} />
+          <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
+          <Divider className={classes.divider} />
+          <AgentList {...{ msvcsPerAgent, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom }} />
+        </div>
+        <div className='content'>
+          <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
+
+        </div>
+        <div className={`${classes.footerContainer} footer`}>
+          <span className={classes.footer}>Copyright © 2019 Edgeworx, Inc. All Rights Reserved.</span>
+        </div>
 
       </div>
-      <div className={`${classes.footerContainer} footer`}>
-        <span className={classes.footer}>Copyright © 2019 Edgeworx, Inc. All Rights Reserved.</span>
-      </div>
+      <Modal
+        {...{
+          open: settingsOpen,
+          title: `Controller details`,
+          onClose: () => setSettingsOpen(false)
+        }}
+      >
+        <Config {...{
+          data: {
+            ip: controller.info.ip,
+            port: controller.info.port,
+            email: controller.info.user.email
+          }
+        }} />
+      </Modal>
 
-    </div>
+    </React.Fragment>
   )
 }

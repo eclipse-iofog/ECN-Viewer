@@ -27,6 +27,7 @@ const useStyles = makeStyles({
 export default function ControllerInfo (props) {
   const classes = useStyles()
   const controller = props.controller
+  const { city, country, lat, lon, query } = controller.info.location || {}
   return (
     <div className={classes.controllerInfo}>
       <div className={classes.controllerTitle}>
@@ -40,15 +41,15 @@ export default function ControllerInfo (props) {
       <List>
         <ListItem>
           <ListItemIcon><LocationCityIcon /></ListItemIcon>
-          <ListItemText primary={`${controller.info.city}, ${controller.info.country}`} />
+          <ListItemText primary={`${city}, ${country}`} />
         </ListItem>
         <ListItem style={{ cursor: 'pointer' }} onClick={() => props.selectController()} >
           <ListItemIcon><GPSFixedIcon /></ListItemIcon>
-          <ListItemText primary={`${controller.info.lat}, ${controller.info.lon}`} />
+          <ListItemText primary={`${lat}, ${lon}`} />
         </ListItem>
         <ListItem>
           <ListItemIcon><IPIcon /></ListItemIcon>
-          <ListItemText primary={controller.info.query} />
+          <ListItemText primary={query} />
         </ListItem>
       </List>
     </div>
