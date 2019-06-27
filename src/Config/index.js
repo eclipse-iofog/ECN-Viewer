@@ -54,8 +54,11 @@ export default function Config (props) {
         open={!!feedback}
         onClose={() => setFeedback(null)}
         autoHideDuration={6000}
-        message={<span id='config-feedback'>{feedback.message}</span>}
-        variant={feedback.type}
+        alerts={[{
+          message: <span id='config-feedback'>{feedback.message}</span>,
+          type: feedback.type,
+          onClose: () => setFeedback(null)
+        }]}
       />}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>

@@ -15,6 +15,7 @@ const app = express()
 const path = require('path')
 const _ = require('lodash')
 const bodyParser = require('body-parser')
+const proxy = require('express-http-proxy')
 
 const PORT = process.env.PORT || 80
 const controllerConfig = require('./config/controller.json')
@@ -69,11 +70,23 @@ const runServer = async () => {
   app.post('/api/controller/connect', async (req, res) => {
     try {
       await controller.connect(req.body)
-      return res.sendStatus(201)
+      return res.sendStatus(204)
     } catch (e) {
       console.log({ e })
       return res.status(500).json(e)
     }
+  })
+
+  app.use('/api/controllerAPI', async (req, res, next) => {
+    const ctrl = controller.find()
+    proxy(ctrl.address, {
+      proxyReqOptDecorator: async (proxyReqOpts, srcReq) => {
+        // recieves an Object of headers, returns an Object of headers.
+        const token = await controller.authenticate(ctrl)
+        proxyReqOpts.headers['Authorization'] = token
+        return proxyReqOpts
+      }
+    })(req, res, next)
   })
 
   await controller.connect(controllerConfig)

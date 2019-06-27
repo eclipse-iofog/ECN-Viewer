@@ -43,6 +43,20 @@ const getMicroservices = async (controller, flows, token) => {
   return microservices
 }
 
+const getCatalog = async (controller, token) => {
+  const agentResponse = await request
+    .get(controller.address + 'api/v3/catalog/microservices')
+    .set({ Authorization: token })
+  return agentResponse.body.catalogItems
+}
+
+const removeMicroservice = (controller, uuid, token) => {
+  return request
+    .delete(controller.address + `api/v3/${uuid}`)
+    .set({ Authorization: token })
+    .send({ withCleanup: true })
+}
+
 const connect = async (controllerConfig) => {
   let controller = {
     ...controllerConfig,
@@ -399,6 +413,8 @@ module.exports = {
   getFlows,
   getAgents,
   getMicroservices,
+  getCatalog,
+  removeMicroservice,
   getMockData,
   connect
 }

@@ -1,15 +1,18 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
 
-import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText } from '@material-ui/core'
+import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor } from './utils'
-import Modal from '../Utils/Modal'
+import { statusColor, msvcStatusColor } from '../utils'
+import Modal from '../../Utils/Modal'
+
+import AddMicroservice from './AddMicroservice'
+import RemoveMicroservice from './RemoveMicroservice'
 
 const useStyles = makeStyles({
   avatarList: {
@@ -61,8 +64,26 @@ const useStyles = makeStyles({
 
 export default function AgentList (props) {
   const classes = useStyles()
-  const [open, setOpen] = React.useState(false)
+  const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
+  const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
+  const [openRemoveMicroserviceModal, setOpenRemoveMicroserviceModal] = React.useState(false)
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
   const { msvcsPerAgent, agents, agent, setAgent, setAutozoom } = props
+
+  const handleCloseMenu = () => setMenuAnchorEl(null)
+  const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
+  const openDetails = () => {
+    setOpenDetailsModal(true)
+    handleCloseMenu()
+  }
+  const openAddMicroservice = () => {
+    setOpenAddMicroserviceModal(true)
+    handleCloseMenu()
+  }
+  const openRemoveMicroservice = () => {
+    setOpenRemoveMicroserviceModal(true)
+    handleCloseMenu()
+  }
 
   return (
     <React.Fragment>
@@ -102,20 +123,49 @@ export default function AgentList (props) {
                   </React.Fragment>
                 ))}
               </div>
-              <MoreIcon onClick={() => setOpen(true)} />
+              <MoreIcon onClick={openMenu} />
             </ListItem>
           )
         })}
       </List>
       <Modal
         {...{
-          open,
+          open: openDetailsModal,
           title: `${agent.name} details`,
-          onClose: () => setOpen(false)
+          onClose: () => setOpenDetailsModal(false)
         }}
       >
         <ReactJson src={agent} name={false} />
       </Modal>
+      <Modal
+        {...{
+          open: openAddMicroserviceModal,
+          title: `Deploy microservice to ${agent.name}`,
+          onClose: () => setOpenAddMicroserviceModal(false)
+        }}
+      >
+        <AddMicroservice target={agent} />
+      </Modal>
+      <Modal
+        {...{
+          open: openRemoveMicroserviceModal,
+          title: `Remove microservice from ${agent.name}`,
+          onClose: () => setOpenRemoveMicroserviceModal(false)
+        }}
+      >
+        <RemoveMicroservice target={agent} msvcs={msvcsPerAgent[agent.uuid] || []} />
+      </Modal>
+      <Menu
+        id='agent-menu'
+        anchorEl={menuAnchorEl}
+        keepMounted
+        open={Boolean(menuAnchorEl)}
+        onClose={handleCloseMenu}
+      >
+        <MenuItem onClick={openDetails}>Details</MenuItem>
+        <MenuItem onClick={openAddMicroservice}>Add microservice</MenuItem>
+        <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem>
+      </Menu>
     </React.Fragment>
   )
 }
