@@ -1,6 +1,7 @@
 import React from 'react'
 import Downshift from 'downshift'
 import deburr from 'lodash/deburr'
+import get from 'lodash/get'
 import { MenuItem, Paper, TextField } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -18,7 +19,9 @@ const useStyles = makeStyles(theme => ({
     zIndex: 1,
     marginTop: theme.spacing(1),
     left: 0,
-    right: 0
+    right: 0,
+    maxHeight: '250px',
+    overflowY: 'scroll'
   },
   chip: {
     margin: theme.spacing(0.5, 0.25)
@@ -36,8 +39,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 function renderInput (inputProps) {
-  const { InputProps, classes, ref, ...other } = inputProps
-
+  const { InputProps, classes, ref, ...others } = inputProps
   return (
     <TextField
       InputProps={{
@@ -48,7 +50,7 @@ function renderInput (inputProps) {
         },
         ...InputProps
       }}
-      {...other}
+      {...others}
     />
   )
 }
@@ -56,7 +58,7 @@ function renderInput (inputProps) {
 function renderSuggestion (suggestionProps) {
   const { suggestion, index, itemProps, highlightedIndex, selectedItem } = suggestionProps
   const isHighlighted = highlightedIndex === index
-  const isSelected = (selectedItem || '').indexOf(suggestion.label) > -1
+  const isSelected = (selectedItem || {}).label === suggestion.label
 
   return (
     <MenuItem
@@ -92,7 +94,10 @@ export default function Autocomplete (props) {
       })
   }
 
-  return (<Downshift id='downshift-options'>
+  return (<Downshift
+    itemToString={item => get(item, 'label', '')}
+    onChange={props.onChange}
+    id='downshift-options'>
     {({
       clearSelection,
       getInputProps,
@@ -133,7 +138,7 @@ export default function Autocomplete (props) {
                   renderSuggestion({
                     suggestion,
                     index,
-                    itemProps: getItemProps({ item: suggestion.label }),
+                    itemProps: getItemProps({ item: suggestion }),
                     highlightedIndex,
                     selectedItem
                   })

@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
 
-import { Grid, Typography, TextField, Divider, Select, Input, Button, InputLabel, FormControl, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core'
+import { Grid, Paper, Typography, TextField, Divider, Select, Input, Button, InputLabel, FormControl, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 
 import Alert from '../../Utils/Alert'
@@ -14,6 +14,13 @@ const useStyles = makeStyles({
   },
   formControl: {
     width: '100%'
+  },
+  newPaper: {
+    boxShadow: '2px 2px gray',
+    borderRadius: '4px',
+    padding: '10px',
+    marginTop: '10px',
+    border: '1px solid gray'
   },
   inputWithIcon: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }
 })
@@ -41,12 +48,17 @@ const initMsvc = {
   rootHostAccess: false
 }
 
+const initFlow = {
+  name: ''
+}
+
 export default function AddMicroservice (props) {
   const classes = useStyles()
   const [ flows, setFlows ] = React.useState([])
   const [ catalog, setCatalog ] = React.useState([])
   const [msvc, setMsvc] = React.useState(initMsvc)
   const [feedback, setFeedback] = React.useState(null)
+  const [ newFlow, setNewFlow ] = React.useState(initFlow)
 
   const agent = props.target
 
@@ -71,7 +83,7 @@ export default function AddMicroservice (props) {
     })()])
   }, [])
 
-  const handleMsvcChange = key => e => setMsvc({ ...msvc, [key]: e.target.value })
+  const handleChange = (key, setter, prevState) => e => setter({ ...prevState, [key]: e.target.value })
   const handleMsvcChangeArray = (key, objKey, idx, valueDecorator = x => x) => e => setMsvc({
     ...msvc,
     [key]: [
@@ -157,6 +169,48 @@ export default function AddMicroservice (props) {
     }
   }
 
+  const createFlow = async () => {
+    try {
+      const { name } = newFlow
+      const response = await window.fetch('/api/controllerApi/api/v3/flow', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newFlow)
+      })
+      if (response.ok) {
+        setFeedback({ message: 'Flow created!', type: 'success' })
+        setNewFlow(initFlow)
+        const flow = { ...await response.json(), name }
+        setMsvc({ ...msvc, flow })
+        msvc.flow = flow
+        return true
+      } else {
+        setFeedback({ message: response.statusText, type: 'error' })
+        return false
+      }
+    } catch (e) {
+      setFeedback({ message: e.message })
+      return false
+    }
+  }
+
+  const createMsvc = async () => {
+    let success = true
+    try {
+      if (msvc.flow.id === -1) {
+        success = await createFlow()
+      }
+      if (success) {
+        await addMsvc()
+      }
+    } catch (e) {
+
+    }
+  }
+
   return (
     <React.Fragment>
       {feedback && <Alert
@@ -173,49 +227,53 @@ export default function AddMicroservice (props) {
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel htmlFor='select-flow'>Flow</InputLabel>
-            <Select
-              required
-              value={msvc.flow}
-              onChange={handleMsvcChange('flow')}
-              input={<Input id='select-flow-input' />}
-              renderValue={selected => selected.name || 'Select a flow'}
-              MenuProps={MenuProps}
-            >
-              {flows.map(f => (
-                <MenuItem key={f.id} value={f}>
-                  {f.name}
-                </MenuItem>
-              ))}
-            </Select>
+            <Autocomplete
+              label='Flow'
+              placeholder='Select a flow'
+              onChange={(selected, state) => {
+                handleChange('flow', setMsvc, msvc)({ target: { value: selected } })
+              }}
+              maxSuggestions={20}
+              suggestions={flows.map(f => ({
+                ...f,
+                label: f.name
+              })).concat([{
+                id: -1,
+                label: '+ Add a flow'
+              }])}
+            />
           </FormControl>
+          {msvc.flow.id === -1 && <Paper className={classes.newPaper}>
+            <Typography variant='subtitle2'>New flow</Typography>
+            <TextField
+              id='name'
+              label='Name'
+              required
+              onChange={handleChange('name', setNewFlow, newFlow)}
+              value={newFlow.name}
+              fullWidth
+              className={classes.textField}
+              margin='normal'
+            />
+          </Paper>}
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            {/* <Autocomplete
+            <Autocomplete
               label='Image'
               placeholder='Select an image'
-              onChange={handleMsvcChange('catalog')}
+              onChange={(selected, state) => {
+                handleChange('catalog', setMsvc, msvc)({ target: { value: selected } })
+              }}
+              maxSuggestions={20}
               suggestions={catalog.map(m => ({
                 ...m,
                 label: getCatalogImage(m)
-              }))}
-            /> */}
-            <InputLabel htmlFor='select-flow'>Image</InputLabel> */}
-            <Select
-              required
-              value={msvc.catalog}
-              onChange={handleMsvcChange('catalog')}
-              input={<Input id='select-flow-input' />}
-              renderValue={selected => getCatalogImage(selected)}
-              MenuProps={MenuProps}
-            >
-              {catalog.map(f => (
-                <MenuItem key={f.id} value={f}>
-                  {getCatalogImage(f)}
-                </MenuItem>
-              ))}
-            </Select>
+              })).concat([{
+                id: -1,
+                label: '+ Add an image'
+              }])}
+            />
           </FormControl>
         </Grid>
       </Grid>
@@ -225,7 +283,7 @@ export default function AddMicroservice (props) {
             id='name'
             label='Name'
             required
-            onChange={handleMsvcChange('name')}
+            onChange={handleChange('name', setMsvc, msvc)}
             value={msvc.name}
             fullWidth
             className={classes.textField}
@@ -356,7 +414,7 @@ export default function AddMicroservice (props) {
       <Divider className={classes.divider} />
       <Grid container justify='flex-end'>
         <Grid item>
-          <Button onClick={addMsvc}>
+          <Button onClick={createMsvc}>
             Add
           </Button>
         </Grid>
