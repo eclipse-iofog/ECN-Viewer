@@ -5,6 +5,7 @@ import { Grid, Typography, TextField, Divider, Select, Input, Button, InputLabel
 import CloseIcon from '@material-ui/icons/Close'
 
 import Alert from '../../Utils/Alert'
+import Autocomplete from '../../Utils/Autocomplete'
 
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
@@ -191,7 +192,16 @@ export default function AddMicroservice (props) {
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
-            <InputLabel htmlFor='select-flow'>Image</InputLabel>
+            {/* <Autocomplete
+              label='Image'
+              placeholder='Select an image'
+              onChange={handleMsvcChange('catalog')}
+              suggestions={catalog.map(m => ({
+                ...m,
+                label: getCatalogImage(m)
+              }))}
+            /> */}
+            <InputLabel htmlFor='select-flow'>Image</InputLabel> */}
             <Select
               required
               value={msvc.catalog}
