@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing(1),
+    marginBot: theme.spacing(2),
     left: 0,
     right: 0,
     maxHeight: '250px',
@@ -97,6 +98,8 @@ export default function Autocomplete (props) {
   return (<Downshift
     itemToString={item => get(item, 'label', '')}
     onChange={props.onChange}
+    initialSelectedItem={props.initialSelectedItem}
+    {...(props.selectedItem ? { selectedItem: props.selectedItem } : {})}
     id='downshift-options'>
     {({
       clearSelection,
@@ -117,6 +120,7 @@ export default function Autocomplete (props) {
           }
         },
         onFocus: openMenu,
+        disabled: props.disabled || false,
         placeholder: props.placeholder || ''
       })
 

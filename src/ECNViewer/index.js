@@ -98,7 +98,7 @@ const updateData = (state, newController) => {
   const activeFlows = newController.flows.filter(f => f.isActivated === true)
   const activeAgents = newController.agents.filter(a => a.daemonStatus === 'RUNNING')
   const msvcsPerAgent = _.groupBy(newController.microservices, 'iofogUuid')
-  const activeMsvcs = activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid] || []), [])
+  const activeMsvcs = activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid].filter(m => !!_.find(activeFlows, f => f.id === m.flowId)) || []), [])
 
   if (!state.agent || !state.agent.uuid) {
     state.agent = newController.agents[0] || {}
@@ -190,7 +190,7 @@ export default function ECNViewer () {
           <Divider className={classes.divider} />
           <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
           <Divider className={classes.divider} />
-          <AgentList {...{ msvcsPerAgent, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom }} />
+          <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, activeFlows }} />
         </div>
         <div className='content'>
           <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />

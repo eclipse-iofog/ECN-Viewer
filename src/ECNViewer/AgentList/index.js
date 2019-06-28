@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
+import findBy from 'lodash/find'
 
 import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem } from '@material-ui/core'
 
@@ -68,7 +69,9 @@ export default function AgentList (props) {
   const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
   const [openRemoveMicroserviceModal, setOpenRemoveMicroserviceModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
-  const { msvcsPerAgent, agents, agent, setAgent, setAutozoom } = props
+  const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom } = props
+
+  const isFlowActive = (id) => !!(findBy(props.activeFlows || [], f => f.id === id))
 
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
@@ -115,7 +118,7 @@ export default function AgentList (props) {
                       label={m.name}
                       style={{
                         '--mTop': idx ? '2px' : '0px',
-                        '--color': msvcStatusColor[a.daemonStatus]
+                        '--color': msvcStatusColor[isFlowActive(m.flowId) ? 'RUNNING' : 'UNKNOWN']
                       }}
                       className={classes.msvcChip}
                       title={m.name}
@@ -144,7 +147,7 @@ export default function AgentList (props) {
           onClose: () => setOpenAddMicroserviceModal(false)
         }}
       >
-        <AddMicroservice target={agent} />
+        <AddMicroservice target={agent} microservices={msvcs} />
       </Modal>
       <Modal
         {...{
