@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
+import get from 'lodash/get'
 
 import { Grid, Paper, Typography, TextField, Divider, Select, Input, Button, InputLabel, FormControl, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
@@ -16,11 +17,11 @@ const useStyles = makeStyles({
     width: '100%'
   },
   newPaper: {
-    boxShadow: '2px 2px gray',
+    border: '1px solid hsla(0, 0%, 0%, 0.2)',
+    boxShadow: '0 4px 6px 0 hsla(0,0%,0%,0.2)',
     borderRadius: '4px',
     padding: '10px',
-    marginTop: '10px',
-    border: '1px solid gray'
+    marginTop: '10px'
   },
   inputWithIcon: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }
 })
@@ -49,16 +50,29 @@ const initMsvc = {
 }
 
 const initFlow = {
-  name: ''
+  name: '',
+  isActivated: true
 }
+
+const initCatalogItem = (fogTypeId) => ({
+  name: '',
+  images: [{
+    containerImage: '',
+    fogTypeId
+  }],
+  registryId: 1
+})
+
+const randomString = () => Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
 
 export default function AddMicroservice (props) {
   const classes = useStyles()
   const [ flows, setFlows ] = React.useState([])
   const [ catalog, setCatalog ] = React.useState([])
-  const [msvc, setMsvc] = React.useState(initMsvc)
-  const [feedback, setFeedback] = React.useState(null)
+  const [ msvc, setMsvc ] = React.useState(initMsvc)
+  const [ feedback, setFeedback ] = React.useState(null)
   const [ newFlow, setNewFlow ] = React.useState(initFlow)
+  const [ newCatalogItem, setNewCatalogItem ] = React.useState(() => initCatalogItem(get(props, 'target.fogTypeId', 1)))
 
   const agent = props.target
 
@@ -197,11 +211,45 @@ export default function AddMicroservice (props) {
     }
   }
 
+  const createCatalogItem = async () => {
+    try {
+      const catalogItem = {
+        ...newCatalogItem,
+        name: randomString()
+      }
+      const response = await window.fetch('/api/controllerApi/api/v3/catalog/microservices', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(catalogItem)
+      })
+      if (response.ok) {
+        setFeedback({ message: 'Image added to catalog!', type: 'success' })
+        setNewCatalogItem(initCatalogItem(agent.fogTypeId))
+        const catalog = { ...await response.json(), ...catalogItem }
+        setMsvc({ ...msvc, catalog })
+        msvc.catalog = catalog
+        return true
+      } else {
+        setFeedback({ message: response.statusText, type: 'error' })
+        return false
+      }
+    } catch (e) {
+      setFeedback({ message: e.message })
+      return false
+    }
+  }
+
   const createMsvc = async () => {
     let success = true
     try {
       if (msvc.flow.id === -1) {
         success = await createFlow()
+      }
+      if (success && msvc.catalog.id === -1) {
+        success = await createCatalogItem()
       }
       if (success) {
         await addMsvc()
@@ -255,6 +303,18 @@ export default function AddMicroservice (props) {
               className={classes.textField}
               margin='normal'
             />
+            <FormControlLabel
+              style={{ color: 'rgba(0, 0, 0, 0.54)' }}
+              control={
+                <Checkbox
+                  checked={newFlow.isActivated}
+                  onChange={e => setNewFlow({ ...newFlow, isActivated: e.target.checked })}
+                  value='checkedB'
+                  color='primary'
+                />
+              }
+              label='Active'
+            />
           </Paper>}
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -275,6 +335,25 @@ export default function AddMicroservice (props) {
               }])}
             />
           </FormControl>
+          {msvc.catalog.id === -1 && <Paper className={classes.newPaper}>
+            <Typography variant='subtitle2'>New image</Typography>
+            <TextField
+              id='name'
+              label='Name'
+              required
+              onChange={e => setNewCatalogItem({
+                ...newCatalogItem,
+                images: [{
+                  ...newCatalogItem.images[0],
+                  containerImage: e.target.value
+                }]
+              })}
+              value={newCatalogItem.images[0].containerImage}
+              fullWidth
+              className={classes.textField}
+              margin='normal'
+            />
+          </Paper>}
         </Grid>
       </Grid>
       <Grid container spacing={2} >
