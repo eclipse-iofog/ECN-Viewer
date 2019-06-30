@@ -1,20 +1,36 @@
 import React from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { TextField, Grid, Button } from '@material-ui/core'
 import Alert from '../Utils/Alert'
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
-
+  skeleton: {
+    minHeight: '55px'
+  }
 })
 
-export default function Config (props) {
+export default function Config () {
   const classes = useStyles()
   const [data, setData] = React.useState({
     email: '',
     password: '',
     ip: '',
-    port: '',
-    ...props.data
+    port: ''
   })
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    window.fetch('/api/controller')
+      .then(res => res.json())
+      .then(({ info }) => setData({
+        ip: info.ip,
+        port: info.port,
+        email: info.user.email
+      }))
+      .then(() => setLoading(false))
+      .catch(e => setFeedback({ message: e.message, type: 'error' }))
+  }, [])
+
   const [feedback, setFeedback] = React.useState(null)
   const save = async () => {
     try {
@@ -39,7 +55,7 @@ export default function Config (props) {
         setFeedback({ message: response.statusText, type: 'error' })
       }
     } catch (e) {
-      setFeedback({ message: e.message })
+      setFeedback({ message: e.message, type: 'error' })
     }
   }
 
@@ -62,7 +78,7 @@ export default function Config (props) {
       />}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
-          <TextField
+          {loading ? <Skeleton height={55} /> : <TextField
             id='ip'
             label='IP'
             onChange={handleChange('ip')}
@@ -71,10 +87,10 @@ export default function Config (props) {
             className={classes.textField}
             margin='normal'
             variant='outlined'
-          />
+          />}
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
+          {loading ? <Skeleton height={55} /> : <TextField
             id='port'
             label='Port'
             onChange={handleChange('port')}
@@ -83,12 +99,12 @@ export default function Config (props) {
             className={classes.textField}
             margin='normal'
             variant='outlined'
-          />
+          />}
         </Grid>
       </Grid>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
-          <TextField
+          {loading ? <Skeleton height={55} /> : <TextField
             id='email'
             label='Email'
             onChange={handleChange('email')}
@@ -97,10 +113,10 @@ export default function Config (props) {
             className={classes.textField}
             margin='normal'
             variant='outlined'
-          />
+          />}
         </Grid>
         <Grid item xs={12} sm={6}>
-          <TextField
+          {loading ? <Skeleton height={55} /> : <TextField
             id='password'
             label='Password'
             onChange={handleChange('password')}
@@ -110,7 +126,7 @@ export default function Config (props) {
             className={classes.textField}
             margin='normal'
             variant='outlined'
-          />
+          />}
         </Grid>
       </Grid>
       <Grid container justify='flex-end'>

@@ -1,25 +1,16 @@
 import React, { useState } from 'react'
 import { useInterval } from '../hooks/useInterval'
-import _ from 'lodash'
+import { find, groupBy } from 'lodash'
 
 import Divider from '@material-ui/core/Divider'
-import Avatar from '@material-ui/core/Avatar'
-import SearchIcon from '@material-ui/icons/Search'
-import NotificationsIcon from '@material-ui/icons/NotificationsOutlined'
-import HomeIcon from '@material-ui/icons/HomeOutlined'
-import FakeIcon1 from '@material-ui/icons/GraphicEqOutlined'
-import SettingsIcon from '@material-ui/icons/SettingsOutlined'
 import { makeStyles } from '@material-ui/styles'
 
 import ControllerInfo from './ControllerInfo'
 import ActiveResources from './ActiveResources'
 import AgentList from './AgentList'
 import Map from './Map'
-import Modal from '../Utils/Modal'
-import Config from '../Config'
 
 // import logo from '../assets/logo.png'
-import logomark from '../assets/logomark.svg'
 import './layout.scss'
 
 import mapStyle from './mapStyle.json'
@@ -27,48 +18,6 @@ import mapStyle from './mapStyle.json'
 const useStyles = makeStyles({
   divider: {
     margin: '15px 0'
-  },
-  avatarContainer: {
-    backgroundColor: '#FF585D',
-    marginRight: '45px'
-  },
-  latIcons: {
-    margin: 'auto',
-    marginTop: '15px',
-    cursor: 'pointer',
-    backgroundColor: '#002E43',
-    '&.selected': {
-      backgroundColor: '#ACB5C6'
-    }
-  },
-  topIcons: {
-    height: '100%',
-    width: '25px',
-    marginRight: '25px',
-    cursor: 'pointer'
-  },
-  nav: {
-    marginBottom: '15px',
-    height: '50px',
-    '& a': {
-      height: '100%',
-      '& img': {
-        height: '100%'
-      }
-    }
-  },
-  footerContainer: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    justifyItems: 'center',
-    padding: '20px 10px 20px 0px'
-  },
-  footer: {
-    color: '#ACB5C6',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    fontSize: '9pt'
   }
 })
 
@@ -80,7 +29,7 @@ const initState = {
     },
     agents: [],
     flows: [],
-    msvcs: []
+    microservices: []
   },
   agent: {},
   activeAgents: [],
@@ -95,10 +44,16 @@ export const actions = {
 }
 
 const updateData = (state, newController) => {
+  if (!newController) {
+    return state
+  }
   const activeFlows = newController.flows.filter(f => f.isActivated === true)
   const activeAgents = newController.agents.filter(a => a.daemonStatus === 'RUNNING')
-  const msvcsPerAgent = _.groupBy(newController.microservices, 'iofogUuid')
-  const activeMsvcs = activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid].filter(m => !!_.find(activeFlows, f => f.id === m.flowId)) || []), [])
+  const msvcsPerAgent = groupBy(newController.microservices.map(m => ({
+    ...m,
+    flowActive: !!find(activeFlows, f => m.flowId === f.id)
+  })), 'iofogUuid')
+  const activeMsvcs = activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid].filter(m => !!find(activeFlows, f => f.id === m.flowId)) || []), [])
 
   if (!state.agent || !state.agent.uuid) {
     state.agent = newController.agents[0] || {}
@@ -132,6 +87,7 @@ export default function ECNViewer () {
   const classes = useStyles()
   const [state, dispatch] = React.useReducer(reducer, initState)
   const [autozoom, setAutozoom] = useState(true)
+  const [loading, setLoading] = useState(true)
   const [map, setMap] = useState({
     center: [0, 0],
     zoom: 15,
@@ -139,12 +95,29 @@ export default function ECNViewer () {
       styles: mapStyle
     }
   })
-  const [settingsOpen, setSettingsOpen] = useState(false)
 
-  useInterval(() => {
-    window.fetch('/api/controller')
-      .then(res => res.json())
-      .then(data => dispatch({ type: actions.UPDATE, data }))
+  useInterval(async () => {
+    const erroredData = e => ({
+      ...initState.controller,
+      info: {
+        ...initState.controller.info,
+        error: e
+      }
+    })
+    try {
+      const res = await window.fetch('/api/controller')
+      if (!res.ok) {
+        dispatch({ type: actions.UPDATE, data: erroredData({ message: res.statusText }) })
+        return
+      }
+      const data = await res.json()
+      dispatch({ type: actions.UPDATE, data })
+      if (loading) {
+        setLoading(false)
+      }
+    } catch (e) {
+      dispatch({ type: actions.UPDATE, data: erroredData(e) })
+    }
   }, [3000])
 
   const setAgent = a => dispatch({ type: actions.SET_AGENT, data: a })
@@ -164,59 +137,17 @@ export default function ECNViewer () {
 
   const { controller, activeAgents, activeFlows, activeMsvcs, agent, msvcsPerAgent } = state
   return (
-    <React.Fragment>
-      <div className='wrapper'>
-        <div className='logo'>
-          <img src={logomark} alt='Edgeworx logomark' />
-        </div>
-        <div className='topnav'>
-          <SearchIcon className={classes.topIcons} />
-          <NotificationsIcon className={classes.topIcons} />
-          <Avatar className={classes.avatarContainer} >M</Avatar>
-        </div>
-        <div className='latnav'>
-          <Avatar className={classes.latIcons + ' selected'} >
-            <HomeIcon />
-          </Avatar>
-          <Avatar className={classes.latIcons} >
-            <FakeIcon1 />
-          </Avatar>
-          <Avatar className={classes.latIcons} >
-            <SettingsIcon onClick={() => setSettingsOpen(!settingsOpen)} />
-          </Avatar>
-        </div>
-        <div className='box sidebar'>
-          <ControllerInfo {...{ controller, selectController }} />
-          <Divider className={classes.divider} />
-          <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
-          <Divider className={classes.divider} />
-          <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, activeFlows }} />
-        </div>
-        <div className='content'>
-          <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
-
-        </div>
-        <div className={`${classes.footerContainer} footer`}>
-          <span className={classes.footer}>Copyright © 2019 Edgeworx, Inc. All Rights Reserved.</span>
-        </div>
-
+    <div className='viewer-layout-container'>
+      <div className='box sidebar'>
+        <ControllerInfo {...{ controller, selectController, loading }} />
+        <Divider className={classes.divider} />
+        <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
+        <Divider className={classes.divider} />
+        <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom }} />
       </div>
-      <Modal
-        {...{
-          open: settingsOpen,
-          title: `Controller details`,
-          onClose: () => setSettingsOpen(false)
-        }}
-      >
-        <Config {...{
-          data: {
-            ip: controller.info.ip,
-            port: controller.info.port,
-            email: controller.info.user.email
-          }
-        }} />
-      </Modal>
-
-    </React.Fragment>
+      <div className='map-grid-container'>
+        <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
+      </div>
+    </div>
   )
 }

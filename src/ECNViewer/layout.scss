@@ -3,71 +3,24 @@
   padding-top: 10px !important;
 }
 
-.content {
-  grid-area: content;
+.map-grid-container {
+  grid-area: map;
   position: relative;
-  margin-right: 50px;
+  padding-right: 50px;
   padding-top: 10px;
 }
 
-.header {
-  grid-area: header;
-  padding-top: 0px;
-}
-
-.footer {
-  grid-area: footer;
-}
-
-.latnav {
-  grid-area: latnav;
-  background-color: #002E43;
-  color: white;
-  min-height: calc(1vh - 50px);
-}
-
-.topnav {
-  grid-area: topnav;
-  margin: 5px;
-  display: flex;
-  justify-content: flex-end;
-  color: #002E43;
-  align-items: center;
-}
-
-.logo {
-  grid-area: logo;
-  background-color: #FF585D;
-  color: white;
-  padding: 13px 15px;
-  cursor: pointer;
-}
-
-.wrapper {
-    width: 100%;
-    max-width: 2048px;
-    margin: auto;
-    display: grid;
-    min-height: 100vh;
-    grid-gap: 10px;
-    grid-template-columns: 60px 40% 1fr;
-    grid-template-rows: 60px minmax(600px, auto) minmax(50px, 1fr);
-    grid-row-gap: 0;
-    grid-template-areas:
-      "logo topnav topnav"
-      "latnav sidebar content"
-      "latnav footer footer";
-    background-color: #FAFCFF;
-    color: #444;
-}
-
-
-.box {
-  border-radius: 5px;
-  padding: 30px;
-  font-size: 150%;
-}
-
-.controllerInfoTitle {
-  text-emphasis: 'bold';
+.viewer-layout-container {
+  width: 100%;
+  margin: auto;
+  display: grid;
+  min-height: 100%;
+  grid-gap: 10px;
+  grid-template-columns: 40% 1fr;
+  grid-template-rows: minmax(600px, auto);
+  grid-row-gap: 0;
+  grid-template-areas:
+    "sidebar map";
+  background-color: #FAFCFF;
+  color: #444;
 }

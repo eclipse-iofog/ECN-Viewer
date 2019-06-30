@@ -1,5 +1,5 @@
 import React from 'react'
-import _ from 'lodash'
+import { isFinite, get } from 'lodash'
 
 import GoogleMapReact from 'google-map-react'
 import { fitBounds } from 'google-map-react/utils'
@@ -51,7 +51,7 @@ const useStyles = makeStyles({
 })
 
 const hasValidCoordinates = (coordinates) => {
-  return _.isFinite(coordinates[0]) && _.isFinite(coordinates[1])
+  return isFinite(coordinates[0]) && isFinite(coordinates[1])
 }
 
 export default function Map (props) {
@@ -64,10 +64,10 @@ export default function Map (props) {
 
     const agents = controller.agents || []
     agents.forEach(marker => {
-      bounds.extend(new window.google.maps.LatLng(marker.latitude, marker.longitude))
+      bounds.extend(new window.google.maps.LatLng(get(marker, 'latitude', 0), get(marker, 'longitude', 0)))
     })
 
-    bounds.extend(new window.google.maps.LatLng(controller.info.location.lat, controller.info.location.lon))
+    bounds.extend(new window.google.maps.LatLng(get(controller, 'info.location.lat', 0), get(controller, 'info.location.lon', 0)))
 
     const newBounds = {
       ne: {
@@ -81,8 +81,8 @@ export default function Map (props) {
     }
 
     const size = {
-      width: DomElementRef.current.offsetWidth,
-      height: DomElementRef.current.offsetHeight
+      width: get(DomElementRef, 'current.offsetWidth', 600),
+      height: get(DomElementRef, 'current.offsetHeight', 800)
     }
 
     const { center, zoom } = fitBounds(newBounds, size)
@@ -105,7 +105,7 @@ export default function Map (props) {
             className={classes.mapMarkerTransform}
             onClick={() => setAgent(a)}
           >
-            <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).length} invisible={a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
+            <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).filter(m => m.flowActive).length} invisible={a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
               <Avatar
                 style={{ '--markerColor': statusColor[a.daemonStatus] }}
                 className={classes.mapMarker}>

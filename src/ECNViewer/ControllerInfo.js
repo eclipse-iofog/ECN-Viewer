@@ -1,4 +1,5 @@
 import React from 'react'
+import Skeleton from 'react-loading-skeleton'
 
 import { Typography, List, ListItem, ListItemIcon, ListItemText, Chip, Tooltip } from '@material-ui/core'
 
@@ -20,13 +21,14 @@ const useStyles = makeStyles({
   },
   controllerTitle: {
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    textEmphasis: 'bold'
   }
 })
 
 export default function ControllerInfo (props) {
   const classes = useStyles()
-  const controller = props.controller
+  const { controller, loading } = props
   const { city, country, lat, lon, query } = controller.info.location || {}
   return (
     <div className={classes.controllerInfo}>
@@ -41,15 +43,15 @@ export default function ControllerInfo (props) {
       <List>
         <ListItem>
           <ListItemIcon><LocationCityIcon /></ListItemIcon>
-          <ListItemText primary={`${city}, ${country}`} />
+          { loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={`${city}, ${country}`} /> }
         </ListItem>
         <ListItem style={{ cursor: 'pointer' }} onClick={() => props.selectController()} >
           <ListItemIcon><GPSFixedIcon /></ListItemIcon>
-          <ListItemText primary={`${lat}, ${lon}`} />
+          { loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={`${lat}, ${lon}`} /> }
         </ListItem>
         <ListItem>
           <ListItemIcon><IPIcon /></ListItemIcon>
-          <ListItemText primary={query} />
+          { loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={query} /> }
         </ListItem>
       </List>
     </div>

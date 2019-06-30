@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
-import findBy from 'lodash/find'
 
 import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem } from '@material-ui/core'
 
@@ -71,8 +70,6 @@ export default function AgentList (props) {
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
   const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom } = props
 
-  const isFlowActive = (id) => !!(findBy(props.activeFlows || [], f => f.id === id))
-
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
   const openDetails = () => {
@@ -118,7 +115,7 @@ export default function AgentList (props) {
                       label={m.name}
                       style={{
                         '--mTop': idx ? '2px' : '0px',
-                        '--color': msvcStatusColor[isFlowActive(m.flowId) ? 'RUNNING' : 'UNKNOWN']
+                        '--color': msvcStatusColor[m.flowActive ? 'RUNNING' : 'UNKNOWN']
                       }}
                       className={classes.msvcChip}
                       title={m.name}
