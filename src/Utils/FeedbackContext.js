@@ -7,6 +7,8 @@ export const FeedbackContext = React.createContext({
   pushFeedback: () => {}
 })
 
+const AUTO_HIDE = 6000
+
 export default function Context (props) {
   const [feedbacks, setFeedbacks] = React.useState([])
   const pushFeedback = (newFeedback) => {
@@ -20,10 +22,10 @@ export default function Context (props) {
         <Alert
           open={!!feedbacks.length}
           onClose={() => setFeedbacks([])}
-          autoHideDuration={6000}
+          autoHideDuration={AUTO_HIDE}
           alerts={feedbacks.map((f, idx) => ({
             ...f,
-            onClose: () => setFeedbacks([...feedbacks.slice(0, idx), ...feedbacks.slice(idx + 1)])
+            onClose: (currentFeedbacks, currentIdx) => setFeedbacks([...currentFeedbacks.slice(0, currentIdx), ...currentFeedbacks.slice(currentIdx + 1)])
           }))}
         />
       }

@@ -90,7 +90,7 @@ export default function Alert (props) {
             </span>
           }
           action={[
-            <IconButton key='close' aria-label='Close' color='inherit' onClick={a.onClose}>
+            <IconButton key='close' aria-label='Close' color='inherit' onClick={() => a.onClose(alerts, idx)}>
               <CloseIcon className={classes.icon} />
             </IconButton>
           ]}
