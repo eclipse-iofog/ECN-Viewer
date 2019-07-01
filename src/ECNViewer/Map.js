@@ -59,11 +59,18 @@ export default function Map (props) {
   const DomElementRef = React.useRef()
   const { controller, agent, setAgent, msvcsPerAgent, map, autozoom } = props
 
-  if (autozoom && window.google) {
+  const setMap = () => {
     const bounds = new window.google.maps.LatLngBounds() // need handler incase `google` not yet available
 
-    const agents = controller.agents || []
-    agents.filter(a => hasValidCoordinates([a.latitude, a.longitude])).forEach(marker => {
+    const agents = (controller.agents || []).filter(a => hasValidCoordinates([a.latitude, a.longitude]))
+
+    if (!agents.length) {
+      map.center = [get(controller, 'info.location.lat', 0), get(controller, 'info.location.lon', 0)]
+      map.zoom = 9
+      return
+    }
+
+    agents.forEach(marker => {
       bounds.extend(new window.google.maps.LatLng(get(marker, 'latitude', 0), get(marker, 'longitude', 0)))
     })
 
@@ -88,6 +95,10 @@ export default function Map (props) {
     const { center, zoom } = fitBounds(newBounds, size)
     map.center = center
     map.zoom = zoom
+  }
+
+  if (autozoom && window.google) {
+    setMap()
   }
 
   return (
