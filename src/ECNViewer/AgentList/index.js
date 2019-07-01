@@ -75,6 +75,8 @@ export default function AgentList (props) {
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
   const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom } = props
 
+  const { feedbackContext } = props
+
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
   const openDetails = () => {
@@ -96,20 +98,20 @@ export default function AgentList (props) {
   }
 
   const removeAgent = async (iofog) => {
-    // try {
-    //   const response = await window.fetch(`/api/controllerApi/api/v3/iofog/${iofog.uuid}`, {
-    //     method: 'DELETE'
-    //   })
-    //   if (!response.ok) {
-
-    //   }
-    // } catch (e) {
-
-    // }
-    setOpenRemoveAgentConfirm(false)
+    try {
+      const response = await window.fetch(`/api/controllerApi/api/v3/iofog/${iofog.uuid}`, {
+        method: 'DELETE'
+      })
+      if (!response.ok) {
+        feedbackContext.pushFeedback({ message: `Failed to remove node: ${response.statusText}`, type: 'error' })
+      } else {
+        feedbackContext.pushFeedback({ message: 'Agent removed!', type: 'success' })
+      }
+      setOpenRemoveAgentConfirm(false)
+    } catch (e) {
+      feedbackContext.pushFeedback({ message: e.message, type: 'error' })
+    }
   }
-
-  const { feedbackContext } = props
 
   return (
     <React.Fragment>

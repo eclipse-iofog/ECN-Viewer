@@ -6,8 +6,11 @@ import Modal from './Modal'
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
   confirm: {
-    backgroundColor: 'var(--color, #5064EC)',
+    backgroundColor: 'var(--color, #002E43)',
     color: 'white'
+  },
+  divider: {
+    margin: '5px'
   }
 })
 
@@ -24,7 +27,7 @@ export default function Confirm (props) {
     >
       {props.children}
       <Divider className={classes.divider} />
-      <Grid container justify='flex-end'>
+      <Grid container justify='flex-end' spacing={2}>
         <Grid item>
           <Button onClick={onClose}>
             Cancel
