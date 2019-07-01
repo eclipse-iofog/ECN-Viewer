@@ -109,6 +109,8 @@ export default function AgentList (props) {
     setOpenRemoveAgentConfirm(false)
   }
 
+  const { feedbackContext } = props
+
   return (
     <React.Fragment>
       <List
@@ -173,7 +175,11 @@ export default function AgentList (props) {
           onClose: () => setOpenAddMicroserviceModal(false)
         }}
       >
-        <AddMicroservice target={agent} microservices={msvcs} />
+        <AddMicroservice {...{
+          target: agent,
+          microservices: msvcs,
+          ...feedbackContext
+        }} />
       </Modal>
       <Modal
         {...{
@@ -182,7 +188,13 @@ export default function AgentList (props) {
           onClose: () => setOpenRemoveMicroserviceModal(false)
         }}
       >
-        <RemoveMicroservice target={agent} msvcs={msvcsPerAgent[agent.uuid] || []} />
+        <RemoveMicroservice
+          {...{
+            target: agent,
+            msvcs: msvcsPerAgent[agent.uuid] || [],
+            ...feedbackContext
+          }}
+        />
       </Modal>
       <Modal
         {...{
@@ -191,7 +203,9 @@ export default function AgentList (props) {
           onClose: () => setOpenConnectNodeModal(false)
         }}
       >
-        <ConnectNode {...{ controller: props.controller }} />
+        <ConnectNode
+          {...{ controller: props.controller, ...feedbackContext }}
+        />
       </Modal>
       <Confirm
         style={{ '--color': '#FF585D' }}

@@ -6,7 +6,6 @@ import { Grid, Paper, Typography, TextField, Divider, Select, Input, Button, Inp
 import CloseIcon from '@material-ui/icons/Close'
 import SwapIcon from '@material-ui/icons/SwapHoriz'
 
-import Alert from '../../Utils/Alert'
 import Autocomplete from '../../Utils/Autocomplete'
 
 import { makeStyles } from '@material-ui/styles'
@@ -103,12 +102,12 @@ export default function AddMicroservice (props) {
     <ReactJson src={config.current} name={false} onAdd={(e) => { config.current = e.updated_src }} onEdit={(e) => { config.current = e.updated_src }} onDelete={(e) => { config.current = e.updated_src }} />
   )
   const [ msvc, setMsvc ] = React.useState(initMsvc)
-  const [ feedbacks, setFeedbacks ] = React.useState([])
   const [ newFlow, setNewFlow ] = React.useState(initFlow)
   const [ newCatalogItem, setNewCatalogItem ] = React.useState(() => initCatalogItem(get(props, 'target.fogTypeId', 1)))
   const [ routes, setRoutes ] = React.useState([])
 
   const agent = props.target
+  const { pushFeedback } = props
 
   React.useEffect(() => {
     Promise.all([(async () => {
@@ -144,14 +143,12 @@ export default function AddMicroservice (props) {
     ]
   })
   const getCatalogImage = item => {
-    if (!item.id) { return 'Select an image' }
+    if (!get(item, 'id', null)) { return 'Select an image' }
     for (const img of item.images) {
       if (img.fogTypeId === agent.fogTypeId) { return img.containerImage }
     }
     return 'Image not found'
   }
-
-  // const editConfig = (e) => { config.current = e.updated_src }
 
   const addVolume = () => setMsvc({
     ...msvc,
@@ -202,15 +199,15 @@ export default function AddMicroservice (props) {
         })
       })
       if (response.ok) {
-        setFeedbacks([...feedbacks, { message: 'Microservice added!', type: 'success' }])
+        pushFeedback({ message: 'Microservice added!', type: 'success' })
         const m = await response.json()
         setMsvc(initMsvc)
         return m.uuid
       } else {
-        setFeedbacks([...feedbacks, { message: response.statusText, type: 'error' }])
+        pushFeedback({ message: response.statusText, type: 'error' })
       }
     } catch (e) {
-      setFeedbacks([...feedbacks, { message: e.message }])
+      pushFeedback({ message: e.message })
     }
   }
 
@@ -226,18 +223,18 @@ export default function AddMicroservice (props) {
         body: JSON.stringify(newFlow)
       })
       if (response.ok) {
-        setFeedbacks([...feedbacks, { message: 'Flow created!', type: 'success' }])
+        pushFeedback({ message: 'Flow created!', type: 'success' })
         setNewFlow(initFlow)
         const flow = { ...await response.json(), name }
         setMsvc({ ...msvc, flow })
         msvc.flow = flow
         return true
       } else {
-        setFeedbacks([...feedbacks, { message: response.statusText, type: 'error' }])
+        pushFeedback({ message: response.statusText, type: 'error' })
         return false
       }
     } catch (e) {
-      setFeedbacks([...feedbacks, { message: e.message }])
+      pushFeedback({ message: e.message })
       return false
     }
   }
@@ -257,18 +254,18 @@ export default function AddMicroservice (props) {
         body: JSON.stringify(catalogItem)
       })
       if (response.ok) {
-        setFeedbacks([...feedbacks, { message: 'Image added to catalog!', type: 'success' }])
+        pushFeedback({ message: 'Image added to catalog!', type: 'success' })
         setNewCatalogItem(initCatalogItem(agent.fogTypeId))
         const catalog = { ...await response.json(), ...catalogItem }
         setMsvc({ ...msvc, catalog })
         msvc.catalog = catalog
         return true
       } else {
-        setFeedbacks([...feedbacks, { message: response.statusText, type: 'error' }])
+        pushFeedback({ message: response.statusText, type: 'error' })
         return false
       }
     } catch (e) {
-      setFeedbacks([...feedbacks, { message: e.message }])
+      pushFeedback({ message: e.message })
       return false
     }
   }
@@ -286,14 +283,14 @@ export default function AddMicroservice (props) {
         body: ''
       })
       if (response.ok) {
-        setFeedbacks([...feedbacks, { message: `Route from ${route.from.name} to ${route.to.name} created !`, type: 'success' }])
+        pushFeedback({ message: `Route from ${route.from.name} to ${route.to.name} created !`, type: 'success' })
         return true
       } else {
-        setFeedbacks([...feedbacks, { message: response.statusText, type: 'error' }])
+        pushFeedback({ message: response.statusText, type: 'error' })
         return false
       }
     } catch (e) {
-      setFeedbacks([...feedbacks, { message: e.message }])
+      pushFeedback({ message: e.message })
       return false
     }
   }
@@ -340,17 +337,6 @@ export default function AddMicroservice (props) {
 
   return (
     <React.Fragment>
-      {!!feedbacks.length && <Alert
-        open={!!feedbacks.length}
-        onClose={() => setFeedbacks([])}
-        autoHideDuration={6000}
-        alerts={feedbacks.map((feedback, idx) => ({
-          ...feedback,
-          key: feedback.type,
-          message: <span id={`rm-feedback-${feedback.type}`}>{feedback.message}</span>,
-          onClose: () => setFeedbacks([...feedbacks.slice(0, idx), ...feedbacks.slice(idx + 1)])
-        }))}
-      />}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
@@ -358,7 +344,7 @@ export default function AddMicroservice (props) {
               label='Flow'
               placeholder='Select a flow'
               onChange={(selected, state) => {
-                handleChange('flow', setMsvc, msvc)({ target: { value: selected } })
+                handleChange('flow', setMsvc, msvc)({ target: { value: selected || {} } })
               }}
               maxSuggestions={20}
               suggestions={flows.map(f => ({
@@ -402,7 +388,7 @@ export default function AddMicroservice (props) {
               label='Image'
               placeholder='Select an image'
               onChange={(selected, state) => {
-                handleChange('catalog', setMsvc, msvc)({ target: { value: selected } })
+                handleChange('catalog', setMsvc, msvc)({ target: { value: selected || {} } })
               }}
               maxSuggestions={20}
               suggestions={catalog.map(m => ({

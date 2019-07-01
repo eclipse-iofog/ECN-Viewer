@@ -2,8 +2,6 @@ import React from 'react'
 
 import { FormControl, Divider, Grid, Button, Input, InputLabel, Select, MenuItem, Checkbox, ListItemText, Chip } from '@material-ui/core'
 
-import Alert from '../../Utils/Alert'
-
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
   chips: {
@@ -36,7 +34,7 @@ const MenuProps = {
 export default function RemoveMicroservice (props) {
   const classes = useStyles()
   const [msvcsToRemove, setMsvcsToRemove] = React.useState([])
-  const [feedback, setFeedback] = React.useState([])
+  const { pushFeedback } = props
 
   function handleChange (event) {
     setMsvcsToRemove(event.target.value)
@@ -44,24 +42,24 @@ export default function RemoveMicroservice (props) {
 
   const remove = async () => {
     try {
-      const feedbacks = []
+      let success = true
       for (const uuid of msvcsToRemove) {
         const res = await window.fetch(`/api/controllerAPI/api/v3/microservices/${uuid}`, {
           method: 'DELETE'
         })
         if (!res.ok) {
-          feedbacks.push({ message: `${msvcsPerUUID[uuid].name}: ${res.statusText}`, type: 'error', uuid })
+          success = false
+          pushFeedback({ message: `${msvcsPerUUID[uuid].name}: ${res.statusText}`, type: 'error', uuid })
         } else {
           const idx = msvcsToRemove.indexOf(uuid)
           setMsvcsToRemove([...msvcsToRemove.slice(0, idx), ...msvcsToRemove.slice(idx + 1)])
         }
       }
-      if (!feedbacks.length) {
-        feedbacks.push({ message: 'Microservices removed', type: 'success', uuid: 'success' })
+      if (success) {
+        pushFeedback({ message: 'Microservices removed', type: 'success', uuid: 'success' })
       }
-      setFeedback(feedbacks)
     } catch (e) {
-      setFeedback([{ message: e.message, type: 'error', uuid: 'error' }])
+      pushFeedback({ message: e.message, type: 'error', uuid: 'error' })
     }
   }
 
@@ -74,18 +72,6 @@ export default function RemoveMicroservice (props) {
 
   return (
     <React.Fragment>
-      {!!feedback.length && <Alert
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        open={feedback.length}
-        onClose={() => setFeedback([])}
-        autoHideDuration={6000}
-        alerts={feedback.map((f, idx) => ({
-          ...f,
-          key: f.uuid,
-          message: <span id={`rm-feedback-${f.uuid}`}>{f.message}</span>,
-          onClose: () => setFeedback([...feedback.slice(0, idx), ...feedback.slice(idx + 1)])
-        }))}
-      />}
       <FormControl className={classes.formControl}>
         <InputLabel htmlFor='select-multiple-checkbox'>Microservices to remove</InputLabel>
         <Select

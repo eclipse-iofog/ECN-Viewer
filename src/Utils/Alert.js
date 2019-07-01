@@ -57,12 +57,19 @@ export default function Alert (props) {
   const timeout = React.useRef()
   const { onClose, open, autoHideDuration, alerts } = props
 
+  const clearAutohide = () => {
+    clearTimeout(timeout.current)
+    timeout.current = null
+  }
+
   React.useEffect(() => {
     if (!alerts.length && timeout.current) {
-      clearTimeout(timeout.current)
-      timeout.current = null
+      clearAutohide()
     }
-    if (autoHideDuration && !timeout.current) {
+    if (autoHideDuration) {
+      if (timeout.current) {
+        clearAutohide()
+      }
       timeout.current = setTimeout(onClose, autoHideDuration)
     }
   }, [autoHideDuration, onClose, alerts])
@@ -90,5 +97,5 @@ export default function Alert (props) {
         />
       })}
     </div>
-  ) : ''
+  ) : null
 }

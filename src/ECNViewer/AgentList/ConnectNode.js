@@ -2,8 +2,6 @@ import React from 'react'
 
 import { Divider, TextField, Grid, Button } from '@material-ui/core'
 
-import Alert from '../../Utils/Alert'
-
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
 })
@@ -20,7 +18,7 @@ const newError = (message) => ({ message })
 export default function ConnectNode (props) {
   const classes = useStyles()
   const [node, setNode] = React.useState({ ...initNode })
-  const [feedbacks, setFeedbacks] = React.useState([])
+  const { pushFeedback } = props
 
   const handleChange = key => (event) => {
     setNode({ ...node, [key]: event.target.value })
@@ -36,7 +34,7 @@ export default function ConnectNode (props) {
       body: JSON.stringify(agent)
     })
     if (response.ok) {
-      setFeedbacks([...feedbacks, { message: 'ioFog created!', type: 'success' }])
+      pushFeedback({ message: 'ioFog created!', type: 'success' })
       const a = await response.json()
       return a.uuid
     }
@@ -64,6 +62,7 @@ export default function ConnectNode (props) {
       body: JSON.stringify({ 'controller-url': `http://${controller.ip}:${controller.port}/api/v3/` })
     })
     if (response.ok) {
+      pushFeedback({ message: 'Agent linked!', type: 'success' })
       return true
     }
     throw (newError(`Failed to link agent: ${response.statusText}`))
@@ -81,6 +80,7 @@ export default function ConnectNode (props) {
       body: JSON.stringify({ 'provisioning-key': key })
     })
     if (response.ok) {
+      pushFeedback({ message: 'Agent provisioned!', type: 'success' })
       return true
     }
     throw (newError(`Failed to provision agent: ${response.statusText}`))
@@ -92,25 +92,14 @@ export default function ConnectNode (props) {
       const provisioningKey = await getProvisioningKey(iofogUuid)
       await linkAgent(node, props.controller)
       await provisionAgent(node, provisioningKey)
+      pushFeedback({ message: 'Agent connected!', type: 'success' })
     } catch (e) {
-      setFeedbacks([{ message: e.message, type: 'error', uuid: 'error' }])
+      pushFeedback({ message: e.message, type: 'error', uuid: 'error' })
     }
   }
 
   return (
     <React.Fragment>
-      {!!feedbacks.length && <Alert
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        open={feedbacks.length}
-        onClose={() => setFeedbacks([])}
-        autoHideDuration={6000}
-        alerts={feedbacks.map((f, idx) => ({
-          ...f,
-          key: f.uuid,
-          message: <span id={`rm-feedback-${f.uuid}`}>{f.message}</span>,
-          onClose: () => setFeedbacks([...feedbacks.slice(0, idx), ...feedbacks.slice(idx + 1)])
-        }))}
-      />}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField

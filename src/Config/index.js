@@ -1,7 +1,6 @@
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TextField, Grid, Button } from '@material-ui/core'
-import Alert from '../Utils/Alert'
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
   skeleton: {
@@ -9,7 +8,7 @@ const useStyles = makeStyles({
   }
 })
 
-export default function Config () {
+export default function Config (props) {
   const classes = useStyles()
   const [data, setData] = React.useState({
     email: '',
@@ -18,6 +17,7 @@ export default function Config () {
     port: ''
   })
   const [loading, setLoading] = React.useState(true)
+  const { pushFeedback } = props
 
   React.useEffect(() => {
     window.fetch('/api/controller')
@@ -28,10 +28,9 @@ export default function Config () {
         email: info.user.email
       }))
       .then(() => setLoading(false))
-      .catch(e => setFeedback({ message: e.message, type: 'error' }))
+      .catch(e => pushFeedback({ message: e.message, type: 'error' }))
   }, [])
 
-  const [feedback, setFeedback] = React.useState(null)
   const save = async () => {
     try {
       const response = await window.fetch('/api/controller/connect', {
@@ -50,12 +49,12 @@ export default function Config () {
         })
       })
       if (response.ok) {
-        setFeedback({ message: 'Controller details saved!', type: 'success' })
+        pushFeedback({ message: 'Controller details saved!', type: 'success' })
       } else {
-        setFeedback({ message: response.statusText, type: 'error' })
+        pushFeedback({ message: response.statusText, type: 'error' })
       }
     } catch (e) {
-      setFeedback({ message: e.message, type: 'error' })
+      pushFeedback({ message: e.message, type: 'error' })
     }
   }
 
@@ -64,18 +63,7 @@ export default function Config () {
   }
 
   return (
-    <div>
-      {feedback && <Alert
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        open={!!feedback}
-        onClose={() => setFeedback(null)}
-        autoHideDuration={6000}
-        alerts={[{
-          message: <span id='config-feedback'>{feedback.message}</span>,
-          type: feedback.type,
-          onClose: () => setFeedback(null)
-        }]}
-      />}
+    <React.Fragment>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           {loading ? <Skeleton height={55} /> : <TextField
@@ -136,6 +124,6 @@ export default function Config () {
           </Button>
         </Grid>
       </Grid>
-    </div>
+    </React.Fragment>
   )
 }

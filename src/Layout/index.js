@@ -15,6 +15,7 @@ import logomark from '../assets/logomark.svg'
 import './layout.scss'
 
 import { makeStyles } from '@material-ui/styles'
+import { FeedbackContext } from '../Utils/FeedbackContext'
 
 const useStyles = makeStyles({
   divider: {
@@ -115,7 +116,9 @@ export default function Layout () {
         onClose: () => setSettingsOpen(false)
       }}
     >
-      <Config />
+      <FeedbackContext.Consumer>
+        {feedbackContext => <Config {...feedbackContext} />}
+      </FeedbackContext.Consumer>
     </Modal>
 
   </React.Fragment>
