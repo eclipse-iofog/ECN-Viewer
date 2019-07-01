@@ -1,7 +1,7 @@
 import React from 'react'
 import Alert from './Alert'
 
-export const FeedbackContext = React.useContext({
+export const FeedbackContext = React.createContext({
   feedbacks: [],
   setFeedbacks: () => {}
 })
