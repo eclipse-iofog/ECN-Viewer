@@ -60,7 +60,7 @@ export default function Alert (props) {
   React.useEffect(() => {
     if (!alerts.length && timeout.current) {
       clearTimeout(timeout.current)
-      timeout.ref = null
+      timeout.current = null
     }
     if (autoHideDuration && !timeout.current) {
       timeout.current = setTimeout(onClose, autoHideDuration)
