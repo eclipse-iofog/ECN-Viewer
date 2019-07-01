@@ -23,6 +23,7 @@ export default function Config (props) {
     window.fetch('/api/controller')
       .then(res => res.json())
       .then(({ info }) => setData({
+        ...data,
         ip: info.ip,
         port: info.port,
         email: info.user.email

@@ -13,6 +13,7 @@ export default function Context (props) {
   const [feedbacks, setFeedbacks] = React.useState([])
   const pushFeedback = (newFeedback) => {
     setFeedbacks([...feedbacks, newFeedback])
+    // Update current feedback array (same array will be used if multiple calls to pushFeedback in the same render loop)
     feedbacks.push(newFeedback)
   }
   return <FeedbackContext.Provider value={{ feedbacks, setFeedbacks, pushFeedback }}>
