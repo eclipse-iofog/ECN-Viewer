@@ -144,7 +144,7 @@ export default function AgentList (props) {
                       label={m.name}
                       style={{
                         '--mTop': idx ? '2px' : '0px',
-                        '--color': msvcStatusColor[m.flowActive ? 'RUNNING' : 'UNKNOWN']
+                        '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING' && m.flowActive) ? 'RUNNING' : 'UNKNOWN']
                       }}
                       className={classes.msvcChip}
                       title={m.name}
