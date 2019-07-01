@@ -1,4 +1,5 @@
 import React from 'react'
+import { findIndex } from 'lodash'
 import Alert from './Alert'
 
 export const FeedbackContext = React.createContext({
@@ -9,14 +10,57 @@ export const FeedbackContext = React.createContext({
 
 const AUTO_HIDE = 6000
 
-export default function Context (props) {
-  const [feedbacks, setFeedbacks] = React.useState([])
-  const pushFeedback = (newFeedback) => {
-    setFeedbacks([...feedbacks, newFeedback])
-    // Update current feedback array (same array will be used if multiple calls to pushFeedback in the same render loop)
-    feedbacks.push(newFeedback)
+const actions = {
+  ADD: 'add',
+  REMOVE: 'remove',
+  SET: 'set'
+}
+
+const initState = {
+  feedbacks: [],
+  nextId: 0
+}
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case actions.ADD:
+      return {
+        feedbacks: [...state.feedbacks,
+          {
+            ...action.data,
+            timeout: setTimeout(() => {
+              action.dispatch({ type: actions.REMOVE, data: { id: state.nextId } })
+            }, 2000),
+            id: state.nextId
+          }],
+        nextId: state.nextId + 1
+      }
+    case actions.REMOVE:
+      const idxToRemove = findIndex(state.feedbacks, f => f.id === action.data.id)
+      if (idxToRemove === -1) return state
+      return {
+        ...state,
+        feedbacks: [...state.feedbacks.slice(0, idxToRemove), ...state.feedbacks.slice(idxToRemove + 1)]
+      }
+    case actions.SET:
+      return {
+        ...state,
+        feedbacks: action.data
+      }
+    default:
+      return state
   }
-  return <FeedbackContext.Provider value={{ feedbacks, setFeedbacks, pushFeedback }}>
+}
+
+export default function Context (props) {
+  const [state, dispatch] = React.useReducer(reducer, initState)
+  const setFeedbacks = (newFeedbacks) => dispatch({ type: actions.SET, data: newFeedbacks })
+  const pushFeedback = (newFeedback) => {
+    dispatch({ type: actions.ADD, data: newFeedback, dispatch })
+    // Update current feedback array (same array will be used if multiple calls to pushFeedback in the same render loop)
+    state.feedbacks.push(newFeedback)
+  }
+  return <FeedbackContext.Provider value={{ feedbacks: state.feedbacks, setFeedbacks, pushFeedback }}>
     {props.children}
     <FeedbackContext.Consumer>
       {({ feedbacks, setFeedbacks }) =>
@@ -26,7 +70,7 @@ export default function Context (props) {
           autoHideDuration={AUTO_HIDE}
           alerts={feedbacks.map((f, idx) => ({
             ...f,
-            onClose: (currentFeedbacks, currentIdx) => setFeedbacks([...currentFeedbacks.slice(0, currentIdx), ...currentFeedbacks.slice(currentIdx + 1)])
+            onClose: () => dispatch({ type: actions.REMOVE, data: f })
           }))}
         />
       }

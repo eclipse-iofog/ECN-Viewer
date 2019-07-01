@@ -178,6 +178,7 @@ export default function AgentList (props) {
         <AddMicroservice {...{
           target: agent,
           microservices: msvcs,
+          onSuccess: () => setOpenAddMicroserviceModal(false),
           ...feedbackContext
         }} />
       </Modal>
@@ -192,6 +193,7 @@ export default function AgentList (props) {
           {...{
             target: agent,
             msvcs: msvcsPerAgent[agent.uuid] || [],
+            onSuccess: () => setOpenRemoveMicroserviceModal(false),
             ...feedbackContext
           }}
         />
@@ -204,7 +206,11 @@ export default function AgentList (props) {
         }}
       >
         <ConnectNode
-          {...{ controller: props.controller, ...feedbackContext }}
+          {...{
+            controller: props.controller,
+            onSuccess: () => setOpenConnectNodeModal(false),
+            ...feedbackContext
+          }}
         />
       </Modal>
       <Confirm

@@ -63,7 +63,7 @@ export default function Map (props) {
     const bounds = new window.google.maps.LatLngBounds() // need handler incase `google` not yet available
 
     const agents = controller.agents || []
-    agents.forEach(marker => {
+    agents.filter(a => hasValidCoordinates([a.latitude, a.longitude])).forEach(marker => {
       bounds.extend(new window.google.maps.LatLng(get(marker, 'latitude', 0), get(marker, 'longitude', 0)))
     })
 

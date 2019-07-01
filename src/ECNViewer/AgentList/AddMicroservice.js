@@ -318,7 +318,8 @@ export default function AddMicroservice (props) {
       }
       if (success) {
         const uuid = await addMsvc()
-        createRoutes(uuid)
+        await createRoutes(uuid)
+        props.onSuccess()
       }
     } catch (e) {
 

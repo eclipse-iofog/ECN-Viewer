@@ -117,7 +117,7 @@ export default function Layout () {
       }}
     >
       <FeedbackContext.Consumer>
-        {feedbackContext => <Config {...feedbackContext} />}
+        {feedbackContext => <Config {...{ ...feedbackContext, onSave: () => setSettingsOpen(false) }} />}
       </FeedbackContext.Consumer>
     </Modal>
 

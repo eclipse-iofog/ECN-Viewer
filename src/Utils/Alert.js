@@ -80,7 +80,7 @@ export default function Alert (props) {
         const variantKey = a.type || 'info'
         const Icon = variantIcon[variantKey]
         return <SnackbarContent
-          key={a.key || idx}
+          key={a.key || a.id || idx}
           className={`${classes[variantKey]} ${classes.alert} ${a.className}`}
           aria-describedby='client-snackbar'
           message={
@@ -90,7 +90,7 @@ export default function Alert (props) {
             </span>
           }
           action={[
-            <IconButton key='close' aria-label='Close' color='inherit' onClick={() => a.onClose(alerts, idx)}>
+            <IconButton key='close' aria-label='Close' color='inherit' onClick={a.onClose}>
               <CloseIcon className={classes.icon} />
             </IconButton>
           ]}

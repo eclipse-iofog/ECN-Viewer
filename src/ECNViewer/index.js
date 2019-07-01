@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useInterval } from '../hooks/useInterval'
-import { find, groupBy, get } from 'lodash'
+import { find, groupBy, get, isFinite } from 'lodash'
 
 import Divider from '@material-ui/core/Divider'
 import { makeStyles } from '@material-ui/styles'
@@ -125,8 +125,10 @@ export default function ECNViewer () {
 
   const selectAgent = (a) => {
     setAgent(a)
-    setMap({ ...map, center: [a.latitude, a.longitude], zoom: 15 })
-    setAutozoom(false)
+    if (isFinite(a.latitude) && isFinite(a.longitude)) {
+      setMap({ ...map, center: [a.latitude, a.longitude], zoom: 15 })
+      setAutozoom(false)
+    }
   }
 
   const selectController = () => {

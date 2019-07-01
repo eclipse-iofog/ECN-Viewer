@@ -51,6 +51,7 @@ export default function Config (props) {
       })
       if (response.ok) {
         pushFeedback({ message: 'Controller details saved!', type: 'success' })
+        props.onSave()
       } else {
         pushFeedback({ message: response.statusText, type: 'error' })
       }

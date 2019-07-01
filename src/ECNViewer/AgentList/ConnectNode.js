@@ -69,7 +69,7 @@ export default function ConnectNode (props) {
   }
 
   const provisionAgent = async (agent, key) => {
-    const response = await window.fetch(`api/agentApi/v2/${key}`, {
+    const response = await window.fetch(`api/agentApi/v2/provision`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

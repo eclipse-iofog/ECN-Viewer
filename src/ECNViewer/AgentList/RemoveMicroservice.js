@@ -57,6 +57,7 @@ export default function RemoveMicroservice (props) {
       }
       if (success) {
         pushFeedback({ message: 'Microservices removed', type: 'success', uuid: 'success' })
+        props.onSuccess()
       }
     } catch (e) {
       pushFeedback({ message: e.message, type: 'error', uuid: 'error' })
