@@ -89,6 +89,11 @@ const runServer = async () => {
     })(req, res, next)
   })
 
+  app.use('/api/agentApi', (req, res, next) => {
+    console.log({ headers: req.headers })
+    proxy(req.headers.iofogapi)(req, res, next)
+  })
+
   await controller.connect(controllerConfig)
 
   app.listen(PORT)

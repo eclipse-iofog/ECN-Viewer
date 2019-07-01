@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
 
-import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem } from '@material-ui/core'
+import { Divider, List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem, Typography } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
@@ -10,7 +10,9 @@ import { makeStyles } from '@material-ui/styles'
 
 import { statusColor, msvcStatusColor } from '../utils'
 import Modal from '../../Utils/Modal'
+import Confirm from '../../Utils/Confirm'
 
+import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
 
@@ -52,7 +54,8 @@ const useStyles = makeStyles({
   },
   listTitle: {
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'baseline'
   },
   link: {
     cursor: 'pointer',
@@ -64,7 +67,9 @@ const useStyles = makeStyles({
 
 export default function AgentList (props) {
   const classes = useStyles()
+  const [openRemoveAgentConfirm, setOpenRemoveAgentConfirm] = React.useState(false)
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
+  const [openConnectNodeModal, setOpenConnectNodeModal] = React.useState(false)
   const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
   const [openRemoveMicroserviceModal, setOpenRemoveMicroserviceModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
@@ -85,14 +90,38 @@ export default function AgentList (props) {
     handleCloseMenu()
   }
 
+  const openRemoveAgent = () => {
+    setOpenRemoveAgentConfirm(true)
+    handleCloseMenu()
+  }
+
+  const removeAgent = async (iofog) => {
+    // try {
+    //   const response = await window.fetch(`/api/controllerApi/api/v3/iofog/${iofog.uuid}`, {
+    //     method: 'DELETE'
+    //   })
+    //   if (!response.ok) {
+
+    //   }
+    // } catch (e) {
+
+    // }
+    setOpenRemoveAgentConfirm(false)
+  }
+
   return (
     <React.Fragment>
       <List
         subheader={
-          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }}>
+          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }} disableGutters disableSticky>
             <div className={classes.listTitle}>
-              <div>Agents - <small>{agents.length} nodes</small></div>
-              <div><small className={classes.link} onClick={() => setAutozoom(true)}>See all ECN</small></div>
+              <div>
+                <Typography variant='h5' style={{ color: '#444' }}>Agents - <small>{agents.length} nodes</small></Typography>
+                <small className={classes.link} onClick={() => setOpenConnectNodeModal(!openConnectNodeModal)}>+ Add node</small>
+              </div>
+              <div>
+                <small className={classes.link} onClick={() => setAutozoom(true)}>See all ECN</small>
+              </div>
             </div>
           </ListSubheader>
         }
@@ -155,6 +184,26 @@ export default function AgentList (props) {
       >
         <RemoveMicroservice target={agent} msvcs={msvcsPerAgent[agent.uuid] || []} />
       </Modal>
+      <Modal
+        {...{
+          open: openConnectNodeModal,
+          title: `Connect agent`,
+          onClose: () => setOpenConnectNodeModal(false)
+        }}
+      >
+        <ConnectNode {...{ controller: props.controller }} />
+      </Modal>
+      <Confirm
+        style={{ '--color': '#FF585D' }}
+        {...{
+          open: openRemoveAgentConfirm,
+          title: `Remove agent: ${agent.name}`,
+          onClose: () => setOpenRemoveAgentConfirm(false),
+          onConfirm: () => removeAgent(agent)
+        }}
+      >
+        <Typography variant='h5'>Confirm removal of agent UUID: {agent.uuid}</Typography>
+      </Confirm>
       <Menu
         id='agent-menu'
         anchorEl={menuAnchorEl}
@@ -163,6 +212,8 @@ export default function AgentList (props) {
         onClose={handleCloseMenu}
       >
         <MenuItem onClick={openDetails}>Details</MenuItem>
+        <MenuItem onClick={openRemoveAgent}>Remove agent</MenuItem>
+        <Divider />
         <MenuItem onClick={openAddMicroservice}>Add microservice</MenuItem>
         <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem>
       </Menu>

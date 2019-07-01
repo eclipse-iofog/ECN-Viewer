@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useInterval } from '../hooks/useInterval'
-import { find, groupBy } from 'lodash'
+import { find, groupBy, get } from 'lodash'
 
 import Divider from '@material-ui/core/Divider'
 import { makeStyles } from '@material-ui/styles'
@@ -53,7 +53,7 @@ const updateData = (state, newController) => {
     ...m,
     flowActive: !!find(activeFlows, f => m.flowId === f.id)
   })), 'iofogUuid')
-  const activeMsvcs = activeAgents.reduce((res, a) => res.concat(msvcsPerAgent[a.uuid].filter(m => !!find(activeFlows, f => f.id === m.flowId)) || []), [])
+  const activeMsvcs = activeAgents.reduce((res, a) => res.concat(get(msvcsPerAgent, a.uuid, []).filter(m => !!find(activeFlows, f => f.id === m.flowId)) || []), [])
 
   if (!state.agent || !state.agent.uuid) {
     state.agent = newController.agents[0] || {}
@@ -143,7 +143,7 @@ export default function ECNViewer () {
         <Divider className={classes.divider} />
         <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
         <Divider className={classes.divider} />
-        <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom }} />
+        <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, controller: controller.info }} />
       </div>
       <div className='map-grid-container'>
         <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
