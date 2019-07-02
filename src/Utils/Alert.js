@@ -40,7 +40,9 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center'
   },
   alert: {
-    margin: '5px'
+    margin: '5px',
+    borderRadius: '4px',
+    boxShadow: `0 4px 6px 0 ${theme.colors.carbon}`
   },
   container: {
     display: 'flex',
