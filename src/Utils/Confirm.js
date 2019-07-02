@@ -4,15 +4,11 @@ import { Button, Divider, Grid } from '@material-ui/core'
 import Modal from './Modal'
 
 import { makeStyles } from '@material-ui/styles'
-const useStyles = makeStyles({
-  confirm: {
-    backgroundColor: 'var(--color, #002E43)',
-    color: 'white'
-  },
+const useStyles = makeStyles(theme => ({
   divider: {
     margin: '5px'
   }
-})
+}))
 
 export default function Confirm (props) {
   const classes = useStyles()
@@ -34,7 +30,7 @@ export default function Confirm (props) {
           </Button>
         </Grid>
         <Grid item>
-          <Button variant='contained' className={classes.confirm} onClick={onConfirm}>
+          <Button variant='contained' color='primary' onClick={onConfirm}>
             Confirm
           </Button>
         </Grid>

@@ -3,9 +3,9 @@ import { Modal, Paper, Typography, Button } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 
 import { makeStyles } from '@material-ui/styles'
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   modalTitle: {
-    backgroundColor: '#002E43',
+    backgroundColor: theme.colors.carbon,
     borderRadius: '4px 4px 0 0',
     color: 'white',
     padding: '5px',
@@ -26,13 +26,13 @@ const useStyles = makeStyles({
   },
   modalActions: {
     display: 'flex',
-    backgroundColor: '#FAFCFF',
+    backgroundColor: theme.colors.silver,
     alignItems: 'flex-end'
   },
   modalAction: {
     marginLeft: '5px'
   }
-})
+}))
 
 export default function _Modal (props) {
   const classes = useStyles()

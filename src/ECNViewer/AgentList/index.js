@@ -17,11 +17,11 @@ import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   avatarList: {
     color: 'white',
     backgroundColor: 'var(--statusColor, white)',
-    boxShadow: '0px 2px 2px #444'
+    boxShadow: `0px 2px 2px ${theme.colors.carbon}`
   },
   msvcChipList: {
     display: 'flex',
@@ -32,7 +32,7 @@ const useStyles = makeStyles({
   },
   msvcChip: {
     marginTop: 'var(--mTop, 0px)',
-    backgroundColor: 'var(--color, #5064EC)',
+    backgroundColor: `var(--color, ${theme.colors.cobalt})`,
     fontSize: '10px',
     borderRadius: '5px',
     height: '20px',
@@ -64,7 +64,7 @@ const useStyles = makeStyles({
       textDecoration: 'underline'
     }
   }
-})
+}))
 
 export default function AgentList (props) {
   const classes = useStyles()
@@ -120,7 +120,7 @@ export default function AgentList (props) {
           <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }} disableGutters disableSticky>
             <div className={classes.listTitle}>
               <div>
-                <Typography variant='h5' style={{ color: '#444' }}>Agents - <small>{agents.length} nodes</small></Typography>
+                <Typography variant='h5'>Agents - <small>{agents.length} nodes</small></Typography>
                 <small className={classes.link} onClick={() => setOpenConnectNodeModal(!openConnectNodeModal)}>+ Add node</small>
               </div>
               <div>
@@ -213,7 +213,6 @@ export default function AgentList (props) {
         />
       </Modal>
       <Confirm
-        style={{ '--color': '#FF585D' }}
         {...{
           open: openRemoveAgentConfirm,
           title: `Remove agent: ${agent.name}`,

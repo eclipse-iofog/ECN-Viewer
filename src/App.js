@@ -6,14 +6,17 @@ import Layout from './Layout'
 
 import './App.css'
 import FeedbackContext from './Utils/FeedbackContext'
+import ThemeContext from './Theme/ThemeProvider'
 
 function App () {
   return (
     <React.Fragment>
       <CssBaseline />
-      <FeedbackContext>
-        <Layout />
-      </FeedbackContext>
+      <ThemeContext>
+        <FeedbackContext>
+          <Layout />
+        </FeedbackContext>
+      </ThemeContext>
     </React.Fragment>
   )
 }

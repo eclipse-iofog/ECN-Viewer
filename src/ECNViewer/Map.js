@@ -9,24 +9,24 @@ import { Badge, Avatar } from '@material-ui/core'
 import MemoryIcon from '@material-ui/icons/Memory'
 import CtrlIcon from '@material-ui/icons/DeveloperBoard'
 
-import { makeStyles } from '@material-ui/styles'
+import { makeStyles, useTheme } from '@material-ui/styles'
 
 import { statusColor, msvcStatusColor } from './utils'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   mapMarkerTransform: {
     transform: 'translate(-50%, -100%)',
     position: 'absolute'
   },
   msvcBadge: {
     '& .MuiBadge-badge': {
-      backgroundColor: 'var(--color, #5064EC)'
+      backgroundColor: `var(--color, ${theme.colors.cobalt})`
     }
   },
   mapMarker: {
-    backgroundColor: 'var(--markerColor, #00C0A9)',
+    backgroundColor: `var(--markerColor, ${theme.colors.success})`,
     borderRadius: '50% 50% 50% 0 !important',
-    border: '2px solid var(--markerColor, #00C0A9)',
+    border: `2px solid var(--markerColor, ${theme.colors.success})`,
     transform: 'rotate(-45deg)',
     '& .MuiSvgIcon-root': {
       transform: 'rotate(-45deg)'
@@ -40,7 +40,7 @@ const useStyles = makeStyles({
     maxHeight: '700px',
     position: 'sticky',
     top: '25px',
-    borderColor: '#ACB5C6',
+    borderColor: theme.colors.aluminium,
     '& div': {
       borderRadius: '4px',
       '& div': {
@@ -48,7 +48,7 @@ const useStyles = makeStyles({
       }
     }
   }
-})
+}))
 
 const hasValidCoordinates = (coordinates) => {
   return isFinite(coordinates[0]) && isFinite(coordinates[1])
@@ -56,6 +56,7 @@ const hasValidCoordinates = (coordinates) => {
 
 export default function Map (props) {
   const classes = useStyles()
+  const theme = useTheme()
   const DomElementRef = React.useRef()
   const { controller, agent, setAgent, msvcsPerAgent, map, autozoom } = props
 
@@ -128,7 +129,7 @@ export default function Map (props) {
         {controller.info && hasValidCoordinates([controller.info.location.lat, controller.info.location.lon]) && <Avatar
           lat={controller.info.location.lat}
           lng={controller.info.location.lon}
-          style={{ '--markerColor': '#7A3BFF' }}
+          style={{ '--markerColor': theme.colors.argon }}
           className={classes.mapMarker}>
           <CtrlIcon />
         </Avatar>}

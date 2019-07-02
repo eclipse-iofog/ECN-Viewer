@@ -44,7 +44,7 @@ const fetchData = async () => {
     }
   } catch (e) {
     console.log({ e })
-    console.log({ request: e.response.request })
+    // console.log({ request: e.response.request })
     return {
       agents: [],
       flows: [],

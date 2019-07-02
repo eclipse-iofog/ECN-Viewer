@@ -7,8 +7,8 @@ import LocationCityIcon from '@material-ui/icons/LocationCity'
 import GPSFixedIcon from '@material-ui/icons/GpsFixed'
 import IPIcon from '@material-ui/icons/WifiTethering'
 
-import { makeStyles } from '@material-ui/styles'
-const useStyles = makeStyles({
+import { makeStyles, useTheme } from '@material-ui/styles'
+const useStyles = makeStyles(theme => ({
   controllerInfo: {
     paddingTop: '0px',
     '& .paper': {
@@ -16,7 +16,7 @@ const useStyles = makeStyles({
     }
   },
   warningChip: {
-    backgroundColor: 'var(--color, #F5A623)',
+    backgroundColor: `var(--color, ${theme.colors.danger})`,
     color: 'white'
   },
   controllerTitle: {
@@ -24,10 +24,11 @@ const useStyles = makeStyles({
     justifyContent: 'space-between',
     textEmphasis: 'bold'
   }
-})
+}))
 
 export default function ControllerInfo (props) {
   const classes = useStyles()
+  const theme = useTheme()
   const { controller, loading } = props
   const { city, country, lat, lon, query } = controller.info.location || {}
   return (
@@ -36,7 +37,7 @@ export default function ControllerInfo (props) {
         <Typography variant='h5'>Controller</Typography>
         {controller.info.error &&
           <Tooltip title={controller.info.error.message} aria-label='Error'>
-            <Chip label={'The controller is not reachable'} style={{ '--color': '#F5A623' }} className={classes.warningChip} />
+            <Chip label={'The controller is not reachable'} style={{ '--color': theme.colors.gold }} className={classes.warningChip} />
           </Tooltip>
         }
       </div>

@@ -1,11 +1,13 @@
+import { theme } from '../Theme/ThemeProvider'
+
 export const statusColor = {
-  'RUNNING': '#00C0A9',
-  'UNKNOWN': '#ACB5C6',
-  'OFFLINE': '#FF585D'
+  'RUNNING': theme.colors.chromium,
+  'UNKNOWN': theme.colors.aluminium,
+  'OFFLINE': theme.colors.phosphorus
 }
 
 export const msvcStatusColor = {
-  'RUNNING': '#5064EC',
-  'UNKNOWN': '#ACB5C6',
-  'OFFLINE': '#ACB5C6'
+  'RUNNING': theme.colors.cobalt,
+  'UNKNOWN': theme.colors.aluminium,
+  'OFFLINE': theme.colors.aluminium
 }

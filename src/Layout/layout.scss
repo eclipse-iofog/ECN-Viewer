@@ -15,8 +15,6 @@
 
 .latnav {
   grid-area: latnav;
-  background-color: #002E43;
-  color: white;
   min-height: calc(1vh - 50px);
 }
 
@@ -25,14 +23,11 @@
   margin: 5px;
   display: flex;
   justify-content: flex-end;
-  color: #002E43;
   align-items: center;
 }
 
 .logo {
   grid-area: logo;
-  background-color: #FF585D;
-  color: white;
   padding: 13px 15px;
   cursor: pointer;
 }
@@ -51,8 +46,6 @@
       "logo topnav"
       "latnav content"
       "latnav footer";
-    background-color: #FAFCFF;
-    color: #444;
 }
 
 

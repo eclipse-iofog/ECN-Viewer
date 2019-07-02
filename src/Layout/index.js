@@ -17,21 +17,32 @@ import './layout.scss'
 import { makeStyles } from '@material-ui/styles'
 import { FeedbackContext } from '../Utils/FeedbackContext'
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+  wrapper: {
+    color: theme.colors.carbon,
+    backgroundColor: theme.colors.silver
+  },
   divider: {
     margin: '15px 0'
   },
+  logo: {
+    backgroundColor: theme.colors.phosphorus,
+    color: theme.colors.white
+  },
+  latNav: {
+    backgroundColor: theme.colors.carbon
+  },
   avatarContainer: {
-    backgroundColor: '#FF585D',
+    backgroundColor: theme.colors.phosphorus,
     marginRight: '45px'
   },
   latIcons: {
     margin: 'auto',
     marginTop: '15px',
     cursor: 'pointer',
-    backgroundColor: '#002E43',
+    backgroundColor: theme.colors.carbon,
     '.active &': {
-      backgroundColor: '#ACB5C6'
+      backgroundColor: theme.colors.aluminium
     }
   },
   topIcons: {
@@ -57,13 +68,13 @@ const useStyles = makeStyles({
     padding: '20px 10px 20px 0px'
   },
   footer: {
-    color: '#ACB5C6',
+    color: theme.colors.aluminium,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
     fontSize: '9pt'
   }
-})
+}))
 
 export default function Layout () {
   const classes = useStyles()
@@ -71,8 +82,8 @@ export default function Layout () {
 
   return <React.Fragment>
     <HashRouter>
-      <div className='wrapper'>
-        <div className='logo'>
+      <div className={classes.wrapper + ' wrapper'}>
+        <div className={classes.logo + ' logo'}>
           <NavLink to='/overview' >
             <img src={logomark} alt='Edgeworx logomark' />
           </NavLink>
@@ -82,7 +93,7 @@ export default function Layout () {
           <NotificationsIcon className={classes.topIcons} />
           <Avatar className={classes.avatarContainer} >M</Avatar>
         </div>
-        <div className='latnav'>
+        <div className={classes.latNav + ' latnav'}>
           <NavLink to='/overview' >
             <Avatar className={classes.latIcons} >
               <HomeIcon />
