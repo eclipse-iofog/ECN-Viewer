@@ -14,7 +14,6 @@ import Map from './Map'
 import './layout.scss'
 
 import mapStyle from './mapStyle.json'
-import { FeedbackContext } from '../Utils/FeedbackContext'
 
 const useStyles = makeStyles({
   divider: {
@@ -140,21 +139,17 @@ export default function ECNViewer () {
 
   const { controller, activeAgents, activeFlows, activeMsvcs, agent, msvcsPerAgent } = state
   return (
-    <FeedbackContext.Consumer>
-      {(feedbackContext) =>
-        <div className='viewer-layout-container'>
-          <div className='box sidebar'>
-            <ControllerInfo {...{ controller, selectController, loading }} />
-            <Divider className={classes.divider} />
-            <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
-            <Divider className={classes.divider} />
-            <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, controller: controller.info, feedbackContext }} />
-          </div>
-          <div className='map-grid-container'>
-            <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
-          </div>
-        </div>
-      }
-    </FeedbackContext.Consumer>
+    <div className='viewer-layout-container'>
+      <div className='box sidebar'>
+        <ControllerInfo {...{ controller, selectController, loading }} />
+        <Divider className={classes.divider} />
+        <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
+        <Divider className={classes.divider} />
+        <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, controller: controller.info }} />
+      </div>
+      <div className='map-grid-container'>
+        <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
+      </div>
+    </div>
   )
 }

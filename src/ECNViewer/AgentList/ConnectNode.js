@@ -1,9 +1,13 @@
 import React from 'react'
 
 import { Divider, TextField, Grid, Button } from '@material-ui/core'
+import { FeedbackContext } from '../../Utils/FeedbackContext'
 
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
+  divider: {
+    margin: '5px'
+  }
 })
 
 const initNode = {
@@ -18,7 +22,7 @@ const newError = (message) => ({ message })
 export default function ConnectNode (props) {
   const classes = useStyles()
   const [node, setNode] = React.useState({ ...initNode })
-  const { pushFeedback } = props
+  const { pushFeedback } = React.useContext(FeedbackContext)
 
   const handleChange = key => (event) => {
     setNode({ ...node, [key]: event.target.value })

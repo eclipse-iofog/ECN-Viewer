@@ -3,6 +3,7 @@ import React from 'react'
 import { FormControl, Divider, Grid, Button, Input, InputLabel, Select, MenuItem, Checkbox, ListItemText, Chip } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/styles'
+import { FeedbackContext } from '../../Utils/FeedbackContext'
 const useStyles = makeStyles({
   chips: {
     display: 'flex',
@@ -34,7 +35,7 @@ const MenuProps = {
 export default function RemoveMicroservice (props) {
   const classes = useStyles()
   const [msvcsToRemove, setMsvcsToRemove] = React.useState([])
-  const { pushFeedback } = props
+  const { pushFeedback } = React.useContext(FeedbackContext)
 
   function handleChange (event) {
     setMsvcsToRemove(event.target.value)

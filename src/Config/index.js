@@ -1,5 +1,6 @@
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { FeedbackContext } from '../Utils/FeedbackContext'
 import { TextField, Grid, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
@@ -17,7 +18,7 @@ export default function Config (props) {
     port: ''
   })
   const [loading, setLoading] = React.useState(true)
-  const { pushFeedback } = props
+  const { pushFeedback } = React.useContext(FeedbackContext)
 
   React.useEffect(() => {
     window.fetch('/api/controller')

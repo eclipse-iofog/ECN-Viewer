@@ -9,6 +9,8 @@ import SwapIcon from '@material-ui/icons/SwapHoriz'
 import Autocomplete from '../../Utils/Autocomplete'
 
 import { makeStyles } from '@material-ui/styles'
+import { FeedbackContext } from '../../Utils/FeedbackContext'
+
 const useStyles = makeStyles({
   divider: {
     margin: '5px'
@@ -107,7 +109,7 @@ export default function AddMicroservice (props) {
   const [ routes, setRoutes ] = React.useState([])
 
   const agent = props.target
-  const { pushFeedback } = props
+  const { pushFeedback } = React.useContext(FeedbackContext)
 
   React.useEffect(() => {
     Promise.all([(async () => {

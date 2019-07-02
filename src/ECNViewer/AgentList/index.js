@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/styles'
 import { statusColor, msvcStatusColor } from '../utils'
 import Modal from '../../Utils/Modal'
 import Confirm from '../../Utils/Confirm'
+import { FeedbackContext } from '../../Utils/FeedbackContext'
 
 import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
@@ -74,8 +75,7 @@ export default function AgentList (props) {
   const [openRemoveMicroserviceModal, setOpenRemoveMicroserviceModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
   const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom } = props
-
-  const { feedbackContext } = props
+  const feedbackContext = React.useContext(FeedbackContext)
 
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
@@ -180,8 +180,7 @@ export default function AgentList (props) {
         <AddMicroservice {...{
           target: agent,
           microservices: msvcs,
-          onSuccess: () => setOpenAddMicroserviceModal(false),
-          ...feedbackContext
+          onSuccess: () => setOpenAddMicroserviceModal(false)
         }} />
       </Modal>
       <Modal
@@ -195,8 +194,7 @@ export default function AgentList (props) {
           {...{
             target: agent,
             msvcs: msvcsPerAgent[agent.uuid] || [],
-            onSuccess: () => setOpenRemoveMicroserviceModal(false),
-            ...feedbackContext
+            onSuccess: () => setOpenRemoveMicroserviceModal(false)
           }}
         />
       </Modal>
@@ -210,8 +208,7 @@ export default function AgentList (props) {
         <ConnectNode
           {...{
             controller: props.controller,
-            onSuccess: () => setOpenConnectNodeModal(false),
-            ...feedbackContext
+            onSuccess: () => setOpenConnectNodeModal(false)
           }}
         />
       </Modal>
