@@ -16,6 +16,7 @@ import { FeedbackContext } from '../../Utils/FeedbackContext'
 import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
+import SimpleTabs from './Tabs'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
@@ -168,7 +169,10 @@ export default function AgentList (props) {
           onClose: () => setOpenDetailsModal(false)
         }}
       >
-        <ReactJson src={agent} name={false} />
+        <SimpleTabs>
+          <ReactJson title='Agents' src={agent} name={false} />
+          <ReactJson title='Microservices' src={msvcs} name={false} />
+        </SimpleTabs>
       </Modal>
       <Modal
         {...{
