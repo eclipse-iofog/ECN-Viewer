@@ -57,9 +57,11 @@ const useStyles = makeStyles(theme => ({
   listTitle: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'baseline'
+    alignItems: 'baseline',
+    color: theme.palette.text.primary
   },
   link: {
+    color: theme.palette.text.secondary,
     cursor: 'pointer',
     '&:hover': {
       textDecoration: 'underline'
