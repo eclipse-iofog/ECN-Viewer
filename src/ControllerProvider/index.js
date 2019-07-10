@@ -140,7 +140,9 @@ export default function Context (props) {
           'Authorization': t
         }
       })
-      // dispatch({ type: actions.CLEAN_ERROR })
+      if (state.controller.error) {
+        dispatch({ type: actions.CLEAN_ERROR })
+      }
       return response
     } catch (err) {
       dispatch({ type: actions.ERROR, data: err })
