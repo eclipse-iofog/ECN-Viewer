@@ -7,15 +7,18 @@ import Layout from './Layout'
 import './App.css'
 import FeedbackContext from './Utils/FeedbackContext'
 import ThemeContext from './Theme/ThemeProvider'
+import ControllerContext from './ControllerProvider'
 
 function App () {
   return (
     <React.Fragment>
       <CssBaseline />
       <ThemeContext>
-        <FeedbackContext>
-          <Layout />
-        </FeedbackContext>
+        <ControllerContext>
+          <FeedbackContext>
+            <Layout />
+          </FeedbackContext>
+        </ControllerContext>
       </ThemeContext>
     </React.Fragment>
   )

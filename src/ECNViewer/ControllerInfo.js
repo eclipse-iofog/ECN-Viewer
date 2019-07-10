@@ -30,13 +30,13 @@ export default function ControllerInfo (props) {
   const classes = useStyles()
   const theme = useTheme()
   const { controller, loading } = props
-  const { city, country, lat, lon, query } = controller.info.location || {}
+  const { city, country, lat, lon, query } = controller.location || {}
   return (
     <div className={classes.controllerInfo}>
       <div className={classes.controllerTitle}>
         <Typography variant='h5'>Controller</Typography>
-        {controller.info.error &&
-          <Tooltip title={controller.info.error.message} aria-label='Error'>
+        {controller.error &&
+          <Tooltip title={controller.error.message} aria-label='Error'>
             <Chip label={'The controller is not reachable'} style={{ '--color': theme.colors.gold }} className={classes.warningChip} />
           </Tooltip>
         }

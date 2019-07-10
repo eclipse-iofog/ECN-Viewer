@@ -4,6 +4,7 @@ import { FormControl, Divider, Grid, Button, Input, InputLabel, Select, MenuItem
 
 import { makeStyles } from '@material-ui/styles'
 import { FeedbackContext } from '../../Utils/FeedbackContext'
+import { ControllerContext } from '../../ControllerProvider'
 const useStyles = makeStyles({
   chips: {
     display: 'flex',
@@ -36,6 +37,7 @@ export default function RemoveMicroservice (props) {
   const classes = useStyles()
   const [msvcsToRemove, setMsvcsToRemove] = React.useState([])
   const { pushFeedback } = React.useContext(FeedbackContext)
+  const { request } = React.useContext(ControllerContext)
 
   function handleChange (event) {
     setMsvcsToRemove(event.target.value)
@@ -45,7 +47,7 @@ export default function RemoveMicroservice (props) {
     try {
       let success = true
       for (const uuid of msvcsToRemove) {
-        const res = await window.fetch(`/api/controllerAPI/api/v3/microservices/${uuid}`, {
+        const res = request(`/api/v3/microservices/${uuid}`, {
           method: 'DELETE'
         })
         if (!res.ok) {
