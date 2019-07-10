@@ -172,7 +172,7 @@ export default function AgentList (props) {
         }}
       >
         <SimpleTabs>
-          <ReactJson title='Agents' src={agent} name={false} />
+          <ReactJson title='Agent' src={agent} name={false} />
           <ReactJson title='Microservices' src={msvcsPerAgent[agent.uuid]} name={false} />
         </SimpleTabs>
       </Modal>
