@@ -17,6 +17,10 @@ else
   cp ./controller_default.json ./src/ControllerProvider/controller.json
 fi
 
+if ! [[ -d  ./node_modules ]]; then
+ npm i
+fi
+
 if [[ $NODE_MODE == "dev" ]]; then
   npm run start-dev
 else
