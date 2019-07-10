@@ -29,14 +29,17 @@ const useStyles = makeStyles(theme => ({
 export default function ControllerInfo (props) {
   const classes = useStyles()
   const theme = useTheme()
-  const { controller, loading } = props
+  const { controller, loading, error } = props
   const { city, country, lat, lon, query } = controller.location || {}
+
+  const controllerError = error || controller.error || null
+
   return (
     <div className={classes.controllerInfo}>
       <div className={classes.controllerTitle}>
         <Typography variant='h5'>Controller</Typography>
-        {controller.error &&
-          <Tooltip title={controller.error.message} aria-label='Error'>
+        {controllerError &&
+          <Tooltip title={controllerError.message} aria-label='Error'>
             <Chip label={'The controller is not reachable'} style={{ '--color': theme.colors.gold }} className={classes.warningChip} />
           </Tooltip>
         }

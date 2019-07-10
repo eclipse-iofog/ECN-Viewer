@@ -58,7 +58,7 @@ export default function Map (props) {
   const classes = useStyles()
   const theme = useTheme()
   const DomElementRef = React.useRef()
-  const { controller, agent, setAgent, msvcsPerAgent, map, autozoom } = props
+  const { controller, agent, setAgent, msvcsPerAgent, map, autozoom, loading } = props
 
   const setMap = () => {
     const bounds = new window.google.maps.LatLngBounds() // need handler incase `google` not yet available
@@ -110,7 +110,7 @@ export default function Map (props) {
           key: 'AIzaSyChp_fUXiK05ulRl_ewRGKWsQ1k0ULIFkA'
         }}
       >
-        {controller.agents.filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
+        {(loading ? [] : controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
           <div
             key={a.uuid}
             lat={a.latitude} lng={a.longitude}
@@ -126,7 +126,7 @@ export default function Map (props) {
             </Badge>
           </div>
         )}
-        {controller.info && hasValidCoordinates([controller.info.location.lat, controller.info.location.lon]) && <Avatar
+        {!loading && controller.info && hasValidCoordinates([controller.info.location.lat, controller.info.location.lon]) && <Avatar
           lat={controller.info.location.lat}
           lng={controller.info.location.lon}
           style={{ '--markerColor': theme.colors.argon }}

@@ -89,6 +89,7 @@ export default function ECNViewer () {
   const [state, dispatch] = React.useReducer(reducer, initState)
   const [autozoom, setAutozoom] = useState(true)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [map, setMap] = useState({
     center: [0, 0],
     zoom: 15,
@@ -97,17 +98,21 @@ export default function ECNViewer () {
     }
   })
   const { controller: controllerInfo, request } = React.useContext(ControllerContext)
+  React.useEffect(() => {
+    setLoading(true)
+    setError(null)
+  }, [controllerInfo])
 
   const update = async () => {
     const agentsResponse = await request('/api/v3/iofog-list')
     if (!agentsResponse.ok) {
-      controllerInfo.error = { message: agentsResponse.statusText }
+      setError({ message: agentsResponse.statusText })
       return
     }
     const agents = (await agentsResponse.json()).fogs
     const flowsResponse = await request('/api/v3/flow')
     if (!flowsResponse.ok) {
-      controllerInfo.error = { message: flowsResponse.statusText }
+      setError({ message: flowsResponse.statusText })
       return
     }
     const flows = (await flowsResponse.json()).flows
@@ -116,13 +121,16 @@ export default function ECNViewer () {
     for (const flow of flows) {
       const microservicesResponse = await request(`/api/v3/microservices?flowId=${flow.id}`)
       if (!flowsResponse.ok) {
-        controllerInfo.error = { message: microservicesResponse.statusText }
+        setError({ message: microservicesResponse.statusText })
         return
       }
       microservices = microservices.concat((await microservicesResponse.json()).microservices)
     }
     if (loading) {
       setLoading(false)
+    }
+    if (error) {
+      setError(false)
     }
     dispatch({ type: actions.UPDATE, data: { agents, flows, microservices } })
   }
@@ -152,14 +160,14 @@ export default function ECNViewer () {
   return (
     <div className='viewer-layout-container'>
       <div className='box sidebar'>
-        <ControllerInfo {...{ controller: controllerInfo, selectController, loading }} />
+        <ControllerInfo {...{ controller: controllerInfo, selectController, loading, error }} />
         <Divider className={classes.divider} />
-        <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
+        <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs, loading }} />
         <Divider className={classes.divider} />
-        <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, controller: controller.info }} />
+        <AgentList {...{ msvcsPerAgent, loading, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, controller: controller.info }} />
       </div>
       <div className='map-grid-container'>
-        <Map {...{ controller: { ...controller, info: controllerInfo }, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
+        <Map {...{ controller: { ...controller, info: controllerInfo }, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom, loading }} />
       </div>
     </div>
   )

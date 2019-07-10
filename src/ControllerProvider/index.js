@@ -79,7 +79,6 @@ const reducer = (state, action) => {
         }
       }
     case actions.UPDATE:
-      console.log({ state, action })
       return {
         ...state,
         controller: {

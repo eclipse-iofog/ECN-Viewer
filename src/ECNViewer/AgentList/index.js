@@ -78,7 +78,7 @@ export default function AgentList (props) {
   const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
   const [openRemoveMicroserviceModal, setOpenRemoveMicroserviceModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
-  const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom } = props
+  const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom, loading } = props
   const feedbackContext = React.useContext(FeedbackContext)
   const { request } = React.useContext(ControllerContext)
 
@@ -125,7 +125,7 @@ export default function AgentList (props) {
           <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }} disableGutters disableSticky>
             <div className={classes.listTitle}>
               <div>
-                <Typography variant='h5'>Agents - <small>{agents.length} nodes</small></Typography>
+                <Typography variant='h5'>Agents - <small>{loading ? 0 : agents.length} nodes</small></Typography>
                 <small className={classes.link} onClick={() => setOpenConnectNodeModal(!openConnectNodeModal)}>+ Add node</small>
               </div>
               <div>
@@ -135,7 +135,7 @@ export default function AgentList (props) {
           </ListSubheader>
         }
       >
-        {agents.map(a => {
+        {(loading ? [] : agents).map(a => {
           const msvcs = msvcsPerAgent[a.uuid] || []
           return (
             <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
