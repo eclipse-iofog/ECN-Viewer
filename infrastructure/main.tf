@@ -2,7 +2,7 @@ variable "project"                     {
     default = "focal-freedom-236620"
 }
 variable "region"                      {
-    default = "us-west1"
+    default = "us-west2"
 }
 variable "gce_ssh_pub_key_file"        {
     default = "~/.ssh/id_rsa.pub"
@@ -28,7 +28,7 @@ resource "google_compute_instance" "ecn" {
     network_interface {
         network = "default"
         access_config {
-        // Ephemeral IP
+            nat_ip = "34.94.240.119"
         }
     }
 
