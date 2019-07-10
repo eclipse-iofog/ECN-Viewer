@@ -5,12 +5,59 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: DownloadSecureFile@1
+  displayName: 'Download secure file for pipelines to access gcp'
+  inputs:
+    secureFile: 'azure-gcp.json'
+
+- task: DownloadSecureFile@1
+  displayName: 'Download config file'
+  inputs:
+    secureFile: ecn_viewer_config.json
+
+- script: |
+    echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    sudo apt-get update && sudo apt-get install google-cloud-sdk
+
+    gcloud --quiet auth activate-service-account --key-file=$(Agent.TempDirectory)/azure-gcp.json
+    gcloud --quiet config set project focal-freedom-236620
+
+    # set env var GOOGLE_APPLICATION_CREDENTIALS for terraform to pick up for GCP authentication
+    echo "##vso[task.setvariable variable=GOOGLE_APPLICATION_CREDENTIALS]$(Agent.TempDirectory)/azure-gcp.json"
+  displayName: 'Install and init gcloud'
+
+- task: TerraformInstaller@0
+  inputs:
+    terraformVersion: '0.11.14'
+
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
 - script: |
+    cp $(Agent.TempDirectory)/ecn_viewer_config.json $(System.DefaultWorkingDirectory)/src/ControllerProvider/controller.json
     npm install
     npm run build
   displayName: 'npm install and build'
+
+- script: |
+    terraform init
+  displayName: 'Init terraform'
+  workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
+
+- script: |
+    terraform destroy -auto-approve
+  displayName: 'destroy'
+  workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
+
+- script: |
+    terraform apply -auto-approve
+  displayName: 'spin up instance '
+  workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
+
+# - script: |
+#     scp reqd stuff using gcloud compute scp
+#     PORT=5555 pm2 start server/index.js
+#   displayName: 'npm install and build'
