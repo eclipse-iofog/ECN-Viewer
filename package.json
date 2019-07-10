@@ -10,6 +10,7 @@
     "downshift": "^3.2.10",
     "express": "^4.17.1",
     "express-http-proxy": "^1.5.1",
+    "external-ip": "^2.1.1",
     "google-map-react": "^1.1.4",
     "lodash": "^4.17.11",
     "react": "^16.8.6",
