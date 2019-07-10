@@ -15,7 +15,6 @@ import logomark from '../assets/logomark.svg'
 import './layout.scss'
 
 import { makeStyles } from '@material-ui/styles'
-import { FeedbackContext } from '../Utils/FeedbackContext'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -80,6 +79,8 @@ export default function Layout () {
   const classes = useStyles()
   const [settingsOpen, setSettingsOpen] = React.useState(false)
 
+  console.log(' ====> Rendering layout')
+
   return <React.Fragment>
     <HashRouter>
       <div className={classes.wrapper + ' wrapper'}>
@@ -127,9 +128,7 @@ export default function Layout () {
         onClose: () => setSettingsOpen(false)
       }}
     >
-      <FeedbackContext.Consumer>
-        {feedbackContext => <Config {...{ ...feedbackContext, onSave: () => setSettingsOpen(false) }} />}
-      </FeedbackContext.Consumer>
+      <Config {...{ onSave: () => setSettingsOpen(false) }} />
     </Modal>
 
   </React.Fragment>

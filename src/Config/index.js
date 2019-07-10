@@ -1,8 +1,10 @@
 import React from 'react'
-import Skeleton from 'react-loading-skeleton'
-import { FeedbackContext } from '../Utils/FeedbackContext'
 import { TextField, Grid, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
+
+import { ControllerContext } from '../ControllerProvider'
+import { FeedbackContext } from '../Utils/FeedbackContext'
+
 const useStyles = makeStyles({
   skeleton: {
     minHeight: '55px'
@@ -11,51 +13,15 @@ const useStyles = makeStyles({
 
 export default function Config (props) {
   const classes = useStyles()
-  const [data, setData] = React.useState({
-    email: '',
-    password: '',
-    ip: '',
-    port: ''
-  })
-  const [loading, setLoading] = React.useState(true)
   const { pushFeedback } = React.useContext(FeedbackContext)
-
-  React.useEffect(() => {
-    window.fetch('/api/controller')
-      .then(res => res.json())
-      .then(({ info }) => setData({
-        ...data,
-        ip: info.ip,
-        port: info.port,
-        email: info.user.email
-      }))
-      .then(() => setLoading(false))
-      .catch(e => pushFeedback({ message: e.message, type: 'error' }))
-  }, [])
+  const { controller, updateController } = React.useContext(ControllerContext)
+  const [data, setData] = React.useState({ ...controller })
 
   const save = async () => {
     try {
-      const response = await window.fetch('/api/controller/connect', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ip: data.ip,
-          port: data.port,
-          user: {
-            email: data.email,
-            password: data.password
-          }
-        })
-      })
-      if (response.ok) {
-        pushFeedback({ message: 'Controller details saved!', type: 'success' })
-        props.onSave()
-      } else {
-        pushFeedback({ message: response.statusText, type: 'error' })
-      }
+      await updateController(data)
+      pushFeedback({ message: 'Controller details saved!', type: 'success' })
+      props.onSave()
     } catch (e) {
       pushFeedback({ message: e.message, type: 'error' })
     }
@@ -64,12 +30,14 @@ export default function Config (props) {
   const handleChange = name => event => {
     setData({ ...data, [name]: event.target.value })
   }
-
+  const handleUserChange = name => event => {
+    setData({ ...data, user: { ...data.user, [name]: event.target.value } })
+  }
   return (
     <React.Fragment>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
-          {loading ? <Skeleton height={55} /> : <TextField
+          <TextField
             id='ip'
             label='IP'
             onChange={handleChange('ip')}
@@ -78,10 +46,10 @@ export default function Config (props) {
             className={classes.textField}
             margin='normal'
             variant='outlined'
-          />}
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
-          {loading ? <Skeleton height={55} /> : <TextField
+          <TextField
             id='port'
             label='Port'
             onChange={handleChange('port')}
@@ -90,34 +58,34 @@ export default function Config (props) {
             className={classes.textField}
             margin='normal'
             variant='outlined'
-          />}
+          />
         </Grid>
       </Grid>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
-          {loading ? <Skeleton height={55} /> : <TextField
+          <TextField
             id='email'
             label='Email'
-            onChange={handleChange('email')}
-            value={data.email}
+            onChange={handleUserChange('email')}
+            value={data.user.email}
             fullWidth
             className={classes.textField}
             margin='normal'
             variant='outlined'
-          />}
+          />
         </Grid>
         <Grid item xs={12} sm={6}>
-          {loading ? <Skeleton height={55} /> : <TextField
+          <TextField
             id='password'
             label='Password'
-            onChange={handleChange('password')}
-            value={data.password}
+            onChange={handleUserChange('password')}
+            value={data.user.password}
             fullWidth
             type='password'
             className={classes.textField}
             margin='normal'
             variant='outlined'
-          />}
+          />
         </Grid>
       </Grid>
       <Grid container justify='flex-end'>

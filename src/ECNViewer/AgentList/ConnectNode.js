@@ -4,6 +4,7 @@ import { Divider, TextField, Grid, Button } from '@material-ui/core'
 import { FeedbackContext } from '../../Utils/FeedbackContext'
 
 import { makeStyles } from '@material-ui/styles'
+import { ControllerContext } from '../../ControllerProvider'
 const useStyles = makeStyles({
   divider: {
     margin: '5px'
@@ -23,13 +24,14 @@ export default function ConnectNode (props) {
   const classes = useStyles()
   const [node, setNode] = React.useState({ ...initNode })
   const { pushFeedback } = React.useContext(FeedbackContext)
+  const { request } = React.useContext(ControllerContext)
 
   const handleChange = key => (event) => {
     setNode({ ...node, [key]: event.target.value })
   }
 
   const createAgent = async (agent) => {
-    const response = await window.fetch('/api/controllerApi/api/v3/iofog', {
+    const response = await request('/api/v3/iofog', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -46,7 +48,7 @@ export default function ConnectNode (props) {
   }
 
   const getProvisioningKey = async (uuid) => {
-    const response = await window.fetch(`/api/controllerApi/api/v3/iofog/${uuid}/provisioning-key`)
+    const response = await request(`/api/v3/iofog/${uuid}/provisioning-key`)
     if (response.ok) {
       const a = await response.json()
       return a.key

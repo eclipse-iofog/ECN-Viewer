@@ -17,6 +17,7 @@ import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
 import SimpleTabs from './Tabs'
+import { ControllerContext } from '../../ControllerProvider'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
@@ -79,6 +80,7 @@ export default function AgentList (props) {
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
   const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom } = props
   const feedbackContext = React.useContext(FeedbackContext)
+  const { request } = React.useContext(ControllerContext)
 
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
@@ -102,7 +104,7 @@ export default function AgentList (props) {
 
   const removeAgent = async (iofog) => {
     try {
-      const response = await window.fetch(`/api/controllerApi/api/v3/iofog/${iofog.uuid}`, {
+      const response = await request(`/api/v3/iofog/${iofog.uuid}`, {
         method: 'DELETE'
       })
       if (!response.ok) {

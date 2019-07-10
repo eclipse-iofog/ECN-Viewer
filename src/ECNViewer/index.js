@@ -14,6 +14,7 @@ import Map from './Map'
 import './layout.scss'
 
 import mapStyle from './mapStyle.json'
+import { ControllerContext } from '../ControllerProvider'
 
 const useStyles = makeStyles({
   divider: {
@@ -95,29 +96,39 @@ export default function ECNViewer () {
       styles: mapStyle
     }
   })
+  const { controller: controllerInfo, request } = React.useContext(ControllerContext)
 
-  useInterval(async () => {
-    const erroredData = e => ({
-      ...initState.controller,
-      info: {
-        ...initState.controller.info,
-        error: e
-      }
-    })
-    try {
-      const res = await window.fetch('/api/controller')
-      if (!res.ok) {
-        dispatch({ type: actions.UPDATE, data: erroredData({ message: res.statusText }) })
+  const update = async () => {
+    const agentsResponse = await request('/api/v3/iofog-list')
+    if (!agentsResponse.ok) {
+      controllerInfo.error = { message: agentsResponse.statusText }
+      return
+    }
+    const agents = (await agentsResponse.json()).fogs
+    const flowsResponse = await request('/api/v3/flow')
+    if (!flowsResponse.ok) {
+      controllerInfo.error = { message: flowsResponse.statusText }
+      return
+    }
+    const flows = (await flowsResponse.json()).flows
+
+    let microservices = []
+    for (const flow of flows) {
+      const microservicesResponse = await request(`/api/v3/microservices?flowId=${flow.id}`)
+      if (!flowsResponse.ok) {
+        controllerInfo.error = { message: microservicesResponse.statusText }
         return
       }
-      const data = await res.json()
-      dispatch({ type: actions.UPDATE, data })
-      if (loading) {
-        setLoading(false)
-      }
-    } catch (e) {
-      dispatch({ type: actions.UPDATE, data: erroredData(e) })
+      microservices = microservices.concat((await microservicesResponse.json()).microservices)
     }
+    if (loading) {
+      setLoading(false)
+    }
+    dispatch({ type: actions.UPDATE, data: { agents, flows, microservices } })
+  }
+
+  useInterval(() => {
+    update()
   }, [3000])
 
   const setAgent = a => dispatch({ type: actions.SET_AGENT, data: a })
@@ -131,7 +142,7 @@ export default function ECNViewer () {
   }
 
   const selectController = () => {
-    setMap({ ...map, center: [state.controller.info.location.lat, state.controller.info.location.lon], zoom: 15 })
+    setMap({ ...map, center: [controllerInfo.location.lat, controllerInfo.location.lon], zoom: 15 })
     setAutozoom(false)
   }
 
@@ -141,14 +152,14 @@ export default function ECNViewer () {
   return (
     <div className='viewer-layout-container'>
       <div className='box sidebar'>
-        <ControllerInfo {...{ controller, selectController, loading }} />
+        <ControllerInfo {...{ controller: controllerInfo, selectController, loading }} />
         <Divider className={classes.divider} />
         <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs }} />
         <Divider className={classes.divider} />
         <AgentList {...{ msvcsPerAgent, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, controller: controller.info }} />
       </div>
       <div className='map-grid-container'>
-        <Map {...{ controller, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
+        <Map {...{ controller: { ...controller, info: controllerInfo }, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom }} />
       </div>
     </div>
   )

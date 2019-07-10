@@ -56,25 +56,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Alert (props) {
   const classes = useStyles()
-  const timeout = React.useRef()
-  const { onClose, open, autoHideDuration, alerts } = props
-
-  const clearAutohide = () => {
-    clearTimeout(timeout.current)
-    timeout.current = null
-  }
-
-  React.useEffect(() => {
-    if (!alerts.length && timeout.current) {
-      clearAutohide()
-    }
-    if (autoHideDuration) {
-      if (timeout.current) {
-        clearAutohide()
-      }
-      timeout.current = setTimeout(onClose, autoHideDuration)
-    }
-  }, [autoHideDuration, onClose, alerts])
+  const { open, alerts } = props
 
   return open ? (
     <div className={classes.container}>

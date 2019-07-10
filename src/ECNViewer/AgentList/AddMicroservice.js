@@ -10,6 +10,7 @@ import Autocomplete from '../../Utils/Autocomplete'
 
 import { makeStyles } from '@material-ui/styles'
 import { FeedbackContext } from '../../Utils/FeedbackContext'
+import { ControllerContext } from '../../ControllerProvider'
 
 const useStyles = makeStyles({
   divider: {
@@ -110,16 +111,17 @@ export default function AddMicroservice (props) {
 
   const agent = props.target
   const { pushFeedback } = React.useContext(FeedbackContext)
+  const { request } = React.useContext(ControllerContext)
 
   React.useEffect(() => {
     Promise.all([(async () => {
-      const flowRaw = await window.fetch('/api/controllerApi/api/v3/flow')
+      const flowRaw = await request('/api/v3/flow')
       if (flowRaw.ok) {
         const flowsRes = await flowRaw.json()
         setFlows(flowsRes.flows)
       }
     })(), (async () => {
-      const catalogRaw = await window.fetch('/api/controllerApi/api/v3/catalog/microservices')
+      const catalogRaw = await request('/api/v3/catalog/microservices')
       if (catalogRaw.ok) {
         const catalogRes = await catalogRaw.json()
         setCatalog(catalogRes.catalogItems.filter(item => {
@@ -130,7 +132,7 @@ export default function AddMicroservice (props) {
         })) // TODO: filter per userId
       }
     })()])
-  }, [])
+  }, [agent.fogTypeId, request])
 
   const handleChange = (key, setter, prevState) => e => setter({ ...prevState, [key]: e.target.value })
   const handleMsvcChangeArray = (key, objKey, idx, valueDecorator = x => x) => e => setMsvc({
@@ -183,7 +185,7 @@ export default function AddMicroservice (props) {
   const addMsvc = async () => {
     try {
       const { name, ports, volumeMappings, rootHostAccess } = msvc
-      const response = await window.fetch('/api/controllerApi/api/v3/microservices', {
+      const response = await request('/api/v3/microservices', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -216,7 +218,7 @@ export default function AddMicroservice (props) {
   const createFlow = async () => {
     try {
       const { name } = newFlow
-      const response = await window.fetch('/api/controllerApi/api/v3/flow', {
+      const response = await request('/api/v3/flow', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -247,7 +249,7 @@ export default function AddMicroservice (props) {
         ...newCatalogItem,
         name: randomString()
       }
-      const response = await window.fetch('/api/controllerApi/api/v3/catalog/microservices', {
+      const response = await request('/api/v3/catalog/microservices', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -276,7 +278,7 @@ export default function AddMicroservice (props) {
     try {
       const from = get(route, 'from.uuid')
       const to = get(route, 'to.uuid')
-      const response = await window.fetch(`/api/controllerApi/api/v3//microservices/${from}/routes/${to}`, {
+      const response = await request(`/api/v3//microservices/${from}/routes/${to}`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
