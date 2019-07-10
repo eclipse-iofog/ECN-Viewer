@@ -30,7 +30,7 @@ const reducer = (state, action) => {
             ...action.data,
             timeout: setTimeout(() => {
               action.dispatch({ type: actions.REMOVE, data: { id: state.nextId } })
-            }, 2000),
+            }, AUTO_HIDE),
             id: state.nextId
           }],
         nextId: state.nextId + 1
@@ -54,20 +54,25 @@ const reducer = (state, action) => {
 
 export default function Context (props) {
   const [state, dispatch] = React.useReducer(reducer, initState)
-  const setFeedbacks = (newFeedbacks) => dispatch({ type: actions.SET, data: newFeedbacks })
+  const setFeedbacks = (newFeedbacks) => {
+    console.log(' ---> SetFeedbacks ')
+    dispatch({ type: actions.SET, data: newFeedbacks })
+  }
   const pushFeedback = (newFeedback) => {
+    console.log(' ---> pushFeedback ')
     dispatch({ type: actions.ADD, data: newFeedback, dispatch })
     // Update current feedback array (same array will be used if multiple calls to pushFeedback in the same render loop)
     state.feedbacks.push(newFeedback)
   }
+
+  console.log('======> Updating feedback context')
+
   return <FeedbackContext.Provider value={{ feedbacks: state.feedbacks, setFeedbacks, pushFeedback }}>
     {props.children}
     <FeedbackContext.Consumer>
       {({ feedbacks, setFeedbacks }) =>
         <Alert
           open={!!feedbacks.length}
-          onClose={() => setFeedbacks([])}
-          autoHideDuration={AUTO_HIDE}
           alerts={feedbacks.map((f, idx) => ({
             ...f,
             onClose: () => dispatch({ type: actions.REMOVE, data: f })

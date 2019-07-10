@@ -4,6 +4,7 @@ import controllerJson from './controller.json'
 
 const initControllerState = {
   ...controllerJson,
+  api: `http://${controllerJson.ip}:${controllerJson.port || 80}/`,
   location: {
     lat: 'Unknown',
     lon: 'Unknown',
@@ -30,7 +31,6 @@ const lookUpControllerInfo = async (controllerConfig) => {
 }
 
 const updateControllerInfo = async (controllerConfig) => {
-  controllerConfig.api = `http://${controllerConfig.ip}:${controllerConfig.port || 80}/`
   let ipInfo = {}
   try {
     ipInfo = await lookUpControllerInfo(controllerConfig)
@@ -105,6 +105,8 @@ export default function Context (props) {
   const [state, dispatch] = React.useReducer(reducer, initState)
   const { token, controller } = state
 
+  console.log('======> Updating controller context')
+
   const authenticate = async (controllerConfig) => {
     const response = await window.fetch('/api/controllerApi/api/v3/user/login', {
       method: 'POST',
@@ -151,6 +153,7 @@ export default function Context (props) {
   }
 
   const updateController = async (newController) => {
+    newController.api = `http://${newController.ip}:${newController.port || 80}/`
     try {
       await authenticate(newController)
     } catch (e) {

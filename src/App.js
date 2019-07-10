@@ -10,6 +10,7 @@ import ThemeContext from './Theme/ThemeProvider'
 import ControllerContext from './ControllerProvider'
 
 function App () {
+  console.log(' ======> Rendering app ')
   return (
     <React.Fragment>
       <CssBaseline />

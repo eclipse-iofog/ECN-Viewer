@@ -79,6 +79,8 @@ export default function Layout () {
   const classes = useStyles()
   const [settingsOpen, setSettingsOpen] = React.useState(false)
 
+  console.log(' ====> Rendering layout')
+
   return <React.Fragment>
     <HashRouter>
       <div className={classes.wrapper + ' wrapper'}>

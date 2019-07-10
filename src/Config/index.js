@@ -1,5 +1,4 @@
 import React from 'react'
-import set from 'lodash/set'
 import { TextField, Grid, Button } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 
@@ -29,10 +28,11 @@ export default function Config (props) {
   }
 
   const handleChange = name => event => {
-    set(data, name, event.target.value)
-    setData(data)
+    setData({ ...data, [name]: event.target.value })
   }
-
+  const handleUserChange = name => event => {
+    setData({ ...data, user: { ...data.user, [name]: event.target.value } })
+  }
   return (
     <React.Fragment>
       <Grid container spacing={2}>
@@ -66,7 +66,7 @@ export default function Config (props) {
           <TextField
             id='email'
             label='Email'
-            onChange={handleChange('user.email')}
+            onChange={handleUserChange('email')}
             value={data.user.email}
             fullWidth
             className={classes.textField}
@@ -78,7 +78,7 @@ export default function Config (props) {
           <TextField
             id='password'
             label='Password'
-            onChange={handleChange('user.password')}
+            onChange={handleUserChange('password')}
             value={data.user.password}
             fullWidth
             type='password'

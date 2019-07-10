@@ -98,7 +98,7 @@ export default function ECNViewer () {
   })
   const { controller: controllerInfo, request } = React.useContext(ControllerContext)
 
-  useInterval(async () => {
+  const update = async () => {
     const agentsResponse = await request('/api/v3/iofog-list')
     if (!agentsResponse.ok) {
       controllerInfo.error = { message: agentsResponse.statusText }
@@ -125,6 +125,10 @@ export default function ECNViewer () {
       setLoading(false)
     }
     dispatch({ type: actions.UPDATE, data: { agents, flows, microservices } })
+  }
+
+  useInterval(() => {
+    update()
   }, [3000])
 
   const setAgent = a => dispatch({ type: actions.SET_AGENT, data: a })
