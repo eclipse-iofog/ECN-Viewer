@@ -14,6 +14,7 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const proxy = require('express-http-proxy')
+const getIP = require('external-ip')()
 
 const PORT = process.env.PORT || 80
 
@@ -28,7 +29,17 @@ const runServer = async () => {
     proxy(req.headers.iofogapi)(req, res, next)
   })
 
-  app.listen(PORT)
+  app.listen(PORT, () => {
+    getIP((err, ip) => {
+      if (err) {
+        console.log(`ECN viewer is ready on: http://0.0.0.0:${PORT}/`)
+        console.log('Could not figure out external ip')
+        return
+      }
+      console.log(`ECN viewer is ready on: http://0.0.0.0:${PORT}/`)
+      console.log(`ECN viewer is ready on: http://${ip}:${PORT}/`)
+    })
+  })
 }
 
 runServer()

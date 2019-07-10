@@ -5,7 +5,7 @@ variable "region"                      {
     default = "us-west1"
 }
 variable "gce_ssh_pub_key_file"        {
-    default = "~/.ssh/azure.pub"
+    default = "~/.ssh/id_rsa.pub"
 }
 
 provider "google" {

@@ -4,7 +4,7 @@ usage() {
     echo
     echo "Usage: `basename $0` [-h, --help] [configFile]"
     echo "$0 will start the ECN viewer using the optional configFile as default Controller info"
-    echo "Set the environment variable 'NODE_MODE' to 'dev' to use hot reload"
+    echo "Set the environment variable 'NODE_ENV' to 'dev' to use hot reload"
     exit 0
 }
 if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
@@ -21,7 +21,7 @@ if ! [[ -d  ./node_modules ]]; then
  npm i
 fi
 
-if [[ $NODE_MODE == "dev" ]]; then
+if [[ $NODE_ENV == "dev" ]]; then
   npm run start-dev
 else
   npm start
