@@ -67,7 +67,7 @@ resource "null_resource" initializeapp {
           "apt-get -y install nodejs > /dev/null",
           "apt-get -y install npm > /dev/null",
           "sudo npm i -g pm2 > /dev/null",
-          "mkdir -p /root/apps/ecn/server/"
+          "mkdir -p /root/apps/ecn/"
         ]
     }
   
@@ -77,13 +77,13 @@ resource "null_resource" initializeapp {
         destination = "/root/apps/ecn"
     }
 
-    provisioner "file" {
-        source      = "../server"
-        destination = "/root/apps/ecn"
-    }
+    # provisioner "file" {
+    #     source      = "../server"
+    #     destination = "/root/apps/ecn"
+    # }
 
     provisioner "local-exec" {
-        command = "rsync -e \"ssh -o StrictHostKeyChecking=no -i ${var.gce_ssh_private_key_file}\" -avzhr ${path.module}/../server/node_modules/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/server/node_modules/"
+        command = "rsync -e \"ssh -o StrictHostKeyChecking=no -i ${var.gce_ssh_private_key_file}\" -avzhr ${path.module}/../server/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/server/"
     }
 }
 
