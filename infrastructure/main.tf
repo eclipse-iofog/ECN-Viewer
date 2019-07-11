@@ -20,7 +20,7 @@ provider "google" {
 data "google_compute_zones" "available" {}
 
 resource "google_compute_instance" "ecn" {
-    name         = "ecn-viewer"
+    name         = "ecn-viewer-alex"
     machine_type = "n1-standard-1"
     zone         = "${data.google_compute_zones.available.names[0]}"
     boot_disk {
@@ -54,6 +54,7 @@ SCRIPT
         type = "ssh"
         host = "${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}"
         user = "root"
+        agent = true
         private_key = "${file(var.gce_ssh_private_key_file)}"
     }
 
