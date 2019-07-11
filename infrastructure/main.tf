@@ -39,7 +39,7 @@ resource "google_compute_instance" "ecn" {
         sshKeys = "root:${file(var.gce_ssh_pub_key_file)}"
     }
     metadata_startup_script = <<SCRIPT
-curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 apt-get update
 apt-get -y install nodejs
 apt-get -y install npm
@@ -55,10 +55,6 @@ SCRIPT
         host = "${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}"
         user = "root"
         private_key = "${file(var.gce_ssh_private_key_file)}"
-    }
-
-    provisioner "local-exec" {
-      command = "cd ${path.module}/.. && npm i && npm run build"
     }
 
     provisioner "remote-exec" {

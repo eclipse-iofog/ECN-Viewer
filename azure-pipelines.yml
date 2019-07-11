@@ -43,6 +43,9 @@ steps:
   displayName: 'npm install and build'
 
 - script: |
+    ssh-keygen -b 2048 -t rsa -f /tmp/sshkey -q -N ""
+
+- script: |
     terraform init
   displayName: 'Init terraform'
   workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
@@ -53,11 +56,8 @@ steps:
   workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
 
 - script: |
-    terraform apply -auto-approve
+    terraform apply -auto-approve \
+    -var 'gce_ssh_private_key_file=/tmp/sshkey' \
+    -var 'gce_ssh_pub_key_file=/tmp/sshkey.pub' \
   displayName: 'spin up instance '
   workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
-
-# - script: |
-#     scp reqd stuff using gcloud compute scp
-#     PORT=5555 pm2 start server/index.js
-#   displayName: 'npm install and build'
