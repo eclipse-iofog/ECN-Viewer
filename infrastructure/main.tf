@@ -20,7 +20,7 @@ provider "google" {
 data "google_compute_zones" "available" {}
 
 resource "google_compute_instance" "ecn" {
-    name         = "ecn-viewer-alex"
+    name         = "ecn-viewer"
     machine_type = "n1-standard-1"
     zone         = "${data.google_compute_zones.available.names[0]}"
     boot_disk {
