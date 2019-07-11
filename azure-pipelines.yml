@@ -74,5 +74,6 @@ steps:
   workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
 
 - script: |
+    sleep 2m
     ssh -i $(Agent.TempDirectory)/azure_ssh_key root@34.94.240.119 'cd /root/apps/ecn/ && PORT=5555 pm2 start server/index.js'
   displayName: 'deploy app'
