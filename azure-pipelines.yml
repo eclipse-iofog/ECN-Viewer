@@ -15,6 +15,16 @@ steps:
   inputs:
     secureFile: ecn_viewer_config.json
 
+- task: DownloadSecureFile@1
+  displayName: 'Download secure file: ssh key'
+  inputs:
+    secureFile: 'azure_ssh_key'
+
+- task: DownloadSecureFile@1
+  displayName: 'Download secure file: public ssh key'
+  inputs:
+    secureFile: 'azure_ssk_key_public'
+
 - script: |
     echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
@@ -43,25 +53,20 @@ steps:
   displayName: 'npm install and build'
 
 - script: |
-    ssh-keygen -t rsa -f /tmp/sshkey -q -N ""
-    chmod 400 /tmp/sshkey
-  displayName: 'Generate ssh key'
-
-- script: |
     terraform init
   displayName: 'Init terraform'
   workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
 
 - script: |
     terraform destroy -auto-approve \
-    -var 'gce_ssh_private_key_file=/tmp/sshkey' \
-    -var 'gce_ssh_pub_key_file=/tmp/sshkey.pub' \
+    -var 'gce_ssh_private_key_file=$(Agent.TempDirectory)/azure_ssk_key' \
+    -var 'gce_ssh_pub_key_file=$(Agent.TempDirectory)/azure_ssk_key_public' \
   displayName: 'destroy'
   workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
 
 - script: |
     terraform apply -auto-approve \
-    -var 'gce_ssh_private_key_file=/tmp/sshkey' \
-    -var 'gce_ssh_pub_key_file=/tmp/sshkey.pub' \
+    -var 'gce_ssh_private_key_file=$(Agent.TempDirectory)/azure_ssk_key_public' \
+    -var 'gce_ssh_pub_key_file=$(Agent.TempDirectory)/azure_ssk_key_public' \
   displayName: 'spin up instance '
   workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
