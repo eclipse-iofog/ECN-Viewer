@@ -69,10 +69,10 @@ SCRIPT
     }
     provisioner "local-exec" {
       command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr --progress ${path.module}/../server/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/server/ > /dev/null"
-      }    
+    }    
     provisioner "local-exec" {
       command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr ${path.module}/../node_modules/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/node_modules/ > /dev/null"
-      }
+    }
     provisioner "remote-exec" {
       inline = [
         "cd /root/apps/ecn/",
