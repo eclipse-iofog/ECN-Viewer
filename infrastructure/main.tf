@@ -57,7 +57,7 @@ resource "null_resource" initializeapp {
         type = "ssh"
         host = "${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}"
         user = "root"
-        agent = true
+        agent = false
         private_key = "${file(var.gce_ssh_private_key_file)}"
     }
 
