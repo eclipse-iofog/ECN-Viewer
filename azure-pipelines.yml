@@ -43,7 +43,8 @@ steps:
   displayName: 'npm install and build'
 
 - script: |
-    ssh-keygen -b 2048 -t rsa -f /tmp/sshkey -q -N ""
+    ssh-keygen -t rsa -f /tmp/sshkey -q -N ""
+    chmod 400 /tmp/sshkey
   displayName: 'Generate ssh key'
 
 - script: |
