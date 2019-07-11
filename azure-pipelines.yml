@@ -44,6 +44,7 @@ steps:
 
 - script: |
     ssh-keygen -b 2048 -t rsa -f /tmp/sshkey -q -N ""
+  displayName: 'Generate ssh key'
 
 - script: |
     terraform init
