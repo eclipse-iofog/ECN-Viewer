@@ -86,7 +86,7 @@ resource "null_resource" initializeapp {
     }
 
     provisioner "local-exec" {
-        command = "rsync -e \"ssh -o StrictHostKeyChecking=no -i ${var.gce_ssh_private_key_file}\" -avzhr ${path.module}/../node_modules/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/"
+        command = "rsync -e \"ssh -o StrictHostKeyChecking=no -i ${var.gce_ssh_private_key_file}\" -avzhr ${path.module}/../node_modules/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/node_modules/"
     }
 
     provisioner "remote-exec" {
