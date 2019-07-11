@@ -23,7 +23,7 @@ steps:
 - task: DownloadSecureFile@1
   displayName: 'Download secure file: public ssh key'
   inputs:
-    secureFile: 'azure_ssk_key_public'
+    secureFile: 'azure_ssh_key_public'
 
 - script: |
     echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list

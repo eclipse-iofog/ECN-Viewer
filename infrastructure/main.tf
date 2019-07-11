@@ -51,7 +51,7 @@ SCRIPT
     }
 }
 
-resource "null_resource" remoteExecProvisionerr {
+resource "null_resource" initializeapp {
 
     connection {
         type = "ssh"
