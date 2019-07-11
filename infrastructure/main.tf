@@ -64,7 +64,6 @@ resource "null_resource" initializeapp {
         type = "ssh"
         host = "${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}"
         user = "root"
-        agent = false
         private_key = "${file(var.gce_ssh_private_key_file)}"
     }
 
@@ -88,11 +87,19 @@ resource "null_resource" initializeapp {
     provisioner "local-exec" {
         command = "rsync -e \"ssh -o StrictHostKeyChecking=no -i ${var.gce_ssh_private_key_file}\" -avzhr ${path.module}/../node_modules/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/node_modules/"
     }
+}
 
+resource "null_resource" deployapp {
+
+    connection {
+        type = "ssh"
+        host = "${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}"
+        user = "root"
+        private_key = "${file(var.gce_ssh_private_key_file)}"
+    }
     provisioner "remote-exec" {
         inline = [
-          "cd /root/apps/ecn/",
-          "PORT=5555 pm2 start server/index.js"
+          "cd /root/apps/ecn/ && PORT=5555 pm2 start server/index.js"
         ]
     }
 }
