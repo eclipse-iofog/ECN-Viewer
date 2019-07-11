@@ -7,6 +7,9 @@ variable "region"                      {
 variable "gce_ssh_pub_key_file"        {
     default = "~/.ssh/id_rsa.pub"
 }
+variable "gce_ssh_private_key_file"        {
+    default = "~/.ssh/id_rsa"
+}
 
 provider "google" {
     version                     = "~> 2.7.0"
@@ -41,35 +44,41 @@ apt-get update
 apt-get -y install nodejs
 apt-get -y install npm
 sudo npm i -g pm2 
-mkdir -p /apps/ecn
 SCRIPT
 
     service_account {
       scopes = ["userinfo-email", "compute-ro", "storage-ro"]
     }
 
+    connection {
+        type = "ssh"
+        host = "${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}"
+        user = "root"
+        private_key = "${file(var.gce_ssh_private_key_file)}"
+    }
+
     provisioner "local-exec" {
-      command = "cd ../ && npm i && npm run build"
-    }
-
-    provisioner "file" {
-      source      = "${path.module}/../server"
-      destination = "/apps/ecn/"
-    }
-
-    provisioner "file" {
-      source      = "${path.module}/../build"
-      destination = "/apps/ecn/"
-    }
-
-    provisioner "file" {
-      source      = "${path.module}/../node_modules"
-      destination = "/apps/ecn/"
+      command = "cd ${path.module}/.. && npm i && npm run build"
     }
 
     provisioner "remote-exec" {
       inline = [
-        "cd /apps/ecn/",
+        "mkdir -p /root/apps/ecn/"
+      ]
+    }
+
+    provisioner "local-exec" {
+      command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr --progress ${path.module}/../build/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/build/ > /dev/null"
+    }
+    provisioner "local-exec" {
+      command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr --progress ${path.module}/../server/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/server/ > /dev/null"
+      }    
+    provisioner "local-exec" {
+      command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr ${path.module}/../node_modules/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/node_modules/ > /dev/null"
+      }
+    provisioner "remote-exec" {
+      inline = [
+        "cd /root/apps/ecn/",
         "PORT=5555 pm2 start server/index.js"
       ]
     }
