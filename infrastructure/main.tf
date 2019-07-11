@@ -45,13 +45,6 @@ resource "google_compute_instance" "ecn" {
     metadata {
         sshKeys = "root:${file(var.gce_ssh_pub_key_file)}"
     }
-#     metadata_startup_script = <<SCRIPT
-# curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-# apt-get update
-# apt-get -y install nodejs
-# apt-get -y install npm
-# sudo npm i -g pm2 
-# SCRIPT
 
     service_account {
       scopes = ["userinfo-email", "compute-ro", "storage-ro"]
@@ -70,10 +63,10 @@ resource "null_resource" initializeapp {
     provisioner "remote-exec" {
         inline = [
           "curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -",
-          "apt-get update",
-          "apt-get -y install nodejs",
-          "apt-get -y install npm",
-          "sudo npm i -g pm2",
+          "apt-get update > /dev/null",
+          "apt-get -y install nodejs > /dev/null",
+          "apt-get -y install npm > /dev/null",
+          "sudo npm i -g pm2 > /dev/null",
           "mkdir -p /root/apps/ecn/"
         ]
     }
