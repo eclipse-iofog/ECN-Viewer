@@ -89,21 +89,6 @@ resource "null_resource" initializeapp {
     }
 }
 
-resource "null_resource" deployapp {
-
-    connection {
-        type = "ssh"
-        host = "${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}"
-        user = "root"
-        private_key = "${file(var.gce_ssh_private_key_file)}"
-    }
-    provisioner "remote-exec" {
-        inline = [
-          "cd /root/apps/ecn/ && PORT=5555 pm2 start server/index.js"
-        ]
-    }
-}
-
 output "IP" {
   value = "${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}"
 }
