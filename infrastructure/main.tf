@@ -17,6 +17,13 @@ provider "google" {
     region                      = "${var.region}"
 }
 
+# Store terraform state in GCS backend
+terraform {
+    backend "gcs" {
+        bucket                  = "terraform-state-ecn-viewer"
+    }
+}
+
 data "google_compute_zones" "available" {}
 
 resource "google_compute_instance" "ecn" {
