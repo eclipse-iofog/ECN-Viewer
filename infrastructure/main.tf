@@ -5,10 +5,10 @@ variable "region"                      {
     default = "us-west2"
 }
 variable "gce_ssh_pub_key_file"        {
-    default = "~/.ssh/id_rsa.pub"
+    default = "~/.ssh/azure.pub"
 }
 variable "gce_ssh_private_key_file"        {
-    default = "~/.ssh/id_rsa"
+    default = "~/.ssh/azure"
 }
 
 provider "google" {
@@ -49,6 +49,9 @@ SCRIPT
     service_account {
       scopes = ["userinfo-email", "compute-ro", "storage-ro"]
     }
+}
+
+resource "null_resource" remoteExecProvisionerr {
 
     connection {
         type = "ssh"
@@ -59,25 +62,36 @@ SCRIPT
     }
 
     provisioner "remote-exec" {
-      inline = [
-        "mkdir -p /root/apps/ecn/"
-      ]
+        inline = [
+          "mkdir -p /root/apps/ecn/"
+        ]
+    }
+  
+    # Copies all files and folders from local to remote
+    provisioner "file" {
+        source      = "../build"
+        destination = "/root/apps/ecn"
     }
 
-    provisioner "local-exec" {
-      command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr --progress ${path.module}/../build/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/build/ > /dev/null"
+    provisioner "file" {
+        source      = "../server"
+        destination = "/root/apps/ecn"
     }
+
+    # provisioner "file" {
+    #     source      = "../node_modules"
+    #     destination = "/root/apps/ecn"
+    # } 
+
     provisioner "local-exec" {
-      command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr --progress ${path.module}/../server/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/server/ > /dev/null"
-    }    
-    provisioner "local-exec" {
-      command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr ${path.module}/../node_modules/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/node_modules/ > /dev/null"
+        command = "rsync -e \"ssh -o StrictHostKeyChecking=no\" -avzhr ${path.module}/../node_modules/ root@${google_compute_instance.ecn.network_interface.0.access_config.0.nat_ip}:/root/apps/ecn/"
     }
+
     provisioner "remote-exec" {
-      inline = [
-        "cd /root/apps/ecn/",
-        "PORT=5555 pm2 start server/index.js"
-      ]
+        inline = [
+          "cd /root/apps/ecn/",
+          "PORT=5555 pm2 start server/index.js"
+        ]
     }
 }
 
