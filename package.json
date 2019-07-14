@@ -1,8 +1,21 @@
 {
   "name": "ecn-viewer",
-  "version": "0.1.0",
-  "private": true,
-  "license": "EPL-2.0",
+  "version": "1.0.0",
+  "description": "Edgeworx ioFog Edge Cloud Network Viewer project  \\nCopyright (c) 2019 Edgeworx, Inc.",
+  "main": "./server/index.js",
+  "author": "Alexandre de Wergifosse",
+  "contributors": [
+    "Serge Radinovic"
+  ],
+  "license": {
+    "type": "EPL-2.0",
+    "url": "https://www.eclipse.org/legal/epl-v20.html"
+  },
+  "homepage": "https://www.edgeworx.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Edgeworx/ECN-viewer"
+  },
   "dependencies": {
     "@material-ui/core": "4.0.0-rc.0",
     "@material-ui/icons": "4.2.0",
