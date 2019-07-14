@@ -31,4 +31,19 @@ Note: NVM being a sourced script, you will need to run `nvm use 'lts/*'` after r
 
 The script will use the configuration file passed as argument, or the default config `./controller_default.json`, to bundle the web application. The web application will use the controller information from the config file as its ECN Controller. (This can later on be modified through the web app, using the settings icon on the lateral nav bar.)
 
+
 The web server will listen on the PORT env variable (or 80 by default).
+
+### Config file
+
+The configuration JSON file contains the informations required to connect to your ECN Controller.
+```json
+{
+  "ip": "127.0.0.1",
+  "port": "51121",
+  "user": {
+    "email": "user@domain.com",
+    "password": "#Bugs4Fun"
+  }
+}
+```
