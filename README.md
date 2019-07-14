@@ -1,6 +1,12 @@
-# Edge Cloud Network Viewer
+<h1 align="center">
+  Edge Cloud Network Viewer
+  <br>
+  <br>
+</h1>
 
-This project is a small web application to help visualise your Edge Cloud Network (ECN).
+<p align="center">
+  <a href="https://standardjs.com"><img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard - JavaScript Style Guide"></a>
+</p>
 
 ## Requirements
 
@@ -26,3 +32,7 @@ Note: NVM being a sourced script, you will need to run `nvm use 'lts/*'` after r
 The script will use the configuration file passed as argument, or the default config `./controller_default.json`, to bundle the web application. The web application will use the controller information from the config file as its ECN Controller. (This can later on be modified through the web app, using the settings icon on the lateral nav bar.)
 
 The web server will listen on the PORT env variable (or 80 by default).
+
+### Style
+
+[![JavaScript Style Guide](https://cdn.rawgit.com/standard/standard/master/badge.svg)](https://github.com/standard/standard)

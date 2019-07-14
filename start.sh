@@ -28,7 +28,7 @@ fi
 if [[ $NODE_ENV == "dev" ]]; then
   npm run start-dev
 else
-  echoInfo "Building production bundle"
+  echoInfo "Creating an optimized production build..."
   npm run build > /dev/null 2>&1
   echoInfo "Starting web server"
   npm run prod
