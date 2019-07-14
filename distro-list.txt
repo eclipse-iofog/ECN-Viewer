@@ -1,0 +1,22 @@
+README.md
+LICENSE.md
+
+# App
+package.json
+package-lock.json
+controller_default.json
+src/
+public/
+
+# Server
+server/
+
+# Bootstrap
+bootstrap.sh
+scripts/
+
+# Run
+start.sh
+
+# Build
+build/

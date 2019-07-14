@@ -100,7 +100,8 @@ export default function Layout () {
               <HomeIcon />
             </Avatar>
           </NavLink>
-          <NavLink to='/routes' >
+          {/* <NavLink to='/routes' > */}
+          <NavLink to='/overview' >
             <Avatar className={classes.latIcons} >
               <FakeIcon1 />
             </Avatar>
@@ -111,7 +112,7 @@ export default function Layout () {
         </div>
         <div className='content'>
           <Switch>
-            <Route path='/routes' component={() => 'Hello agents'} />
+            {/* <Route path='/routes' component={() => 'Hello agents'} /> */}
             <Route path='/overview' component={ECNViewer} />
             <Route component={() => <Redirect to='/overview' />} />
           </Switch>

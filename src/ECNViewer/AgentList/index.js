@@ -126,7 +126,7 @@ export default function AgentList (props) {
             <div className={classes.listTitle}>
               <div>
                 <Typography variant='h5'>Agents - <small>{loading ? 0 : agents.length} nodes</small></Typography>
-                <small className={classes.link} onClick={() => setOpenConnectNodeModal(!openConnectNodeModal)}>+ Add node</small>
+                {/* <small className={classes.link} onClick={() => setOpenConnectNodeModal(!openConnectNodeModal)}>+ Add node</small> */}
               </div>
               <div>
                 <small className={classes.link} onClick={() => setAutozoom(true)}>See all ECN</small>
@@ -239,9 +239,9 @@ export default function AgentList (props) {
       >
         <MenuItem onClick={openDetails}>Details</MenuItem>
         <MenuItem onClick={openRemoveAgent}>Remove agent</MenuItem>
-        <Divider />
+        {/* <Divider />
         <MenuItem onClick={openAddMicroservice}>Add microservice</MenuItem>
-        <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem>
+        <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem> */}
       </Menu>
     </React.Fragment>
   )

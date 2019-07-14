@@ -1,20 +1,34 @@
 {
   "name": "ecn-viewer",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "Edgeworx ioFog Edge Cloud Network Viewer project  \\nCopyright (c) 2019 Edgeworx, Inc.",
+  "main": "./server/index.js",
+  "author": "Alexandre de Wergifosse",
+  "contributors": [
+    "Serge Radinovic"
+  ],
+  "license": {
+    "type": "EPL-2.0",
+    "url": "https://www.eclipse.org/legal/epl-v20.html"
+  },
+  "homepage": "https://www.edgeworx.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Edgeworx/ECN-viewer"
+  },
   "dependencies": {
-    "@material-ui/core": "^4.0.0-rc.0",
-    "@material-ui/icons": "^4.2.0",
-    "@material-ui/styles": "^4.1.1",
-    "downshift": "^3.2.10",
-    "google-map-react": "^1.1.4",
-    "lodash": "^4.17.11",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-json-view": "^1.19.1",
-    "react-loading-skeleton": "^1.1.2",
-    "react-router": "^5.0.1",
-    "react-router-dom": "^5.0.1",
+    "@material-ui/core": "4.0.0-rc.0",
+    "@material-ui/icons": "4.2.0",
+    "@material-ui/styles": "4.1.1",
+    "downshift": "3.2.10",
+    "google-map-react": "1.1.4",
+    "lodash": "4.17.11",
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-json-view": "1.19.1",
+    "react-loading-skeleton": "1.1.2",
+    "react-router": "5.0.1",
+    "react-router-dom": "5.0.1",
     "react-scripts": "3.0.1"
   },
   "proxy": "http://localhost:5555",
@@ -30,6 +44,9 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "resolutions": {
+    "caniuse-lite": "1.0.30000984"
+  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -43,8 +60,8 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^4.1.0",
-    "node-sass": "^4.12.0",
-    "nodemon": "^1.19.1"
+    "concurrently": "4.1.0",
+    "node-sass": "4.12.0",
+    "nodemon": "1.19.1"
   }
 }
