@@ -23,6 +23,9 @@ fi
 
 if ! [[ -d  ./node_modules ]] || ! [[ -d ./server/node_modules ]]; then
  npm i
+ if ! [[ -d ./server/node_modules ]]; then
+  cd server && npm i && cd -
+ fi
 fi
 
 if [[ $NODE_ENV == "dev" ]]; then

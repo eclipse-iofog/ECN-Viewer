@@ -101,11 +101,10 @@ export default function Layout () {
             </Avatar>
           </NavLink>
           {/* <NavLink to='/routes' > */}
-          <NavLink to='/overview' >
-            <Avatar className={classes.latIcons} >
-              <FakeIcon1 />
-            </Avatar>
-          </NavLink>
+          <Avatar className={classes.latIcons} >
+            <FakeIcon1 />
+          </Avatar>
+          {/* </NavLink> */}
           <Avatar className={classes.latIcons} >
             <SettingsIcon onClick={() => setSettingsOpen(!settingsOpen)} />
           </Avatar>
