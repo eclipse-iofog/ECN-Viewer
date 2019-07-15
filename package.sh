@@ -12,8 +12,8 @@ VERSION="1.0.0"
 prettyTitle "Edgeworx ioFog ECN Viewer Packaging"
 echoInfo "Beginning packaging process"
 
-echoInfo "Building application bundle"
-npm run build
+# echoInfo "Building application bundle"
+# npm run build
 
 # This is what we want to call our distro
 DISTRO_NAME="edgeworx-iofog-ecn-viewer_${VERSION}.tar.gz"

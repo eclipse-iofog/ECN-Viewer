@@ -14,7 +14,11 @@
 * [NPM](https://www.npmjs.com/) (It will be installed alongside node)
 
 `./bootstrap.sh` will install Node.js and NPM using [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm)
-Note: NVM being a sourced script, you will need to run `nvm use 'lts/*'` after running bootstrap in order to have node set up in your current shell session.
+Note: NVM being a sourced script, a few extra commands are needed in order to be able to use nvm in your current shell session
+```sh
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+```
 
 ## Usage
 

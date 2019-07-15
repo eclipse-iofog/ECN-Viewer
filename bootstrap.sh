@@ -77,7 +77,11 @@ install_nvm() {
 
 check_nvm() {
   {
-      load_nvm
+      {
+          load_nvm
+      } || {
+        echo "Could not load nvm"
+      }
       if [[ -z "$(command -v nvm)" ]]; then
           if [[ "$OSTYPE" == "linux-gnu" ]]; then
               install_nvm "linux"

@@ -125,6 +125,7 @@ fi
 
 load_nvm() {
   export NVM_DIR="${XDG_CONFIG_HOME:-$HOME}/.nvm"
+	mkdir -p $NVM_DIR
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm"
 }
 
