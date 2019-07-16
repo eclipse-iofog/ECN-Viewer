@@ -238,7 +238,7 @@ export default function AgentList (props) {
         onClose={handleCloseMenu}
       >
         <MenuItem onClick={openDetails}>Details</MenuItem>
-        <MenuItem onClick={openRemoveAgent}>Remove agent</MenuItem>
+        {/* <MenuItem onClick={openRemoveAgent}>Remove agent</MenuItem> */}
         {/* <Divider />
         <MenuItem onClick={openAddMicroservice}>Add microservice</MenuItem>
         <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem> */}
