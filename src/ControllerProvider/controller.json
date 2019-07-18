@@ -1,9 +1,6 @@
 {
-  "ip": "127.0.0.1",
-  "port": "51121",
-  "dev": true,
   "user": {
-    "email": "user@domain.com",
-    "password": "#Bugs4Fun"
+    "email": "",
+    "password": ""
   }
 }

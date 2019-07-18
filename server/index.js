@@ -11,16 +11,14 @@
  */
 
 const express = require('express')
+const ecnViewer = require('ecn-viewer')
 const app = express()
-const path = require('path')
 const proxy = require('express-http-proxy')
 const getIP = require('external-ip')()
 
 const PORT = process.env.PORT || 80
 
 const runServer = async () => {
-  app.use('/', express.static(path.join(__dirname, '../build')))
-
   app.use('/api/controllerAPI', (req, res, next) => {
     proxy(req.headers['ecn-api-destination'])(req, res, next)
   })
@@ -28,6 +26,8 @@ const runServer = async () => {
   app.use('/api/agentApi', (req, res, next) => {
     proxy(req.headers.iofogapi)(req, res, next)
   })
+
+  app.use('/', ecnViewer.middleware(express))
 
   app.listen(PORT, () => {
     getIP((err, ip) => {

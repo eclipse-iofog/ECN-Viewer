@@ -2,6 +2,4 @@
 
 const path = require('path')
 
-exports.middleware = function (express, req, res, next) {
-  express.static(path.join(__dirname, 'build'))(req, res, next)
-}
+exports.middleware = (express) => express.static(path.join(__dirname, 'build'))

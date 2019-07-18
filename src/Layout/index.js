@@ -126,7 +126,7 @@ export default function Layout () {
     <Modal
       {...{
         open: settingsOpen,
-        title: `Controller details`,
+        title: controller.dev ? `Controller details` : `User credentials`,
         onClose: () => setSettingsOpen(false)
       }}
     >
