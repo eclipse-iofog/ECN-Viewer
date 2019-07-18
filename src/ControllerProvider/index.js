@@ -36,7 +36,7 @@ export const ControllerContext = React.createContext({
 
 const lookUpControllerInfo = async (controllerConfig) => {
   const localhost = new RegExp('(0\.0\.0\.0|localhost|127\.0\.0\.1|192\.168\.)') // eslint-disable-line no-useless-escape
-  const ip = localhost.test(controllerConfig.ip) ? '8.8.8.8' : controllerConfig.ip
+  const ip = localhost.test(controllerConfig.ip) ? '8.8.8.8' : controllerConfig.ip || window.location.host
   const response = await window.fetch(IPLookUp + ip)
   if (response.ok) {
     return response.json()
