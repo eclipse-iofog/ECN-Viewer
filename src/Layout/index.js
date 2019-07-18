@@ -10,6 +10,7 @@ import SettingsIcon from '@material-ui/icons/SettingsOutlined'
 import ECNViewer from '../ECNViewer'
 import Modal from '../Utils/Modal'
 import Config from '../Config'
+import { ControllerContext } from '../ControllerProvider'
 
 import logomark from '../assets/logomark.svg'
 import './layout.scss'
@@ -77,7 +78,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function Layout () {
   const classes = useStyles()
-  const [settingsOpen, setSettingsOpen] = React.useState(false)
+  const { controller } = React.useContext(ControllerContext)
+  const [settingsOpen, setSettingsOpen] = React.useState(!(controller.user.email && controller.user.password))
 
   console.log(' ====> Rendering layout')
 

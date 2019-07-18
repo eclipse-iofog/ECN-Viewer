@@ -2,17 +2,32 @@ import React, { useEffect } from 'react'
 
 import controllerJson from './controller.json'
 
-const initControllerState = {
-  ...controllerJson,
-  api: `http://${controllerJson.ip}:${controllerJson.port || 80}/`,
-  location: {
-    lat: 'Unknown',
-    lon: 'Unknown',
-    query: controllerJson.ip
+const initControllerState = (() => {
+  const localUser = window.localStorage.getItem('iofogUser')
+  if (localUser) {
+    controllerJson.user = JSON.parse(localUser)
   }
-}
+  return {
+    ...controllerJson,
+    api: `http://${controllerJson.ip}:${controllerJson.port || 80}/`,
+    location: {
+      lat: 'Unknown',
+      lon: 'Unknown',
+      query: controllerJson.ip
+    }
+  }
+})()
 
 const IPLookUp = 'http://ip-api.com/json/'
+
+// If dev mode, use proxy
+// Otherwise assume you are running on the Controller
+const getUrl = (path) => controllerJson.dev ? '/api/controllerApi' + path : path
+const getHeaders = (headers, controllerConfig) => controllerJson.dev
+  ? ({
+    ...headers,
+    'ECN-Api-Destination': controllerConfig.api
+  }) : headers
 
 export const ControllerContext = React.createContext({
   controller: {},
@@ -61,43 +76,48 @@ const actions = {
 }
 
 const reducer = (state, action) => {
-  switch (action.type) {
-    case actions.ERROR:
-      return {
-        ...state,
-        controller: {
-          ...state.controller,
-          error: action.data
+  console.log({ state, action })
+  const newState = (() => {
+    switch (action.type) {
+      case actions.ERROR:
+        return {
+          ...state,
+          controller: {
+            ...state.controller,
+            error: action.data
+          }
         }
-      }
-    case actions.CLEAN_ERROR:
-      return {
-        ...state,
-        controller: {
-          ...state.controller,
-          error: null
+      case actions.CLEAN_ERROR:
+        return {
+          ...state,
+          controller: {
+            ...state.controller,
+            error: null
+          }
         }
-      }
-    case actions.UPDATE:
-      return {
-        ...state,
-        controller: {
-          ...state.controller,
-          ...action.data
+      case actions.UPDATE:
+        return {
+          ...state,
+          controller: {
+            ...state.controller,
+            ...action.data
+          }
         }
-      }
-    case actions.SET_TOKEN:
-      return {
-        ...state,
-        token: action.data,
-        controller: {
-          ...state.controller,
-          error: null
+      case actions.SET_TOKEN:
+        return {
+          ...state,
+          token: action.data,
+          controller: {
+            ...state.controller,
+            error: null
+          }
         }
-      }
-    default:
-      return state
-  }
+      default:
+        return state
+    }
+  })()
+  newState.controller.dev = controllerJson.dev
+  return newState
 }
 
 export default function Context (props) {
@@ -107,13 +127,12 @@ export default function Context (props) {
   console.log('======> Updating controller context')
 
   const authenticate = async (controllerConfig) => {
-    const response = await window.fetch('/api/controllerApi/api/v3/user/login', {
+    const response = await window.fetch(getUrl('/api/v3/user/login'), {
       method: 'POST',
-      headers: {
+      headers: getHeaders({
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'ECN-Api-Destination': controllerConfig.api
-      },
+        'Content-Type': 'application/json'
+      }, controllerConfig),
       body: JSON.stringify(controllerConfig.user)
     })
     if (response.ok) {
@@ -121,6 +140,7 @@ export default function Context (props) {
       dispatch({ type: actions.SET_TOKEN, data: token })
       return token
     } else {
+      dispatch({ type: actions.SET_TOKEN, data: null })
       throw new Error(response.statusText)
     }
   }
@@ -132,13 +152,12 @@ export default function Context (props) {
       if (!t) {
         t = await authenticate(controller)
       }
-      const response = await window.fetch('/api/controllerApi' + path, {
+      const response = await window.fetch(getUrl(path), {
         ...options,
-        headers: {
+        headers: getHeaders({
           ...options.headers,
-          'ECN-Api-Destination': controller.api,
           'Authorization': t
-        }
+        }, controller)
       })
       if (state.controller.error) {
         dispatch({ type: actions.CLEAN_ERROR })
@@ -148,13 +167,14 @@ export default function Context (props) {
       dispatch({ type: actions.ERROR, data: err })
       return ({
         ok: false,
-        statusText: 'Could not reach controller'
+        statusText: err.message || 'Could not reach controller'
       })
     }
   }
 
   const updateController = async (newController) => {
-    newController.api = `http://${newController.ip}:${newController.port || 80}/`
+    if (controllerJson.dev) { newController.api = `http://${newController.ip}:${newController.port || 80}/` }
+    window.localStorage.setItem('iofogUser', JSON.stringify(newController.user))
     try {
       await authenticate(newController)
     } catch (e) {

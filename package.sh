@@ -23,6 +23,10 @@ if [ -f ${DISTRO_NAME} ]; then
     rm ${DISTRO_NAME}
 fi
 
+echoInfo "Building production app"
+npm run build
+cp -r build package/
+
 echoInfo "Creating ECN Viewer tarball with name '${DISTRO_NAME}''"
 
 # Build our archive
@@ -31,5 +35,9 @@ tar -czvf ${DISTRO_NAME} \
     --exclude="./server/node_modules" \
     --exclude="./node_modules" \
     -T distro-list.txt
+
+if [[ "$1" == "--publish" ]]; then
+    npm publish ${DISTRO_NAME} --access public
+fi
 
 echoInfo "Distro packaging complete!"
