@@ -7,10 +7,7 @@
   "contributors": [
     "Serge Radinovic"
   ],
-  "license": {
-    "type": "EPL-2.0",
-    "url": "https://www.eclipse.org/legal/epl-v20.html"
-  },
+  "license": "MIT",
   "homepage": "https://www.edgeworx.org",
   "repository": {
     "type": "git",
