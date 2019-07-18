@@ -29,6 +29,8 @@ cp -r build package/
 
 echoInfo "Creating ECN Viewer tarball with name '${DISTRO_NAME}''"
 
+cp LICENSE.md package/LICENSE.md
+
 # Build our archive
 tar -czvf ${DISTRO_NAME} \
     --exclude='^#' \
