@@ -1,6 +1,6 @@
 {
   "name": "ecn-viewer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Edgeworx ioFog Edge Cloud Network Viewer project  \\\\nCopyright (c) 2019 Edgeworx, Inc.",
   "main": "index.js",
   "scripts": {
