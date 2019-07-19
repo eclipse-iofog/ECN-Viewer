@@ -1,19 +1,22 @@
 {
-  "name": "ecn-viewer",
-  "version": "1.0.2",
-  "description": "Edgeworx ioFog Edge Cloud Network Viewer project  \\\\nCopyright (c) 2019 Edgeworx, Inc.",
+  "name": "@iofog/ecn-viewer",
+  "version": "1.0.0",
+  "description": "Eclipse ioFog Edge Cloud Network Viewer project  \nCopyright (c) 2019 Edgeworx, Inc.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Edgeworx/ECN-viewer.git"
+    "url": "git+https://github.com/eclipse-iofog/ECN-Viewer.git"
   },
   "author": "Alexandre de Wergifosse",
   "license": "EPL-2.0",
   "bugs": {
-    "url": "https://github.com/Edgeworx/ECN-viewer/issues"
+    "url": "https://github.com/eclipse-iofog/ECN-Viewer/issues"
   },
-  "homepage": "https://github.com/Edgeworx/ECN-viewer#readme"
+  "homepage": "https://github.com/eclipse-iofog/ECN-Viewer#readme"
 }

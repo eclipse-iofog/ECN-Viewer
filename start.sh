@@ -16,7 +16,7 @@ fi
 if [[ -f "$1" ]]; then
   cp $1 ./src/ControllerProvider/controller.json
 else
-  cp ./controller_default.json ./src/ControllerProvider/controller.json
+  cp ./controller_dev.json ./src/ControllerProvider/controller.json
 fi
 
 (load_nvm && [ $(command -v nvm) == "nvm" ] && nvm use 'lts/*' > /dev/null 2>&1 ) || echo ''

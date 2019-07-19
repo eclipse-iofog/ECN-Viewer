@@ -26,6 +26,7 @@ fi
 echoInfo "Building production app"
 npm run build
 cp -r build package/
+cd package && npm version "${VERSION}" && cd -
 
 echoInfo "Creating ECN Viewer tarball with name '${DISTRO_NAME}''"
 
