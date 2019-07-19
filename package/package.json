@@ -11,7 +11,7 @@
     "url": "git+https://github.com/Edgeworx/ECN-viewer.git"
   },
   "author": "Alexandre de Wergifosse",
-  "license": "MIT",
+  "license": "EPL-2.0",
   "bugs": {
     "url": "https://github.com/Edgeworx/ECN-viewer/issues"
   },
