@@ -9,7 +9,7 @@ const initControllerState = (() => {
   }
   return {
     ...controllerJson,
-    api: `http://${controllerJson.ip}:${controllerJson.port || 80}/`,
+    api: `${window.location.protocol}://${controllerJson.ip}:${controllerJson.port || 80}/`,
     location: {
       lat: 'Unknown',
       lon: 'Unknown',
@@ -22,7 +22,7 @@ const IPLookUp = 'http://ip-api.com/json/'
 
 // If dev mode, use proxy
 // Otherwise assume you are running on the Controller
-const getUrl = (path) => controllerJson.dev ? '/api/controllerApi' + path : path
+const getUrl = (path) => controllerJson.dev ? `/api/controllerApi${path}` : `${window.location.protocol}://${[window.location.host.split(':')[0], controllerJson.port].join(':')}${path}`
 const getHeaders = (headers, controllerConfig) => controllerJson.dev
   ? ({
     ...headers,

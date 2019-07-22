@@ -7,7 +7,7 @@
 # Import our helper functions
 . scripts/utils.sh
 
-VERSION="1.0.0"
+VERSION="1.0.1"
 
 prettyTitle "Edgeworx ioFog ECN Viewer Packaging"
 echoInfo "Beginning packaging process"
@@ -24,9 +24,10 @@ if [ -f ${DISTRO_NAME} ]; then
 fi
 
 echoInfo "Building production app"
+cp controller_default.json src/ControllerProvider/controller.json
 npm run build
 cp -r build package/
-cd package && npm version "${VERSION}" && cd -
+cd package && npm version "${VERSION}" --allow-same-version && cd -
 
 echoInfo "Creating ECN Viewer tarball with name '${DISTRO_NAME}''"
 
