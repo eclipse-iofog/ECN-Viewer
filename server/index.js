@@ -11,7 +11,7 @@
  */
 
 const express = require('express')
-const ecnViewer = require('ecn-viewer')
+const ecnViewer = require('@iofog/ecn-viewer')
 const app = express()
 const proxy = require('express-http-proxy')
 const getIP = require('external-ip')()
