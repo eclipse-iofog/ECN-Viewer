@@ -20,7 +20,7 @@ export default function Config (props) {
   const save = async () => {
     try {
       await updateController(data)
-      pushFeedback({ message: 'Controller details saved!', type: 'success' })
+      pushFeedback({ message: data.dev ? 'Controller details saved!' : 'Authenticated!', type: 'success' })
       props.onSave()
     } catch (e) {
       pushFeedback({ message: e.message, type: 'error' })
@@ -79,6 +79,7 @@ export default function Config (props) {
             id='password'
             label='Password'
             onChange={handleUserChange('password')}
+            onKeyPress={(e) => e.key === 'Enter' && data.user.email && data.user.password ? save() : null}
             value={data.user.password}
             fullWidth
             type='password'

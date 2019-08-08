@@ -72,7 +72,11 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    fontSize: '9pt'
+    fontSize: '9pt',
+    '& a': {
+      color: theme.colors.aluminium,
+      textDecoration: 'none!important'
+    }
   }
 }))
 
@@ -119,7 +123,7 @@ export default function Layout () {
           </Switch>
         </div>
         <div className={`${classes.footerContainer} footer`}>
-          <span className={classes.footer}>Copyright © 2019 Edgeworx, Inc. All Rights Reserved.</span>
+          <span className={classes.footer}><a href="http://www.eclipse.org/legal/copyright.php">© 2019 Eclipse Foundation, Inc.</a></span>
         </div>
       </div>
     </HashRouter>

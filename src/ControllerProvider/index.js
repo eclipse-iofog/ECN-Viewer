@@ -127,8 +127,6 @@ export default function Context (props) {
   const [state, dispatch] = React.useReducer(reducer, initState)
   const { token, controller } = state
 
-  console.log('======> Updating controller context')
-
   const authenticate = async (controllerConfig) => {
     const response = await window.fetch(getUrl('/api/v3/user/login'), {
       method: 'POST',
@@ -182,6 +180,8 @@ export default function Context (props) {
       await authenticate(newController)
     } catch (e) {
       dispatch({ type: actions.ERROR, data: e })
+      dispatch({ type: actions.UPDATE, data: await updateControllerInfo(newController) })
+      throw e
     }
     dispatch({ type: actions.UPDATE, data: await updateControllerInfo(newController) })
   }
