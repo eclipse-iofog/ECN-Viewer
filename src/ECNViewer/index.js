@@ -101,7 +101,7 @@ export default function ECNViewer () {
   React.useEffect(() => {
     setLoading(true)
     setError(null)
-  }, [controllerInfo])
+  }, [controllerInfo.ip, controllerInfo.port, controllerInfo.user])
 
   const update = async () => {
     const agentsResponse = await request('/api/v3/iofog-list')
@@ -137,7 +137,7 @@ export default function ECNViewer () {
 
   useInterval(() => {
     update()
-  }, [3000])
+  }, +controllerInfo.refresh || 3000)
 
   const setAgent = a => dispatch({ type: actions.SET_AGENT, data: a })
 

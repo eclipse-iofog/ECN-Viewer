@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Grid, Button } from '@material-ui/core'
+import { TextField, Grid, Button, InputAdornment, Divider } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 
 import { ControllerContext } from '../ControllerProvider'
@@ -87,6 +87,29 @@ export default function Config (props) {
             className={classes.textField}
             margin='normal'
             variant='outlined'
+          />
+        </Grid>
+      </Grid>
+      <Divider />
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            id='refresh'
+            label='Refresh'
+            type='number'
+            onChange={handleChange('refresh')}
+            value={data.refresh}
+            fullWidth
+            className={classes.textField}
+            margin='normal'
+            variant='outlined'
+            inputProps={{
+              min: '1000',
+              step: '500'
+            }}
+            InputProps={{
+              endAdornment: <InputAdornment position='end'>ms</InputAdornment>
+            }}
           />
         </Grid>
       </Grid>
