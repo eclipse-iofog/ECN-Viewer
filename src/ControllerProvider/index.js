@@ -131,7 +131,7 @@ export default function Context (props) {
     const response = await window.fetch(getUrl('/api/v3/user/login'), {
       method: 'POST',
       headers: getHeaders({
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json'
       }, controllerConfig),
       body: JSON.stringify(controllerConfig.user)
@@ -157,7 +157,7 @@ export default function Context (props) {
         ...options,
         headers: getHeaders({
           ...options.headers,
-          'Authorization': t
+          Authorization: t
         }, controller)
       })
       if (state.controller.error) {
@@ -195,7 +195,9 @@ export default function Context (props) {
     dispatch({ type: actions.UPDATE, data: await updateControllerInfo(initState.controller) })
   })(), [])
 
-  return <ControllerContext.Provider value={{ controller, updateController, request }}>
-    {props.children}
-  </ControllerContext.Provider>
+  return (
+    <ControllerContext.Provider value={{ controller, updateController, request }}>
+      {props.children}
+    </ControllerContext.Provider>
+  )
 }

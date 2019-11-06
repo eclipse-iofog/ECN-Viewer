@@ -12,7 +12,7 @@ import ControllerContext from './ControllerProvider'
 function App () {
   console.log(' ======> Rendering app ')
   return (
-    <React.Fragment>
+    <>
       <CssBaseline />
       <ThemeContext>
         <ControllerContext>
@@ -21,7 +21,7 @@ function App () {
           </FeedbackContext>
         </ControllerContext>
       </ThemeContext>
-    </React.Fragment>
+    </>
   )
 }
 

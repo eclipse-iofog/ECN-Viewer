@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
 
-import { Divider, List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem, Typography } from '@material-ui/core'
+import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem, Typography } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
@@ -88,19 +88,19 @@ export default function AgentList (props) {
     setOpenDetailsModal(true)
     handleCloseMenu()
   }
-  const openAddMicroservice = () => {
-    setOpenAddMicroserviceModal(true)
-    handleCloseMenu()
-  }
-  const openRemoveMicroservice = () => {
-    setOpenRemoveMicroserviceModal(true)
-    handleCloseMenu()
-  }
+  // const openAddMicroservice = () => {
+  //   setOpenAddMicroserviceModal(true)
+  //   handleCloseMenu()
+  // }
+  // const openRemoveMicroservice = () => {
+  //   setOpenRemoveMicroserviceModal(true)
+  //   handleCloseMenu()
+  // }
 
-  const openRemoveAgent = () => {
-    setOpenRemoveAgentConfirm(true)
-    handleCloseMenu()
-  }
+  // const openRemoveAgent = () => {
+  //   setOpenRemoveAgentConfirm(true)
+  //   handleCloseMenu()
+  // }
 
   const removeAgent = async (iofog) => {
     try {
@@ -119,7 +119,7 @@ export default function AgentList (props) {
   }
 
   return (
-    <React.Fragment>
+    <>
       <List
         subheader={
           <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }} disableGutters disableSticky>
@@ -189,7 +189,8 @@ export default function AgentList (props) {
           target: agent,
           microservices: msvcs,
           onSuccess: () => setOpenAddMicroserviceModal(false)
-        }} />
+        }}
+        />
       </Modal>
       <Modal
         {...{
@@ -209,7 +210,7 @@ export default function AgentList (props) {
       <Modal
         {...{
           open: openConnectNodeModal,
-          title: `Connect agent`,
+          title: 'Connect agent',
           onClose: () => setOpenConnectNodeModal(false)
         }}
       >
@@ -243,6 +244,6 @@ export default function AgentList (props) {
         <MenuItem onClick={openAddMicroservice}>Add microservice</MenuItem>
         <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem> */}
       </Menu>
-    </React.Fragment>
+    </>
   )
 }

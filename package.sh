@@ -16,7 +16,7 @@ echoInfo "Beginning packaging process"
 # npm run build
 
 # This is what we want to call our distro
-DISTRO_NAME="edgeworx-iofog-ecn-viewer_${VERSION}.tar.gz"
+DISTRO_NAME="eclipse-iofog-ecn-viewer_${VERSION}.tar.gz"
 # Clean away any previous distro
 if [ -f ${DISTRO_NAME} ]; then
     echoInfo "Removing old Distro file"

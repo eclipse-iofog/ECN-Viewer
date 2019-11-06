@@ -35,9 +35,9 @@ export default function SimpleTabs (props) {
   return (
     <div className={classes.root}>
       <Tabs value={value} onChange={handleChange}>
-        {props.children.map(child => {
+        {props.children.map((child, idx) => {
           return (
-            <Tab label={child.props.title} />
+            <Tab key={child.id || idx} label={child.props.title} />
           )
         })}
       </Tabs>

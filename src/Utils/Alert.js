@@ -61,24 +61,27 @@ export default function Alert (props) {
   return open ? (
     <div className={classes.container}>
       {alerts.map((a, idx) => {
+        const handleClick = a.onClose
         const variantKey = a.type || 'info'
         const Icon = variantIcon[variantKey]
-        return <SnackbarContent
-          key={a.key || a.id || idx}
-          className={`${classes[variantKey]} ${classes.alert} ${a.className}`}
-          aria-describedby='client-snackbar'
-          message={
-            <span id='client-snackbar' className={classes.message}>
-              <Icon className={`${classes.icon} ${classes.iconVariant}`} />
-              {a.message}
-            </span>
-          }
-          action={[
-            <IconButton key='close' aria-label='Close' color='inherit' onClick={a.onClose}>
-              <CloseIcon className={classes.icon} />
-            </IconButton>
-          ]}
-        />
+        return (
+          <SnackbarContent
+            key={a.key || a.id || idx}
+            className={`${classes[variantKey]} ${classes.alert} ${a.className}`}
+            aria-describedby='client-snackbar'
+            message={
+              <span id='client-snackbar' className={classes.message}>
+                <Icon className={`${classes.icon} ${classes.iconVariant}`} />
+                {a.message}
+              </span>
+            }
+            action={[
+              <IconButton key='close' aria-label='Close' color='inherit' onClick={handleClick}>
+                <CloseIcon className={classes.icon} />
+              </IconButton>
+            ]}
+          />
+        )
       })}
     </div>
   ) : null

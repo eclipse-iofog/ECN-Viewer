@@ -87,55 +87,56 @@ export default function Layout () {
 
   console.log(' ====> Rendering layout')
 
-  return <React.Fragment>
-    <HashRouter>
-      <div className={classes.wrapper + ' wrapper'}>
-        <div className={classes.logo + ' logo'}>
-          <NavLink to='/overview' >
-            <img src={logomark} alt='Edgeworx logomark' />
-          </NavLink>
-        </div>
-        <div className='topnav'>
-          <SearchIcon className={classes.topIcons} />
-          <NotificationsIcon className={classes.topIcons} />
-          <Avatar className={classes.avatarContainer} >M</Avatar>
-        </div>
-        <div className={classes.latNav + ' latnav'}>
-          <NavLink to='/overview' >
-            <Avatar className={classes.latIcons} >
-              <HomeIcon />
+  return (
+    <>
+      <HashRouter>
+        <div className={classes.wrapper + ' wrapper'}>
+          <div className={classes.logo + ' logo'}>
+            <NavLink to='/overview'>
+              <img src={logomark} alt='Edgeworx logomark' />
+            </NavLink>
+          </div>
+          <div className='topnav'>
+            <SearchIcon className={classes.topIcons} />
+            <NotificationsIcon className={classes.topIcons} />
+            <Avatar className={classes.avatarContainer}>M</Avatar>
+          </div>
+          <div className={classes.latNav + ' latnav'}>
+            <NavLink to='/overview'>
+              <Avatar className={classes.latIcons}>
+                <HomeIcon />
+              </Avatar>
+            </NavLink>
+            {/* <NavLink to='/routes' > */}
+            <Avatar className={classes.latIcons}>
+              <FakeIcon1 />
             </Avatar>
-          </NavLink>
-          {/* <NavLink to='/routes' > */}
-          <Avatar className={classes.latIcons} >
-            <FakeIcon1 />
-          </Avatar>
-          {/* </NavLink> */}
-          <Avatar className={classes.latIcons} >
-            <SettingsIcon onClick={() => setSettingsOpen(!settingsOpen)} />
-          </Avatar>
+            {/* </NavLink> */}
+            <Avatar className={classes.latIcons}>
+              <SettingsIcon onClick={() => setSettingsOpen(!settingsOpen)} />
+            </Avatar>
+          </div>
+          <div className='content'>
+            <Switch>
+              {/* <Route path='/routes' component={() => 'Hello agents'} /> */}
+              <Route path='/overview' component={ECNViewer} />
+              <Route component={() => <Redirect to='/overview' />} />
+            </Switch>
+          </div>
+          <div className={`${classes.footerContainer} footer`}>
+            <span className={classes.footer}><a href='http://www.eclipse.org/legal/copyright.php'>© 2019 Eclipse Foundation, Inc.</a></span>
+          </div>
         </div>
-        <div className='content'>
-          <Switch>
-            {/* <Route path='/routes' component={() => 'Hello agents'} /> */}
-            <Route path='/overview' component={ECNViewer} />
-            <Route component={() => <Redirect to='/overview' />} />
-          </Switch>
-        </div>
-        <div className={`${classes.footerContainer} footer`}>
-          <span className={classes.footer}><a href="http://www.eclipse.org/legal/copyright.php">© 2019 Eclipse Foundation, Inc.</a></span>
-        </div>
-      </div>
-    </HashRouter>
-    <Modal
-      {...{
-        open: settingsOpen,
-        title: controller.dev ? `Controller details` : `User credentials`,
-        onClose: () => setSettingsOpen(false)
-      }}
-    >
-      <Config {...{ onSave: () => setSettingsOpen(false) }} />
-    </Modal>
-
-  </React.Fragment>
+      </HashRouter>
+      <Modal
+        {...{
+          open: settingsOpen,
+          title: controller.dev ? 'Controller details' : 'User credentials',
+          onClose: () => setSettingsOpen(false)
+        }}
+      >
+        <Config {...{ onSave: () => setSettingsOpen(false) }} />
+      </Modal>
+    </>
+  )
 }

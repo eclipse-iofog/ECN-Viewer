@@ -49,8 +49,8 @@ export default function ControllerInfo (props) {
   const { city, country, lat, lon, query } = controller.location || {}
 
   const controllerError = error || controller.error || null
-  const [ controllerName, setControllerName ] = React.useState(() => {
-    return window.localStorage.getItem(CONTROLLER_NAME_KEY) || DEFAULT_CONTROLLER_NAME 
+  const [controllerName, setControllerName] = React.useState(() => {
+    return window.localStorage.getItem(CONTROLLER_NAME_KEY) || DEFAULT_CONTROLLER_NAME
   })
 
   const updateControllerName = (e) => {
@@ -60,7 +60,7 @@ export default function ControllerInfo (props) {
   }
 
   React.useEffect(() => {
-    if (controllerName === DEFAULT_CONTROLLER_NAME) { 
+    if (controllerName === DEFAULT_CONTROLLER_NAME) {
       window.document.title = 'ECN Viewer'
       return
     }
@@ -70,27 +70,26 @@ export default function ControllerInfo (props) {
   return (
     <div className={classes.controllerInfo}>
       <div className={classes.controllerTitle}>
-        <Typography style={{width: '100%'}} variant='h5'>
+        <Typography style={{ width: '100%' }} variant='h5'>
           <Input className={classes.controllerName} value={controllerName} onChange={updateControllerName} />
         </Typography>
         {controllerError &&
           <Tooltip title={controllerError.message} aria-label='Error'>
-            <Chip label={'The controller is not reachable'} style={{ '--color': theme.colors.gold }} className={classes.warningChip} />
-          </Tooltip>
-        }
+            <Chip label='The controller is not reachable' style={{ '--color': theme.colors.gold }} className={classes.warningChip} />
+          </Tooltip>}
       </div>
       <List>
         <ListItem>
           <ListItemIcon><LocationCityIcon /></ListItemIcon>
-          { loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={`${city}, ${country}`} /> }
+          {loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={`${city}, ${country}`} />}
         </ListItem>
-        <ListItem style={{ cursor: 'pointer' }} onClick={() => props.selectController()} >
+        <ListItem style={{ cursor: 'pointer' }} onClick={() => props.selectController()}>
           <ListItemIcon><GPSFixedIcon /></ListItemIcon>
-          { loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={`${lat}, ${lon}`} /> }
+          {loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={`${lat}, ${lon}`} />}
         </ListItem>
         <ListItem>
           <ListItemIcon><IPIcon /></ListItemIcon>
-          { loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={query} /> }
+          {loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={query} />}
         </ListItem>
       </List>
     </div>

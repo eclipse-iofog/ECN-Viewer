@@ -120,19 +120,22 @@ export default function Map (props) {
             <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).filter(m => m.flowActive).length} invisible={a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
               <Avatar
                 style={{ '--markerColor': statusColor[a.daemonStatus] }}
-                className={classes.mapMarker}>
+                className={classes.mapMarker}
+              >
                 <MemoryIcon />
               </Avatar>
             </Badge>
           </div>
         )}
-        {!loading && controller.info && hasValidCoordinates([controller.info.location.lat, controller.info.location.lon]) && <Avatar
-          lat={controller.info.location.lat}
-          lng={controller.info.location.lon}
-          style={{ '--markerColor': theme.colors.argon }}
-          className={classes.mapMarker}>
-          <CtrlIcon />
-        </Avatar>}
+        {!loading && controller.info && hasValidCoordinates([controller.info.location.lat, controller.info.location.lon]) &&
+          <Avatar
+            lat={controller.info.location.lat}
+            lng={controller.info.location.lon}
+            style={{ '--markerColor': theme.colors.argon }}
+            className={classes.mapMarker}
+          >
+            <CtrlIcon />
+          </Avatar>}
       </GoogleMapReact>
     </div>
   )

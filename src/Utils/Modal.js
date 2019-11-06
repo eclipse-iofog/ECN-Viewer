@@ -53,9 +53,10 @@ export default function _Modal (props) {
         <div className={classes.modalContent}>
           {props.children}
         </div>
-        {props.actions && !!props.actions.length && <div className={classes.modalActions}>
-          {props.actions.map(a => <Button className={`${a.className} ${classes.modalAction}`} variant={a.variant} onClick={a.onClick}>{a.text}</Button>)}
-        </div>}
+        {props.actions && !!props.actions.length &&
+          <div className={classes.modalActions}>
+            {props.actions.map(a => <Button key={a.text} className={`${a.className} ${classes.modalAction}`} {...{ variant: a.variant, onClick: a.onClick }}>{a.text}</Button>)}
+          </div>}
       </Paper>
     </Modal>
   )

@@ -34,33 +34,34 @@ export default function Config (props) {
     setData({ ...data, user: { ...data.user, [name]: event.target.value } })
   }
   return (
-    <React.Fragment>
-      {data.dev && <Grid container spacing={2} >
-        <Grid item xs={12} sm={6}>
-          <TextField
-            id='ip'
-            label='IP'
-            onChange={handleChange('ip')}
-            value={data.ip}
-            fullWidth
-            className={classes.textField}
-            margin='normal'
-            variant='outlined'
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            id='port'
-            label='Port'
-            onChange={handleChange('port')}
-            value={data.port}
-            fullWidth
-            className={classes.textField}
-            margin='normal'
-            variant='outlined'
-          />
-        </Grid>
-      </Grid>}
+    <>
+      {data.dev &&
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id='ip'
+              label='IP'
+              onChange={handleChange('ip')}
+              value={data.ip}
+              fullWidth
+              className={classes.textField}
+              margin='normal'
+              variant='outlined'
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id='port'
+              label='Port'
+              onChange={handleChange('port')}
+              value={data.port}
+              fullWidth
+              className={classes.textField}
+              margin='normal'
+              variant='outlined'
+            />
+          </Grid>
+        </Grid>}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -96,6 +97,6 @@ export default function Config (props) {
           </Button>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   )
 }

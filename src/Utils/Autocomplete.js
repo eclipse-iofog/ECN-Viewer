@@ -95,64 +95,66 @@ export default function Autocomplete (props) {
       })
   }
 
-  return (<Downshift
-    itemToString={item => get(item, 'label', '')}
-    onChange={props.onChange}
-    initialSelectedItem={props.initialSelectedItem}
-    {...(props.selectedItem ? { selectedItem: props.selectedItem } : {})}
-    id='downshift-options'>
-    {({
-      clearSelection,
-      getInputProps,
-      getItemProps,
-      getLabelProps,
-      getMenuProps,
-      highlightedIndex,
-      inputValue,
-      isOpen,
-      openMenu,
-      selectedItem
-    }) => {
-      const { onBlur, onChange, onFocus, ...inputProps } = getInputProps({
-        onChange: event => {
-          if (event.target.value === '') {
-            clearSelection()
-          }
-        },
-        onFocus: openMenu,
-        disabled: props.disabled || false,
-        placeholder: props.placeholder || ''
-      })
+  return (
+    <Downshift
+      itemToString={item => get(item, 'label', '')}
+      onChange={props.onChange}
+      initialSelectedItem={props.initialSelectedItem}
+      {...(props.selectedItem ? { selectedItem: props.selectedItem } : {})}
+      id='downshift-options'
+    >
+      {({
+        clearSelection,
+        getInputProps,
+        getItemProps,
+        getLabelProps,
+        getMenuProps,
+        highlightedIndex,
+        inputValue,
+        isOpen,
+        openMenu,
+        selectedItem
+      }) => {
+        const { onBlur, onChange, onFocus, ...inputProps } = getInputProps({
+          onChange: event => {
+            if (event.target.value === '') {
+              clearSelection()
+            }
+          },
+          onFocus: openMenu,
+          disabled: props.disabled || false,
+          placeholder: props.placeholder || ''
+        })
 
-      return (
-        <div className={classes.container}>
-          {renderInput({
-            fullWidth: true,
-            classes,
-            label: props.label,
-            InputLabelProps: getLabelProps({ shrink: true }),
-            InputProps: { onBlur, onChange, onFocus },
-            inputProps
-          })}
+        return (
+          <div className={classes.container}>
+            {renderInput({
+              fullWidth: true,
+              classes,
+              label: props.label,
+              InputLabelProps: getLabelProps({ shrink: true }),
+              InputProps: { onBlur, onChange, onFocus },
+              inputProps
+            })}
 
-          <div {...getMenuProps()}>
-            {isOpen ? (
-              <Paper className={classes.paper} square>
-                {getSuggestions(inputValue, { showEmpty: true }).map((suggestion, index) =>
-                  renderSuggestion({
-                    suggestion,
-                    index,
-                    itemProps: getItemProps({ item: suggestion }),
-                    highlightedIndex,
-                    selectedItem
-                  })
-                )}
-              </Paper>
-            ) : null}
+            <div {...getMenuProps()}>
+              {isOpen ? (
+                <Paper className={classes.paper} square>
+                  {getSuggestions(inputValue, { showEmpty: true }).map((suggestion, index) =>
+                    renderSuggestion({
+                      suggestion,
+                      index,
+                      itemProps: getItemProps({ item: suggestion }),
+                      highlightedIndex,
+                      selectedItem
+                    })
+                  )}
+                </Paper>
+              ) : null}
+            </div>
           </div>
-        </div>
-      )
-    }}
-  </Downshift>
+        )
+      }}
+    </Downshift>
   )
 }

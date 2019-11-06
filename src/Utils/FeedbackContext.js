@@ -35,13 +35,14 @@ const reducer = (state, action) => {
           }],
         nextId: state.nextId + 1
       }
-    case actions.REMOVE:
+    case actions.REMOVE: {
       const idxToRemove = findIndex(state.feedbacks, f => f.id === action.data.id)
       if (idxToRemove === -1) return state
       return {
         ...state,
         feedbacks: [...state.feedbacks.slice(0, idxToRemove), ...state.feedbacks.slice(idxToRemove + 1)]
       }
+    }
     case actions.SET:
       return {
         ...state,
@@ -67,18 +68,19 @@ export default function Context (props) {
 
   console.log('======> Updating feedback context')
 
-  return <FeedbackContext.Provider value={{ feedbacks: state.feedbacks, setFeedbacks, pushFeedback }}>
-    {props.children}
-    <FeedbackContext.Consumer>
-      {({ feedbacks, setFeedbacks }) =>
-        <Alert
-          open={!!feedbacks.length}
-          alerts={feedbacks.map((f, idx) => ({
-            ...f,
-            onClose: () => dispatch({ type: actions.REMOVE, data: f })
-          }))}
-        />
-      }
-    </FeedbackContext.Consumer>
-  </FeedbackContext.Provider>
+  return (
+    <FeedbackContext.Provider value={{ feedbacks: state.feedbacks, setFeedbacks, pushFeedback }}>
+      {props.children}
+      <FeedbackContext.Consumer>
+        {({ feedbacks, setFeedbacks }) =>
+          <Alert
+            open={!!feedbacks.length}
+            alerts={feedbacks.map((f, idx) => ({
+              ...f,
+              onClose: () => dispatch({ type: actions.REMOVE, data: f })
+            }))}
+          />}
+      </FeedbackContext.Consumer>
+    </FeedbackContext.Provider>
+  )
 }

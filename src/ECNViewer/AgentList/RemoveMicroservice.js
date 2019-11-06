@@ -75,7 +75,7 @@ export default function RemoveMicroservice (props) {
   }), {})
 
   return (
-    <React.Fragment>
+    <>
       <FormControl className={classes.formControl}>
         <InputLabel htmlFor='select-multiple-checkbox'>Microservices to remove</InputLabel>
         <Select
@@ -108,6 +108,6 @@ export default function RemoveMicroservice (props) {
           </Button>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   )
 }

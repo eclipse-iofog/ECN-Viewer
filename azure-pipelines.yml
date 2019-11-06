@@ -1,78 +1,46 @@
 trigger:
-- develop
+  tags:
+    include:
+      - v*
+  branches:
+    include:
+      - develop
+      - release*
+  paths:
+    exclude:
+      - README.md
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+- stage: Preflight
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.x'
+        displayName: 'Install Node.js'
 
-steps:
-- task: DownloadSecureFile@1
-  displayName: 'Download secure file for pipelines to access gcp'
-  inputs:
-    secureFile: 'azure-gcp.json'
+      - script: |
+          npm install
+        displayName: 'npm install and build'
 
-- task: DownloadSecureFile@1
-  displayName: 'Download config file'
-  inputs:
-    secureFile: ecn_viewer_config.json
+      - script: |
+          npm run standard
+        displayName: 'Standardjs report'
 
-- task: DownloadSecureFile@1
-  displayName: 'Download secure file: ssh key'
-  inputs:
-    secureFile: 'azure_ssh_key'
-
-- task: DownloadSecureFile@1
-  displayName: 'Download secure file: public ssh key'
-  inputs:
-    secureFile: 'azure_ssh_key_public'
-
-- script: |
-    chmod 400 $(Agent.TempDirectory)/azure_ssh_key
-
-    echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-    sudo apt-get update && sudo apt-get install google-cloud-sdk
-
-    gcloud --quiet auth activate-service-account --key-file=$(Agent.TempDirectory)/azure-gcp.json
-    gcloud --quiet config set project focal-freedom-236620
-
-    # set env var GOOGLE_APPLICATION_CREDENTIALS for terraform to pick up for GCP authentication
-    echo "##vso[task.setvariable variable=GOOGLE_APPLICATION_CREDENTIALS]$(Agent.TempDirectory)/azure-gcp.json"
-  displayName: 'Install and init gcloud'
-
-- task: TerraformInstaller@0
-  inputs:
-    terraformVersion: '0.11.14'
-
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    cp $(Agent.TempDirectory)/ecn_viewer_config.json $(System.DefaultWorkingDirectory)/src/ControllerProvider/controller.json
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-
-- script: |
-    terraform init
-  displayName: 'Init terraform'
-  workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
-
-- script: |
-    terraform destroy -auto-approve \
-    -var 'gce_ssh_private_key_file=$(Agent.TempDirectory)/azure_ssh_key' \
-    -var 'gce_ssh_pub_key_file=$(Agent.TempDirectory)/azure_ssh_key_public' \
-  displayName: 'destroy'
-  workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
-
-- script: |
-    terraform apply -auto-approve \
-    -var 'gce_ssh_private_key_file=$(Agent.TempDirectory)/azure_ssh_key' \
-    -var 'gce_ssh_pub_key_file=$(Agent.TempDirectory)/azure_ssh_key_public' \
-  displayName: 'spin up instance '
-  workingDirectory: $(System.DefaultWorkingDirectory)/infrastructure
-
-- script: |
-    ssh -i $(Agent.TempDirectory)/azure_ssh_key root@34.94.240.119 'cd /root/apps/ecn/ && PORT=5555 pm2 start server/index.js'
-  displayName: 'deploy app'
+      - script: |
+          npm audit --production
+        displayName: Check for vulnerabilities
+- stage: Test
+  jobs:
+  - template: azure-templates/test.yml
+    parameters:
+      nodeVersion: '8'
+  - template: azure-templates/test.yml
+    parameters:
+      nodeVersion: '10'
+  - template: azure-templates/test.yml
+    parameters:
+      nodeVersion: '12'

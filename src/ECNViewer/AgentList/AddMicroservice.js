@@ -79,24 +79,26 @@ const randomString = () => Math.random().toString(36).replace(/[^a-z]+/g, '').su
 
 const generateRouteSelect = (current, list, label, onChange) => {
   const isNewMsvc = get(current, '_new', false)
-  return (<Autocomplete
-    label={label}
-    placeholder='Select a microservice'
-    onChange={onChange}
-    disabled={isNewMsvc}
-    selectedItem={isNewMsvc ? list[list.length - 1] : current}
-    maxSuggestions={20}
-    suggestions={list.filter(e => !isNewMsvc ? !!e.uuid : true).map(m => ({
-      ...m,
-      label: m.name
-    }))}
-  />)
+  return (
+    <Autocomplete
+      label={label}
+      placeholder='Select a microservice'
+      onChange={onChange}
+      disabled={isNewMsvc}
+      selectedItem={isNewMsvc ? list[list.length - 1] : current}
+      maxSuggestions={20}
+      suggestions={list.filter(e => !isNewMsvc ? !!e.uuid : true).map(m => ({
+        ...m,
+        label: m.name
+      }))}
+    />
+  )
 }
 
 export default function AddMicroservice (props) {
   const classes = useStyles()
-  const [ flows, setFlows ] = React.useState([])
-  const [ catalog, setCatalog ] = React.useState([])
+  const [flows, setFlows] = React.useState([])
+  const [catalog, setCatalog] = React.useState([])
   // Due to polling, the component is re-rendering every 3 sec.
   // To avoid JSON edit popups to be closed every 3 sec,
   // we need to keep the config and the JSX ReactJson component as ref
@@ -104,10 +106,10 @@ export default function AddMicroservice (props) {
   const ReactJsonRef = React.useRef(
     <ReactJson src={config.current} name={false} onAdd={(e) => { config.current = e.updated_src }} onEdit={(e) => { config.current = e.updated_src }} onDelete={(e) => { config.current = e.updated_src }} />
   )
-  const [ msvc, setMsvc ] = React.useState(initMsvc)
-  const [ newFlow, setNewFlow ] = React.useState(initFlow)
-  const [ newCatalogItem, setNewCatalogItem ] = React.useState(() => initCatalogItem(get(props, 'target.fogTypeId', 1)))
-  const [ routes, setRoutes ] = React.useState([])
+  const [msvc, setMsvc] = React.useState(initMsvc)
+  const [newFlow, setNewFlow] = React.useState(initFlow)
+  const [newCatalogItem, setNewCatalogItem] = React.useState(() => initCatalogItem(get(props, 'target.fogTypeId', 1)))
+  const [routes, setRoutes] = React.useState([])
 
   const agent = props.target
   const { pushFeedback } = React.useContext(FeedbackContext)
@@ -188,7 +190,7 @@ export default function AddMicroservice (props) {
       const response = await request('/api/v3/microservices', {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -221,7 +223,7 @@ export default function AddMicroservice (props) {
       const response = await request('/api/v3/flow', {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(newFlow)
@@ -252,7 +254,7 @@ export default function AddMicroservice (props) {
       const response = await request('/api/v3/catalog/microservices', {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(catalogItem)
@@ -281,7 +283,7 @@ export default function AddMicroservice (props) {
       const response = await request(`/api/v3//microservices/${from}/routes/${to}`, {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: ''
@@ -341,7 +343,7 @@ export default function AddMicroservice (props) {
     }])
 
   return (
-    <React.Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
@@ -361,31 +363,32 @@ export default function AddMicroservice (props) {
               }])}
             />
           </FormControl>
-          {msvc.flow.id === -1 && <Paper className={classes.newPaper}>
-            <Typography variant='subtitle2'>New flow</Typography>
-            <TextField
-              id='name'
-              label='Name'
-              required
-              onChange={handleChange('name', setNewFlow, newFlow)}
-              value={newFlow.name}
-              fullWidth
-              className={classes.textField}
-              margin='normal'
-            />
-            <FormControlLabel
-              style={{ color: 'rgba(0, 0, 0, 0.54)' }}
-              control={
-                <Checkbox
-                  checked={newFlow.isActivated}
-                  onChange={e => setNewFlow({ ...newFlow, isActivated: e.target.checked })}
-                  value='checkedB'
-                  color='primary'
-                />
-              }
-              label='Active'
-            />
-          </Paper>}
+          {msvc.flow.id === -1 &&
+            <Paper className={classes.newPaper}>
+              <Typography variant='subtitle2'>New flow</Typography>
+              <TextField
+                id='name'
+                label='Name'
+                required
+                onChange={handleChange('name', setNewFlow, newFlow)}
+                value={newFlow.name}
+                fullWidth
+                className={classes.textField}
+                margin='normal'
+              />
+              <FormControlLabel
+                style={{ color: 'rgba(0, 0, 0, 0.54)' }}
+                control={
+                  <Checkbox
+                    checked={newFlow.isActivated}
+                    onChange={e => setNewFlow({ ...newFlow, isActivated: e.target.checked })}
+                    value='checkedB'
+                    color='primary'
+                  />
+                }
+                label='Active'
+              />
+            </Paper>}
         </Grid>
         <Grid item xs={12} sm={6}>
           <FormControl className={classes.formControl}>
@@ -405,28 +408,29 @@ export default function AddMicroservice (props) {
               }])}
             />
           </FormControl>
-          {msvc.catalog.id === -1 && <Paper className={classes.newPaper}>
-            <Typography variant='subtitle2'>New image</Typography>
-            <TextField
-              id='name'
-              label='Name'
-              required
-              onChange={e => setNewCatalogItem({
-                ...newCatalogItem,
-                images: [{
-                  ...newCatalogItem.images[0],
-                  containerImage: e.target.value
-                }]
-              })}
-              value={newCatalogItem.images[0].containerImage}
-              fullWidth
-              className={classes.textField}
-              margin='normal'
-            />
-          </Paper>}
+          {msvc.catalog.id === -1 &&
+            <Paper className={classes.newPaper}>
+              <Typography variant='subtitle2'>New image</Typography>
+              <TextField
+                id='name'
+                label='Name'
+                required
+                onChange={e => setNewCatalogItem({
+                  ...newCatalogItem,
+                  images: [{
+                    ...newCatalogItem.images[0],
+                    containerImage: e.target.value
+                  }]
+                })}
+                value={newCatalogItem.images[0].containerImage}
+                fullWidth
+                className={classes.textField}
+                margin='normal'
+              />
+            </Paper>}
         </Grid>
       </Grid>
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <TextField
             id='name'
@@ -441,14 +445,14 @@ export default function AddMicroservice (props) {
         </Grid>
       </Grid>
       <Divider className={classes.divider} />
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography style={{ color: 'rgba(0, 0, 0, 0.54)' }} variant='subtitle1'>Configuration</Typography><br />
           {ReactJsonRef.current}
         </Grid>
       </Grid>
       <Divider className={classes.divider} />
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography style={{ color: 'rgba(0, 0, 0, 0.54)' }} variant='subtitle1'>Volumes</Typography><br />
           {msvc.volumeMappings.map((v, idx) =>
@@ -479,7 +483,7 @@ export default function AddMicroservice (props) {
                       margin='dense'
                     />
                   </Grid>
-                  <Grid item xs={12} sm={4} >
+                  <Grid item xs={12} sm={4}>
                     <FormControl className={classes.formControl} style={{ marginTop: '5px' }}>
                       <InputLabel htmlFor='select-flow'>Access mode</InputLabel>
                       <Select
@@ -504,13 +508,13 @@ export default function AddMicroservice (props) {
         </Grid>
       </Grid>
       <Divider className={classes.divider} />
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography style={{ color: 'rgba(0, 0, 0, 0.54)' }} variant='subtitle1'>Ports</Typography><br />
           {msvc.ports.map((p, idx) =>
             <Grid container spacing={2} key={idx} style={{ alignItems: 'flex-end' }}>
               <Grid item xs={11}>
-                <Grid container spacing={2} >
+                <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
                       id='host'
@@ -548,13 +552,13 @@ export default function AddMicroservice (props) {
         </Grid>
       </Grid>
       <Divider className={classes.divider} />
-      <Grid container spacing={2} >
+      <Grid container spacing={2}>
         <Grid item xs={12}>
           <Typography style={{ color: 'rgba(0, 0, 0, 0.54)' }} variant='subtitle1'>Routes</Typography><br />
           {routes.map((r, idx) =>
             <Grid container spacing={2} key={idx} style={{ alignItems: 'flex-end' }}>
               <Grid item xs={11}>
-                <Grid container spacing={2} style={{ alignItems: 'flex-end' }} >
+                <Grid container spacing={2} style={{ alignItems: 'flex-end' }}>
                   <Grid item xs={12} sm={5}>
                     {generateRouteSelect(r.from, routeList, 'From', selected => setRoutes([
                       ...routes.slice(0, idx),
@@ -566,15 +570,17 @@ export default function AddMicroservice (props) {
                     ]))}
                   </Grid>
                   <Grid item xs={2} className={classes.rowIcon}>
-                    <SwapIcon style={{ cursor: 'pointer' }} onClick={() => setRoutes([
-                      ...routes.slice(0, idx),
-                      {
-                        ...r,
-                        from: r.to,
-                        to: r.from
-                      },
-                      ...routes.slice(idx + 1)
-                    ])} />
+                    <SwapIcon
+                      style={{ cursor: 'pointer' }} onClick={() => setRoutes([
+                        ...routes.slice(0, idx),
+                        {
+                          ...r,
+                          from: r.to,
+                          to: r.from
+                        },
+                        ...routes.slice(idx + 1)
+                      ])}
+                    />
                   </Grid>
                   <Grid item xs={12} sm={5}>
                     {generateRouteSelect(r.to, routeList, 'To', selected => setRoutes([
@@ -617,6 +623,6 @@ export default function AddMicroservice (props) {
           </Button>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   )
 }

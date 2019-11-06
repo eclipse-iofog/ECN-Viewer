@@ -34,7 +34,7 @@ export default function ConnectNode (props) {
     const response = await request('/api/v3/iofog', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(agent)
@@ -57,13 +57,13 @@ export default function ConnectNode (props) {
   }
 
   const linkAgent = async (agent, controller) => {
-    const response = await window.fetch(`api/agentApi/v2/config`, {
+    const response = await window.fetch('api/agentApi/v2/config', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': agent.key,
-        'ioFogApi': `http://${agent.ip}:${agent.port}`
+        Authorization: agent.key,
+        ioFogApi: `http://${agent.ip}:${agent.port}`
       },
       body: JSON.stringify({ 'controller-url': `http://${controller.ip}:${controller.port}/api/v3/` })
     })
@@ -75,13 +75,13 @@ export default function ConnectNode (props) {
   }
 
   const provisionAgent = async (agent, key) => {
-    const response = await window.fetch(`api/agentApi/v2/provision`, {
+    const response = await window.fetch('api/agentApi/v2/provision', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': agent.key,
-        'ioFogApi': `http://${agent.ip}:${agent.port}`
+        Authorization: agent.key,
+        ioFogApi: `http://${agent.ip}:${agent.port}`
       },
       body: JSON.stringify({ 'provisioning-key': key })
     })
@@ -105,7 +105,7 @@ export default function ConnectNode (props) {
   }
 
   return (
-    <React.Fragment>
+    <>
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -162,6 +162,6 @@ export default function ConnectNode (props) {
           </Button>
         </Grid>
       </Grid>
-    </React.Fragment>
+    </>
   )
 }
