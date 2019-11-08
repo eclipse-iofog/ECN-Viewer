@@ -22,7 +22,7 @@ export default function ActiveResources (props) {
       <div className={classes.summary}>
         <Paper>
           <Typography variant='h3'>{loading ? 0 : activeFlows.length}</Typography>
-          <Typography variant='subtitle1'>Flows</Typography>
+          <Typography variant='subtitle1'>Applications</Typography>
         </Paper>
         <Paper>
           <Typography variant='h3'>{loading ? 0 : activeAgents.length}</Typography>

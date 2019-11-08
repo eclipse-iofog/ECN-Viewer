@@ -188,11 +188,6 @@ export default function Context (props) {
 
   useEffect(() => {
     const effect = async () => {
-      try {
-        await authenticate(initState.controller)
-      } catch (e) {
-        dispatch({ type: actions.ERROR, data: e })
-      }
       dispatch({ type: actions.UPDATE, data: await updateControllerInfo(initState.controller) })
     }
     effect()
