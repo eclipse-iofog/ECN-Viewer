@@ -186,14 +186,17 @@ export default function Context (props) {
     dispatch({ type: actions.UPDATE, data: await updateControllerInfo(newController) })
   }
 
-  useEffect(() => (async () => {
-    try {
-      await authenticate(initState.controller)
-    } catch (e) {
-      dispatch({ type: actions.ERROR, data: e })
+  useEffect(() => {
+    const effect = async () => {
+      try {
+        await authenticate(initState.controller)
+      } catch (e) {
+        dispatch({ type: actions.ERROR, data: e })
+      }
+      dispatch({ type: actions.UPDATE, data: await updateControllerInfo(initState.controller) })
     }
-    dispatch({ type: actions.UPDATE, data: await updateControllerInfo(initState.controller) })
-  })(), [])
+    effect()
+  }, [])
 
   return (
     <ControllerContext.Provider value={{ controller, updateController, request }}>

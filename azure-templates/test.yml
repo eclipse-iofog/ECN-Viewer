@@ -14,7 +14,7 @@ jobs:
     displayName: Install dependencies
 
   - script: |
-      echo 'npm test'
+      npm test
     displayName: 'unit tests'
 
   - script: |

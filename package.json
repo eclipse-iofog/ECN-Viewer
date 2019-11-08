@@ -33,7 +33,7 @@
     "start-dev": "cp controller_dev.json ./src/ControllerProvider/controller.json && concurrently 'PORT=5555 nodemon server/index.js' 'react-scripts start'",
     "prod": "node server/index.js",
     "build": "cp controller_default.json ./src/ControllerProvider/controller.json && react-scripts build",
-    "test": "react-scripts test",
+    "test": "CI=true react-scripts test",
     "eject": "react-scripts eject",
     "standard": "standard"
   },
@@ -56,10 +56,16 @@
     ]
   },
   "devDependencies": {
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-react": "^7.7.0",
+    "babel-jest": "^24.9.0",
     "concurrently": "5.0.0",
+    "jest": "^24.9.0",
     "node-sass": "4.13.0",
     "nodemon": "1.19.4",
     "react-scripts": "3.2.0",
+    "react-test-renderer": "^16.11.0",
+    "sass-loader": "^8.0.0",
     "standard": "14.3.1"
   }
 }
