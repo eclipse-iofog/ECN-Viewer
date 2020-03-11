@@ -65,6 +65,7 @@ export default function AddCatalogItemForm (props) {
           <TextField
             id='x86'
             label='x86'
+            helperText='image to be used on x86 edge nodes'
             onChange={handleImageChange('x86')}
             value={newItem.images.x86}
             fullWidth
@@ -77,6 +78,7 @@ export default function AddCatalogItemForm (props) {
           <TextField
             id='arm'
             label='ARM'
+            helperText='image to be used on ARM edge nodes'
             onChange={handleImageChange('arm')}
             value={newItem.images.arm}
             fullWidth
@@ -115,6 +117,20 @@ export default function AddCatalogItemForm (props) {
             label='Category'
             onChange={handleChange('category')}
             value={newItem.category}
+            fullWidth
+            multiline
+            rowsMax='4'
+            className={classes.textField}
+            margin='normal'
+            variant='outlined'
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            id='publisher'
+            label='Publisher'
+            onChange={handleChange('publisher')}
+            value={newItem.publisher}
             fullWidth
             multiline
             rowsMax='4'

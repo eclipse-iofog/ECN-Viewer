@@ -23,26 +23,25 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const mapImages = (images) => {
-  const map = {
-    x86: '',
-    arm: ''
-  }
+  const supportedPlatforms = []
   for (const img of images) {
-    switch (img.fogTypeId) {
-      case 1:
-        map.x86 = img.containerImage
-        break
-      case 2:
-        map.arm = img.containerImage
-        break
-      default:
-        break
+    if (img.containerImage) {
+      switch (img.fogTypeId) {
+        case 1:
+          supportedPlatforms.push('x86')
+          break
+        case 2:
+          supportedPlatforms.push('arm')
+          break
+        default:
+          break
+      }
     }
   }
-  return map
+  return supportedPlatforms
 }
 const mapCatalogItem = (item, registries) => {
-  item.images = mapImages(item.images)
+  item.supportedPlatforms = mapImages(item.images)
   item.registry = registries.find(r => r.id === item.registryId)
   if (item.configExample) {
     try {
@@ -167,7 +166,7 @@ export default function Catalog () {
     <>
       <div className={classes.container}>
         <div className={classes.titleRow}>
-          <Typography variant='h5'>Catalog</Typography>
+          <Typography variant='h5'>ECN Microservices Catalog</Typography>
         </div>
         <CatalogTable {...{ loading: fetching, openMenu, catalog, onAdd: () => setOpenAddCatalogItemModal(true) }} />
       </div>

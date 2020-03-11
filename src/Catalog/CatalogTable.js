@@ -86,8 +86,9 @@ export default function CatalogTable (props) {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell align='right'>x86</TableCell>
-              <TableCell align='right'>ARM</TableCell>
+              <TableCell align='right'>Description</TableCell>
+              <TableCell align='right'>Supported platforms</TableCell>
+              <TableCell align='right'>Publisher</TableCell>
               <TableCell align='right'>Registry</TableCell>
               <TableCell align='right'>Category</TableCell>
               <TableCell align='right' />
@@ -101,8 +102,9 @@ export default function CatalogTable (props) {
                   <TableCell component='th' scope='row'>
                     {row.name}
                   </TableCell>
-                  <TableCell align='right'>{row.images.x86}</TableCell>
-                  <TableCell align='right'>{row.images.arm}</TableCell>
+                  <TableCell align='right'>{row.description}</TableCell>
+                  <TableCell align='right'>{row.supportedPlatforms.join(', ')}</TableCell>
+                  <TableCell align='right'>{row.publisher}</TableCell>
                   <TableCell align='right'>{row.registry.url}</TableCell>
                   <TableCell align='right'>{row.category}</TableCell>
                   <TableCell align='right' className={classes.pointer}>
