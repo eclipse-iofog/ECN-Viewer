@@ -10,14 +10,11 @@ import { makeStyles } from '@material-ui/styles'
 
 import { statusColor, msvcStatusColor } from '../utils'
 import Modal from '../../Utils/Modal'
-import Confirm from '../../Utils/Confirm'
-import { FeedbackContext } from '../../Utils/FeedbackContext'
 
 import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
 import SimpleTabs from './Tabs'
-import { ControllerContext } from '../../ControllerProvider'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
@@ -72,15 +69,12 @@ const useStyles = makeStyles(theme => ({
 
 export default function AgentList (props) {
   const classes = useStyles()
-  const [openRemoveAgentConfirm, setOpenRemoveAgentConfirm] = React.useState(false)
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [openConnectNodeModal, setOpenConnectNodeModal] = React.useState(false)
   const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
   const [openRemoveMicroserviceModal, setOpenRemoveMicroserviceModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
   const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom, loading } = props
-  const feedbackContext = React.useContext(FeedbackContext)
-  const { request } = React.useContext(ControllerContext)
 
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
@@ -97,27 +91,6 @@ export default function AgentList (props) {
   //   handleCloseMenu()
   // }
 
-  // const openRemoveAgent = () => {
-  //   setOpenRemoveAgentConfirm(true)
-  //   handleCloseMenu()
-  // }
-
-  const removeAgent = async (iofog) => {
-    try {
-      const response = await request(`/api/v3/iofog/${iofog.uuid}`, {
-        method: 'DELETE'
-      })
-      if (!response.ok) {
-        feedbackContext.pushFeedback({ message: `Failed to remove node: ${response.statusText}`, type: 'error' })
-      } else {
-        feedbackContext.pushFeedback({ message: 'Agent removed!', type: 'success' })
-      }
-      setOpenRemoveAgentConfirm(false)
-    } catch (e) {
-      feedbackContext.pushFeedback({ message: e.message, type: 'error' })
-    }
-  }
-
   return (
     <>
       <List
@@ -126,7 +99,6 @@ export default function AgentList (props) {
             <div className={classes.listTitle}>
               <div>
                 <Typography variant='h5'>Agents - <small>{loading ? 0 : agents.length} nodes</small></Typography>
-                {/* <small className={classes.link} onClick={() => setOpenConnectNodeModal(!openConnectNodeModal)}>+ Add node</small> */}
               </div>
               <div>
                 <small className={classes.link} onClick={() => setAutozoom(true)}>See all ECN</small>
@@ -146,20 +118,33 @@ export default function AgentList (props) {
               </ListItemAvatar>
               <ListItemText primary={a.name} secondary={`${msvcs.length} Microservices`} />
               <div className={classes.msvcChipList}>
-                {msvcs.map((m, idx) => (
-                  <React.Fragment key={m.uuid}>
+                {msvcs.length > 4
+                  ? (
                     <Chip
                       size='small'
-                      label={m.name}
+                      label={`${msvcs.length} microservices`}
                       style={{
-                        '--mTop': idx ? '2px' : '0px',
-                        '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING' && m.flowActive) ? 'RUNNING' : 'UNKNOWN']
+                        '--mTop': '0px',
+                        '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING') ? 'RUNNING' : 'UNKNOWN']
                       }}
                       className={classes.msvcChip}
-                      title={m.name}
+                      title={`${msvcs.length} microservices`}
                     />
-                  </React.Fragment>
-                ))}
+                  )
+                  : msvcs.map((m, idx) => (
+                    <React.Fragment key={m.uuid}>
+                      <Chip
+                        size='small'
+                        label={m.name}
+                        style={{
+                          '--mTop': idx ? '2px' : '0px',
+                          '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING' && m.flowActive) ? 'RUNNING' : 'UNKNOWN']
+                        }}
+                        className={classes.msvcChip}
+                        title={m.name}
+                      />
+                    </React.Fragment>
+                  ))}
               </div>
               <MoreIcon onClick={openMenu} />
             </ListItem>
@@ -221,16 +206,6 @@ export default function AgentList (props) {
           }}
         />
       </Modal>
-      <Confirm
-        {...{
-          open: openRemoveAgentConfirm,
-          title: `Remove agent: ${agent.name}`,
-          onClose: () => setOpenRemoveAgentConfirm(false),
-          onConfirm: () => removeAgent(agent)
-        }}
-      >
-        <Typography variant='h5'>Confirm removal of agent UUID: {agent.uuid}</Typography>
-      </Confirm>
       <Menu
         id='agent-menu'
         anchorEl={menuAnchorEl}
@@ -239,7 +214,6 @@ export default function AgentList (props) {
         onClose={handleCloseMenu}
       >
         <MenuItem onClick={openDetails}>Details</MenuItem>
-        {/* <MenuItem onClick={openRemoveAgent}>Remove agent</MenuItem> */}
         {/* <Divider />
         <MenuItem onClick={openAddMicroservice}>Add microservice</MenuItem>
         <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem> */}

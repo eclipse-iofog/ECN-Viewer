@@ -280,7 +280,7 @@ export default function AddMicroservice (props) {
     try {
       const from = get(route, 'from.uuid')
       const to = get(route, 'to.uuid')
-      const response = await request(`/api/v3//microservices/${from}/routes/${to}`, {
+      const response = await request(`/api/v3/microservices/${from}/routes/${to}`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',

@@ -4,10 +4,11 @@ import Avatar from '@material-ui/core/Avatar'
 import SearchIcon from '@material-ui/icons/Search'
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined'
 import HomeIcon from '@material-ui/icons/HomeOutlined'
-import FakeIcon1 from '@material-ui/icons/GraphicEqOutlined'
+import CatalogIcon from '@material-ui/icons/GraphicEqOutlined'
 import SettingsIcon from '@material-ui/icons/SettingsOutlined'
 
 import ECNViewer from '../ECNViewer'
+import Catalog from '../Catalog'
 import Modal from '../Utils/Modal'
 import Config from '../Config'
 import { ControllerContext } from '../ControllerProvider'
@@ -107,18 +108,18 @@ export default function Layout () {
                 <HomeIcon />
               </Avatar>
             </NavLink>
-            {/* <NavLink to='/routes' > */}
-            <Avatar className={classes.latIcons}>
-              <FakeIcon1 />
-            </Avatar>
-            {/* </NavLink> */}
+            <NavLink to='/catalog'>
+              <Avatar className={classes.latIcons}>
+                <CatalogIcon />
+              </Avatar>
+            </NavLink>
             <Avatar className={classes.latIcons}>
               <SettingsIcon onClick={() => setSettingsOpen(!settingsOpen)} />
             </Avatar>
           </div>
           <div className='content'>
             <Switch>
-              {/* <Route path='/routes' component={() => 'Hello agents'} /> */}
+              <Route path='/catalog' component={Catalog} />
               <Route path='/overview' component={ECNViewer} />
               <Route component={() => <Redirect to='/overview' />} />
             </Switch>
