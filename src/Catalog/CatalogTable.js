@@ -25,8 +25,9 @@ const useStyles = makeStyles(theme => ({
 
 const filterFields = [
   'name',
-  'images.x86',
-  'images.arm',
+  'description',
+  'publisher',
+  'supportedPlatforms',
   'category',
   'registry.url'
 ]
@@ -95,7 +96,7 @@ export default function CatalogTable (props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {loading ? <TableRow><TableCell colSpan={6}><Skeleton height={50} count={5} /></TableCell></TableRow> : filteredCatalog
+            {loading ? <TableRow><TableCell colSpan={7}><Skeleton height={50} count={5} /></TableCell></TableRow> : filteredCatalog
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(row => (
                 <TableRow key={row.name}>
