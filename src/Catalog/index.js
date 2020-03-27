@@ -1,7 +1,8 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 import ReactJson from 'react-json-view'
-import { Menu, MenuItem, Divider, Typography } from '@material-ui/core'
+import yaml from 'js-yaml'
+import { Avatar, Menu, MenuItem, Divider, Typography } from '@material-ui/core'
 
 import { ControllerContext } from '../ControllerProvider'
 import { FeedbackContext } from '../Utils/FeedbackContext'
@@ -9,13 +10,23 @@ import Modal from '../Utils/Modal'
 import CatalogTable from './CatalogTable'
 import AddCatalogItemForm from './AddCatalogItemForm'
 import Confirm from '../Utils/Confirm'
+import FileDrop from '../Utils/FileDrop'
+
+import lget from 'lodash/get'
 
 const useStyles = makeStyles(theme => ({
   pointer: {
     cursor: 'pointer'
   },
+  avatarContainer: {
+    backgroundColor: theme.colors.chromium
+  },
   container: {
     padding: '10px 50px 10px 30px'
+  },
+  flexColumn: {
+    display: 'flex',
+    flexDirection: 'column'
   },
   titleRow: {
     marginBottom: '30px'
@@ -52,11 +63,49 @@ const mapCatalogItem = (item, registries) => {
   return item
 }
 
+const getRegistryIdFromRegistry = (registry) => {
+  if (registry === 'remote') {
+    return 1
+  }
+  if (registry === 'local') {
+    return 2
+  }
+  return +(registry)
+}
+
+const parseCatalogItem = (doc) => {
+  if (doc.apiVersion !== 'iofog.org/v2') {
+    return [{}, `Invalid API Version ${doc.apiVersion}, current version is iofog.org/v2`]
+  }
+  if (doc.kind !== 'CatalogItem') {
+    return [{}, `Invalid kind ${doc.kind}`]
+  }
+  if (!doc.metadata || !doc.spec) {
+    return [{}, 'Invalid YAML format']
+  }
+  const catalogItem = {
+    name: lget(doc, 'metadata.name', lget(doc, 'spec.name', undefined)),
+    images: {
+      x86: lget(doc, 'spec.x86', ''),
+      arm: lget(doc, 'spec.arm', '')
+    },
+    description: lget(doc, 'spec.description', ''),
+    publisher: lget(doc, 'spec.publisher', ''),
+    category: lget(doc, 'spec.category', ''),
+    registry: lget(doc, 'spec.registry', ''),
+    configExample: lget(doc, 'spec.configExample', {})
+  }
+
+  catalogItem.registryId = catalogItem.registry ? getRegistryIdFromRegistry(catalogItem.registry) : 1
+  return [catalogItem]
+}
+
 export default function Catalog () {
   const classes = useStyles()
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [openRemoveConfirm, setOpenRemoveConfirm] = React.useState(false)
   const [openAddCatalogItemModal, setOpenAddCatalogItemModal] = React.useState(false)
+  const [newCatalogItem, setNewCatalogItem] = React.useState(null)
   const [fetching, setFetching] = React.useState(true)
   const [loading, setLoading] = React.useState(false)
   const [catalog, setCatalog] = React.useState([])
@@ -123,6 +172,9 @@ export default function Catalog () {
         containerImage: item.images.arm
       }]
     }
+    if (newItem.configExample && typeof newItem.configExample === typeof ({})) {
+      newItem.configExample = JSON.stringify(newItem.configExample)
+    }
     setLoading(true)
     const response = await request('/api/v3/catalog/microservices', {
       method: 'POST',
@@ -162,13 +214,51 @@ export default function Catalog () {
     }
   }
 
+  const readCatalogItemFile = async (item) => {
+    const file = item.files[0]
+    if (file) {
+      const reader = new window.FileReader()
+
+      reader.onload = function (evt) {
+        console.log({ evt })
+        try {
+          const doc = yaml.safeLoad(evt.target.result)
+          const [catalogItem, err] = parseCatalogItem(doc)
+          if (err) {
+            return pushFeedback({ message: err, type: 'error' })
+          }
+          setNewCatalogItem(catalogItem)
+          setOpenAddCatalogItemModal(true)
+        } catch (e) {
+          console.error({ e })
+          pushFeedback({ message: 'Could not parse the file', type: 'error' })
+        }
+      }
+
+      reader.onerror = function (evt) {
+        pushFeedback({ message: evt, type: 'error' })
+      }
+
+      reader.readAsText(file, 'UTF-8')
+    }
+  }
+
   return (
     <>
       <div className={classes.container}>
         <div className={classes.titleRow}>
           <Typography variant='h5'>ECN Microservices Catalog</Typography>
         </div>
-        <CatalogTable {...{ loading: fetching, openMenu, catalog, onAdd: () => setOpenAddCatalogItemModal(true) }} />
+        <CatalogTable {...{ loading: fetching, openMenu, catalog }} />
+        <div>
+          <FileDrop {...{ onDrop: readCatalogItemFile }}>
+            <div className={classes.flexColumn}>
+              <span>Drag a file here</span>
+              <span>---</span>
+              <Avatar style={{ margin: 'auto' }} className={`${classes.avatarContainer} ${classes.pointer}`} onClick={() => setOpenAddCatalogItemModal(true)}>+</Avatar>
+            </div>
+          </FileDrop>
+        </div>
       </div>
       <Modal
         {...{
@@ -189,9 +279,11 @@ export default function Catalog () {
         <AddCatalogItemForm {...{
           loading,
           registries,
+          newCatalogItem,
           onSave: async (item) => {
             try {
               await addCatalogItem(item)
+              setNewCatalogItem(null)
               setOpenAddCatalogItemModal(false)
             } catch (e) {
               pushFeedback({ message: e.message, type: 'error' })

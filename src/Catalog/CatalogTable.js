@@ -2,7 +2,7 @@ import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 
 import Skeleton from 'react-loading-skeleton'
-import { Avatar, TextField, InputAdornment, Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
+import { TextField, InputAdornment, Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import SearchIcon from '@material-ui/icons/Search'
@@ -34,7 +34,7 @@ const filterFields = [
 
 export default function CatalogTable (props) {
   const classes = useStyles()
-  const { loading, openMenu, catalog, onAdd } = props
+  const { loading, openMenu, catalog } = props
   const [filter, setFilter] = React.useState('')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -61,7 +61,6 @@ export default function CatalogTable (props) {
   return (
     <>
       <div className={`${classes.tableActions} ${classes.pointer}`}>
-        <Avatar className={classes.avatarContainer} onClick={() => onAdd()}>+</Avatar>
         <TextField
           className={classes.margin}
           id='input-with-icon-textfield'

@@ -27,7 +27,8 @@ export default function AddCatalogItemForm (props) {
     registryId: 1,
     name: '',
     description: '',
-    category: ''
+    category: '',
+    ...props.newCatalogItem
   })
   const { onSave, loading, registries } = props
   const handleChange = (key) => (e) => setNewItem({ ...newItem, [key]: e.target.value })

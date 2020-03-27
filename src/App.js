@@ -1,6 +1,8 @@
 import React from 'react'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
+import Backend from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd'
 
 import Layout from './Layout'
 
@@ -15,11 +17,13 @@ function App () {
     <>
       <CssBaseline />
       <ThemeContext>
-        <ControllerContext>
-          <FeedbackContext>
-            <Layout />
-          </FeedbackContext>
-        </ControllerContext>
+        <DndProvider backend={Backend}>
+          <ControllerContext>
+            <FeedbackContext>
+              <Layout />
+            </FeedbackContext>
+          </ControllerContext>
+        </DndProvider>
       </ThemeContext>
     </>
   )
