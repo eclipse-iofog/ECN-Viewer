@@ -50,7 +50,7 @@ export default function CatalogTable (props) {
 
   const filterItem = (item) => {
     for (const field of filterFields) {
-      if (lget(item, field, '').toLowerCase().includes(filter)) { return true }
+      if (lget(item, field, '').toString().toLowerCase().includes(filter)) { return true }
     }
     return false
   }

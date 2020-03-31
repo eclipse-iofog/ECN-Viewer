@@ -7,7 +7,7 @@
 # Import our helper functions
 . scripts/utils.sh
 
-VERSION="1.0.4"
+VERSION="1.0.5"
 
 prettyTitle "Edgeworx ioFog ECN Viewer Packaging"
 echoInfo "Beginning packaging process"
