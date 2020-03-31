@@ -1,22 +1,39 @@
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 
-export function useInterval (callback, delay) {
-  const savedCallback = useRef()
+function useRecursiveTimeout (
+  callback,
+  delay
+) {
+  const savedCallback = useRef(callback)
 
   // Remember the latest callback.
   useEffect(() => {
     savedCallback.current = callback
   }, [callback])
 
-  // Set up the interval.
+  // Set up the timeout loop.
   useEffect(() => {
+    let id
     function tick () {
-      savedCallback.current()
+      const ret = savedCallback.current()
+
+      if (ret instanceof Promise) {
+        ret.then(() => {
+          if (delay !== null) {
+            id = setTimeout(tick, delay)
+          }
+        })
+      } else {
+        if (delay !== null) {
+          id = setTimeout(tick, delay)
+        }
+      }
     }
     if (delay !== null) {
-      savedCallback.current()
-      const id = setInterval(tick, delay)
-      return () => clearInterval(id)
+      id = setTimeout(tick, delay)
+      return () => id && clearTimeout(id)
     }
   }, [delay])
 }
+
+export default useRecursiveTimeout

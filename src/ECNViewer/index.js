@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useInterval } from '../hooks/useInterval'
+import useRecursiveTimeout from '../hooks/useInterval'
 import { find, groupBy, get, isFinite } from 'lodash'
 
 import Divider from '@material-ui/core/Divider'
@@ -107,12 +107,14 @@ export default function ECNViewer () {
   const update = async () => {
     const agentsResponse = await request('/api/v3/iofog-list')
     if (!agentsResponse.ok) {
-      throw new Error(agentsResponse.statusText)
+      setError({ message: agentsResponse.statusText })
+      return
     }
     const agents = (await agentsResponse.json()).fogs
     const flowsResponse = await request('/api/v3/flow')
     if (!flowsResponse.ok) {
-      throw new Error(agentsResponse.statusText)
+      setError({ message: agentsResponse.statusText })
+      return
     }
     const flows = (await flowsResponse.json()).flows
 
@@ -120,7 +122,8 @@ export default function ECNViewer () {
     for (const flow of flows) {
       const microservicesResponse = await request(`/api/v3/microservices?flowId=${flow.id}`)
       if (!flowsResponse.ok) {
-        throw new Error(agentsResponse.statusText)
+        setError({ message: agentsResponse.statusText })
+        return
       }
       microservices = microservices.concat((await microservicesResponse.json()).microservices)
     }
@@ -133,22 +136,7 @@ export default function ECNViewer () {
     dispatch({ type: actions.UPDATE, data: { agents, flows, microservices } })
   }
 
-  React.useEffect(() => {
-    let id
-    async function tick () {
-      try {
-        await update()
-      } catch (e) {
-        setError({ message: e.toString() })
-      } finally {
-        id = setTimeout(tick, timeout)
-      }
-    }
-    if (timeout !== null) {
-      id = setTimeout(tick, timeout)
-      return () => clearTimeout(id)
-    }
-  }, [timeout])
+  useRecursiveTimeout(update, timeout)
 
   const setAgent = a => dispatch({ type: actions.SET_AGENT, data: a })
 
