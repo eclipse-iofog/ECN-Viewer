@@ -98,6 +98,7 @@ export default function ECNViewer () {
     }
   })
   const { controller: controllerInfo, request } = React.useContext(ControllerContext)
+  const timeout = +controllerInfo.refresh || 3000
   React.useEffect(() => {
     setLoading(true)
     setError(null)
@@ -106,14 +107,12 @@ export default function ECNViewer () {
   const update = async () => {
     const agentsResponse = await request('/api/v3/iofog-list')
     if (!agentsResponse.ok) {
-      setError({ message: agentsResponse.statusText })
-      return
+      throw new Error(agentsResponse.statusText)
     }
     const agents = (await agentsResponse.json()).fogs
     const flowsResponse = await request('/api/v3/flow')
     if (!flowsResponse.ok) {
-      setError({ message: flowsResponse.statusText })
-      return
+      throw new Error(agentsResponse.statusText)
     }
     const flows = (await flowsResponse.json()).flows
 
@@ -121,8 +120,7 @@ export default function ECNViewer () {
     for (const flow of flows) {
       const microservicesResponse = await request(`/api/v3/microservices?flowId=${flow.id}`)
       if (!flowsResponse.ok) {
-        setError({ message: microservicesResponse.statusText })
-        return
+        throw new Error(agentsResponse.statusText)
       }
       microservices = microservices.concat((await microservicesResponse.json()).microservices)
     }
@@ -135,9 +133,22 @@ export default function ECNViewer () {
     dispatch({ type: actions.UPDATE, data: { agents, flows, microservices } })
   }
 
-  useInterval(() => {
-    update()
-  }, +controllerInfo.refresh || 3000)
+  React.useEffect(() => {
+    let id
+    async function tick () {
+      try {
+        await update()
+      } catch (e) {
+        setError({ message: e.toString() })
+      } finally {
+        id = setTimeout(tick, timeout)
+      }
+    }
+    if (timeout !== null) {
+      id = setTimeout(tick, timeout)
+      return () => clearTimeout(id)
+    }
+  }, [timeout])
 
   const setAgent = a => dispatch({ type: actions.SET_AGENT, data: a })
 
