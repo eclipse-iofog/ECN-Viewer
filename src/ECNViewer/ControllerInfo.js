@@ -53,6 +53,13 @@ export default function ControllerInfo (props) {
     return window.localStorage.getItem(CONTROLLER_NAME_KEY) || DEFAULT_CONTROLLER_NAME
   })
 
+  const loseFocus = (e) => {
+    const { key, target } = e
+    if (key === 'Enter') {
+      target.blur()
+    }
+  }
+
   const updateControllerName = (e) => {
     const name = e.target.value
     window.localStorage.setItem(CONTROLLER_NAME_KEY, name)
@@ -71,7 +78,7 @@ export default function ControllerInfo (props) {
     <div className={classes.controllerInfo}>
       <div className={classes.controllerTitle}>
         <Typography style={{ width: '100%' }} variant='h5'>
-          <Input className={classes.controllerName} value={controllerName} onChange={updateControllerName} />
+          <Input className={classes.controllerName} value={controllerName} onChange={updateControllerName} onKeyDown={loseFocus} />
         </Typography>
         {controllerError &&
           <Tooltip title={controllerError.message} aria-label='Error'>
