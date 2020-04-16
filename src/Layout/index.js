@@ -125,7 +125,10 @@ export default function Layout () {
             </Switch>
           </div>
           <div className={`${classes.footerContainer} footer`}>
-            <span className={classes.footer}><a href='http://www.eclipse.org/legal/copyright.php'>© 2019 Eclipse Foundation, Inc.</a></span>
+            <span className={classes.footer}>
+              <span>Controller v{controller.status.versions.controller} - ECN Viewer v{controller.status.versions.ecnViewer}</span>
+              <a style={{ margin: 'auto' }} href='http://www.eclipse.org/legal/copyright.php'>© 2020 Eclipse Foundation, Inc.</a>
+            </span>
           </div>
         </div>
       </HashRouter>

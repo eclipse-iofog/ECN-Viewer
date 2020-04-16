@@ -14,6 +14,12 @@ const initControllerState = (() => {
       lat: 'Unknown',
       lon: 'Unknown',
       query: controllerJson.ip
+    },
+    status: {
+      versions: {
+        controller: '',
+        ecnViewer: ''
+      }
     }
   }
 })()
@@ -30,7 +36,9 @@ const getHeaders = (headers, controllerConfig) => controllerJson.dev
   }) : headers
 
 export const ControllerContext = React.createContext({
-  controller: {},
+  controller: {
+    status: {}
+  },
   updateController: () => {}
 })
 
@@ -41,6 +49,17 @@ const lookUpControllerInfo = async (controllerConfig) => {
   const localhost = new RegExp('(0\.0\.0\.0|localhost|127\.0\.0\.1|192\.168\.)') // eslint-disable-line no-useless-escape
   const ip = localhost.test(controllerConfig.ip) ? '8.8.8.8' : controllerConfig.ip
   const response = await window.fetch(IPLookUp + ip)
+  if (response.ok) {
+    return response.json()
+  } else {
+    throw new Error(response.statusText)
+  }
+}
+
+const getControllerStatus = async (controllerConfig) => {
+  const response = await await window.fetch(getUrl('/api/v3/status'), {
+    headers: getHeaders({}, controllerConfig)
+  })
   if (response.ok) {
     return response.json()
   } else {
@@ -62,7 +81,8 @@ const updateControllerInfo = async (controllerConfig) => {
 
   return {
     ...controllerConfig,
-    location: ipInfo
+    location: ipInfo,
+    status: await getControllerStatus(controllerConfig)
   }
 }
 
