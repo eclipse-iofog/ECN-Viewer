@@ -8,10 +8,11 @@ import { Badge, Avatar } from '@material-ui/core'
 
 import MemoryIcon from '@material-ui/icons/Memory'
 import CtrlIcon from '@material-ui/icons/DeveloperBoard'
+import Icon from '@material-ui/core/Icon'
 
 import { makeStyles, useTheme } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor } from './utils'
+import { statusColor, msvcStatusColor, tagColor } from './utils'
 
 const useStyles = makeStyles(theme => ({
   mapMarkerTransform: {
@@ -118,12 +119,18 @@ export default function Map (props) {
             onClick={() => setAgent(a)}
           >
             <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).filter(m => m.flowActive).length} invisible={a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
-              <Avatar
-                style={{ '--markerColor': statusColor[a.daemonStatus] }}
-                className={classes.mapMarker}
-              >
-                <MemoryIcon />
-              </Avatar>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Avatar
+                  style={{ '--markerColor': statusColor[a.daemonStatus] }}
+                  className={classes.mapMarker}
+                >
+                  <MemoryIcon />
+                </Avatar>
+                <div style={{ display: 'flex', position: 'absolute', bottom: -15 }}>
+                  {a.tags && a.tags.map(t => t.icon ? <div style={{ backgroundColor: t.color || tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon key={t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.icon}</Icon></div> : null)}
+                </div>
+
+              </div>
             </Badge>
           </div>
         )}

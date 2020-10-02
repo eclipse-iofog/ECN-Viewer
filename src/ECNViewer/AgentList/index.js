@@ -8,13 +8,14 @@ import MemoryIcon from '@material-ui/icons/Memory'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor } from '../utils'
+import { statusColor, msvcStatusColor, tagColor } from '../utils'
 import Modal from '../../Utils/Modal'
 
 import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
 import SimpleTabs from './Tabs'
+import Icon from '@material-ui/core/Icon'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
@@ -109,6 +110,7 @@ export default function AgentList (props) {
       >
         {(loading ? [] : agents).map(a => {
           const msvcs = msvcsPerAgent[a.uuid] || []
+          const tags = a.tags || []
           return (
             <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
               <ListItemAvatar>
@@ -117,6 +119,23 @@ export default function AgentList (props) {
                 </Avatar>
               </ListItemAvatar>
               <ListItemText primary={a.name} secondary={`${msvcs.length} Microservices`} />
+              <div className={classes.msvcChipList}>
+                {tags.map((t, idx) => (
+                  <React.Fragment key={t.name}>
+                    <Chip
+                      icon={<Icon style={{ fontSize: 16, color: 'white' }}>{t.icon}</Icon>}
+                      size='small'
+                      label={t.name}
+                      style={{
+                        '--mTop': idx ? '2px' : '0px',
+                        '--color': t.color || tagColor
+                      }}
+                      className={classes.msvcChip}
+                      title={t.name}
+                    />
+                  </React.Fragment>
+                ))}
+              </div>
               <div className={classes.msvcChipList}>
                 {msvcs.length > 4
                   ? (
