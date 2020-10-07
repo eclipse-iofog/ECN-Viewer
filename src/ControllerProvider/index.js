@@ -42,6 +42,8 @@ export const ControllerContext = React.createContext({
   updateController: () => {}
 })
 
+export const useController = () => React.useContext(ControllerContext)
+
 const lookUpControllerInfo = async (controllerConfig) => {
   if (!controllerConfig.ip) {
     controllerConfig.ip = window.location.host.split(':')[0] // Get only ip, not port

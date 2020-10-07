@@ -15,6 +15,7 @@ import './layout.scss'
 
 import mapStyle from './mapStyle.json'
 import { ControllerContext } from '../ControllerProvider'
+import { useConfig } from '../providers/Config'
 
 const useStyles = makeStyles({
   divider: {
@@ -86,6 +87,7 @@ const reducer = (state, action) => {
 
 export default function ECNViewer () {
   const classes = useStyles()
+  const { updateTags } = useConfig()
   const [state, dispatch] = React.useReducer(reducer, initState)
   const [autozoom, setAutozoom] = useState(true)
   const [loading, setLoading] = useState(true)
@@ -133,6 +135,7 @@ export default function ECNViewer () {
     if (error) {
       setError(false)
     }
+    updateTags(agents)
     dispatch({ type: actions.UPDATE, data: { agents, flows, microservices } })
   }
 

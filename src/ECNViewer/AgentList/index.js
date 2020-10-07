@@ -14,8 +14,9 @@ import Modal from '../../Utils/Modal'
 import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
-import SimpleTabs from './Tabs'
+import SimpleTabs from '../../Utils/Tabs'
 import Icon from '@material-ui/core/Icon'
+import { useConfig } from '../../providers/Config'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
@@ -68,8 +69,41 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+const TagChip = ({ tag, first }) => {
+  const classes = useStyles()
+  if (!tag.icon) {
+    return (
+      <Chip
+        size='small'
+        label={tag.value}
+        style={{
+          '--mTop': first ? '0px' : '2px',
+          '--color': tag.color || tagColor,
+          color: 'white'
+        }}
+        className={classes.msvcChip}
+        title={tag.value}
+      />)
+  }
+  return (
+    <Chip
+      icon={<Icon style={{ fontSize: 16, color: 'white' }}>{tag.icon}</Icon>}
+      size='small'
+      label={tag.value}
+      style={{
+        '--mTop': first ? '0px' : '2px',
+        '--color': tag.color || tagColor,
+        color: 'white'
+      }}
+      className={classes.msvcChip}
+      title={tag.value}
+    />
+  )
+}
+
 export default function AgentList (props) {
   const classes = useStyles()
+  const { getTagDisplayInfo } = useConfig()
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [openConnectNodeModal, setOpenConnectNodeModal] = React.useState(false)
   const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
@@ -110,7 +144,7 @@ export default function AgentList (props) {
       >
         {(loading ? [] : agents).map(a => {
           const msvcs = msvcsPerAgent[a.uuid] || []
-          const tags = a.tags || []
+          const tags = (a.tags || []).map(getTagDisplayInfo)
           return (
             <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
               <ListItemAvatar>
@@ -121,19 +155,7 @@ export default function AgentList (props) {
               <ListItemText primary={a.name} secondary={`${msvcs.length} Microservices`} />
               <div className={classes.msvcChipList}>
                 {tags.map((t, idx) => (
-                  <React.Fragment key={t.name}>
-                    <Chip
-                      icon={<Icon style={{ fontSize: 16, color: 'white' }}>{t.icon}</Icon>}
-                      size='small'
-                      label={t.name}
-                      style={{
-                        '--mTop': idx ? '2px' : '0px',
-                        '--color': t.color || tagColor
-                      }}
-                      className={classes.msvcChip}
-                      title={t.name}
-                    />
-                  </React.Fragment>
+                  <TagChip key={t.value} tag={t} first={!idx} />
                 ))}
               </div>
               <div className={classes.msvcChipList}>

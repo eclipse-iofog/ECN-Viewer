@@ -8,6 +8,8 @@ export const FeedbackContext = React.createContext({
   pushFeedback: () => {}
 })
 
+export const useFeedback = () => React.useContext(FeedbackContext)
+
 const AUTO_HIDE = 6000
 
 const actions = {

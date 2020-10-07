@@ -13,6 +13,7 @@ import Icon from '@material-ui/core/Icon'
 import { makeStyles, useTheme } from '@material-ui/styles'
 
 import { statusColor, msvcStatusColor, tagColor } from './utils'
+import { useConfig } from '../providers/Config'
 
 const useStyles = makeStyles(theme => ({
   mapMarkerTransform: {
@@ -56,6 +57,7 @@ const hasValidCoordinates = (coordinates) => {
 }
 
 export default function Map (props) {
+  const { getTagDisplayInfo } = useConfig()
   const classes = useStyles()
   const theme = useTheme()
   const DomElementRef = React.useRef()
@@ -127,7 +129,7 @@ export default function Map (props) {
                   <MemoryIcon />
                 </Avatar>
                 <div style={{ display: 'flex', position: 'absolute', bottom: -15 }}>
-                  {a.tags && a.tags.map(t => t.icon ? <div style={{ backgroundColor: t.color || tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon key={t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.icon}</Icon></div> : null)}
+                  {a.tags && a.tags.map(getTagDisplayInfo).map(t => t.icon ? <div style={{ backgroundColor: t.color || tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon key={t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.icon}</Icon></div> : null)}
                 </div>
 
               </div>
