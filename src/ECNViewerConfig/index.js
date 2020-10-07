@@ -75,7 +75,7 @@ export default function Config (props) {
         }
         return (
           <div style={{ display: 'flex', alignItems: 'center' }} key={name}>
-            <div style={{ marginRight: '10px', width: '60px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ marginRight: '10px', width: '150px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               <span>{name}:</span>
             </div>
             <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
