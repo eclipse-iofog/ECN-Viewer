@@ -1,6 +1,6 @@
 import React from 'react'
 import { map as lmap } from 'lodash'
-import { TextField, Typography, Button, Icon } from '@material-ui/core'
+import { TextField, Typography, Button, Icon, InputAdornment } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 import { theme } from '../Theme/ThemeProvider'
 
@@ -21,6 +21,7 @@ export default function Config (props) {
   const { config, saveConfig } = useConfig()
   const { pushFeedback } = useFeedback()
   const [tags, setTags] = React.useState(config.tags || {})
+  const [filter, setFilter] = React.useState('')
 
   const save = async () => {
     try {
@@ -48,39 +49,61 @@ export default function Config (props) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', flex: 1, alignItems: 'baseline' }}>
-        <Typography variant='h5'>Tags</Typography>
+        <div style={{ display: 'flex', alignItems: 'baseline' }}>
+          <Typography variant='h5' style={{ marginRight: '20px' }}>Tags</Typography>
+          <TextField
+            id='search'
+            label='Search'
+            onChange={e => setFilter(e.target.value)}
+            value={filter}
+            className={classes.textField}
+            margin='normal'
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start'>
+                  <Icon>search</Icon>
+                </InputAdornment>
+              )
+            }}
+          />
+        </div>
         <Typography variant='subtitle2'><a className={classes.link} href='https://material.io/resources/icons/?style=baseline' rel='noopener noreferrer' target='_blank'>Available Icons <Icon style={{ fontSize: 12 }}>open_in_new</Icon></a></Typography>
       </div>
-      {lmap(tags, (tag, name) => (
-        <div style={{ display: 'flex', alignItems: 'center' }} key={name}>
-          <div style={{ marginRight: '10px', width: '60px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            <span>{name}:</span>
+      {lmap(tags, (tag, name) => {
+        if (!name.includes(filter)) {
+          return null
+        }
+        return (
+          <div style={{ display: 'flex', alignItems: 'center' }} key={name}>
+            <div style={{ marginRight: '10px', width: '60px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <span>{name}:</span>
+            </div>
+            <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
+              <TextField
+                id='color'
+                label='Color'
+                onChange={handleChange(name, 'color')}
+                value={tag.color}
+                fullWidth
+                className={classes.textField}
+                margin='normal'
+                variant='outlined'
+                type='color'
+              />
+              <TextField
+                id='icon'
+                label='Icon Name'
+                onChange={handleChange(name, 'icon')}
+                value={tag.icon}
+                fullWidth
+                className={classes.textField}
+                margin='normal'
+                variant='outlined'
+              />
+            </div>
           </div>
-          <div style={{ display: 'flex', flex: 1, alignItems: 'center' }}>
-            <TextField
-              id='color'
-              label='Color'
-              onChange={handleChange(name, 'color')}
-              value={tag.color}
-              fullWidth
-              className={classes.textField}
-              margin='normal'
-              variant='outlined'
-              type='color'
-            />
-            <TextField
-              id='icon'
-              label='Icon Name'
-              onChange={handleChange(name, 'icon')}
-              value={tag.icon}
-              fullWidth
-              className={classes.textField}
-              margin='normal'
-              variant='outlined'
-            />
-          </div>
-        </div>
-      ))}
+        )
+      })}
       <Button onClick={save} style={{ float: 'right' }}>
         Save
       </Button>
