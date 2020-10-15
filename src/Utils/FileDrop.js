@@ -2,6 +2,7 @@ import React from 'react'
 import { useDrop } from 'react-dnd'
 import { NativeTypes } from 'react-dnd-html5-backend'
 import { makeStyles } from '@material-ui/core/styles'
+import { CircularProgress } from '@material-ui/core'
 
 const { FILE } = NativeTypes
 
@@ -9,16 +10,21 @@ const useStyles = makeStyles(theme => ({
   dropZone: {
     width: '100%',
     border: '1px dashed',
-    height: '120px',
-    padding: '1rem',
+    height: '50px',
+    // padding: '1rem',
     textAlign: 'center',
+    verticalAlign: 'center',
     borderRadius: '4px',
-    borderColor: theme.colors.carbon,
-    color: theme.colors.carbon
+    background: 'aliceblue',
+    color: theme.colors.carbon,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   active: {
-    backgroundColor: 'white',
-    fontWeight: 'bold'
+    backgroundColor: '#d8dfe5'
+    // border: '1px solid'
   }
 }))
 
@@ -41,9 +47,13 @@ export default function FileDrop (props) {
     (active ? classes.active : '')
   ].join(' ')
 
-  return (
-    <div className={className} ref={drop}>
-      {active ? 'Release to drop' : props.children}
-    </div>
-  )
+  return props.loading
+    ? (
+      <div className={className}><CircularProgress size={24} /></div>
+    )
+    : (
+      <div className={className} ref={drop}>
+        {active ? 'Release to drop' : props.children}
+      </div>
+    )
 }

@@ -19,6 +19,7 @@ import logomark from '../assets/logomark.svg'
 import './layout.scss'
 
 import { makeStyles } from '@material-ui/styles'
+import { MapProvider } from '../providers/Map'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -122,7 +123,7 @@ export default function Layout () {
           <div className='content'>
             <Switch>
               <Route path='/catalog' component={Catalog} />
-              <Route path='/overview' component={ECNViewer} />
+              <Route path='/overview' component={() => <MapProvider><ECNViewer /></MapProvider>} />
               <Route component={() => <Redirect to='/overview' />} />
             </Switch>
           </div>

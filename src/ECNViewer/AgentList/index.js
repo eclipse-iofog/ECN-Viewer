@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
+import Skeleton from 'react-loading-skeleton'
 
-import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem, Typography } from '@material-ui/core'
+import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
@@ -130,10 +131,10 @@ export default function AgentList (props) {
     <>
       <List
         subheader={
-          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }} disableGutters disableSticky>
+          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative', marginBottom: '5px' }} disableGutters disableSticky>
             <div className={classes.listTitle}>
               <div>
-                <Typography variant='h5'>Agents - <small>{loading ? 0 : agents.length} nodes</small></Typography>
+                {/* <Typography variant='h5'><small>{loading ? 0 : agents.length} nodes</small></Typography> */}
               </div>
               <div>
                 <small className={classes.link} onClick={() => setAutozoom(true)}>See all ECN</small>
@@ -142,7 +143,7 @@ export default function AgentList (props) {
           </ListSubheader>
         }
       >
-        {(loading ? [] : agents).map(a => {
+        {(loading ? [1, 2, 3].map((idx) => <ListItem key={idx}><ListItemText><Skeleton height={72} /></ListItemText></ListItem>) : agents.map(a => {
           const msvcs = msvcsPerAgent[a.uuid] || []
           const tags = (a.tags || []).map(getTagDisplayInfo)
           return (
@@ -179,7 +180,7 @@ export default function AgentList (props) {
                         label={m.name}
                         style={{
                           '--mTop': idx ? '2px' : '0px',
-                          '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING' && m.flowActive) ? 'RUNNING' : 'UNKNOWN']
+                          '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING' && m.status.status === 'RUNNING' && m.flowActive) ? 'RUNNING' : 'UNKNOWN']
                         }}
                         className={classes.msvcChip}
                         title={m.name}
@@ -190,7 +191,7 @@ export default function AgentList (props) {
               <MoreIcon onClick={openMenu} />
             </ListItem>
           )
-        })}
+        }))}
       </List>
       <Modal
         {...{
