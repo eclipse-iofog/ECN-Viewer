@@ -11,7 +11,6 @@ import Icon from '@material-ui/core/Icon'
 import { makeStyles, useTheme } from '@material-ui/styles'
 
 import { statusColor, msvcStatusColor, tagColor } from './utils'
-import { useConfig } from '../providers/Config'
 import { useMap } from '../providers/Map'
 
 const useStyles = makeStyles(theme => ({
@@ -52,7 +51,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function Map (props) {
-  const { getTagDisplayInfo } = useConfig()
   const classes = useStyles()
   const theme = useTheme()
   const { controller, agent, setAgent, msvcsPerAgent, loading } = props
@@ -82,7 +80,7 @@ export default function Map (props) {
                   <MemoryIcon />
                 </Avatar>
                 <div style={{ display: 'flex', position: 'absolute', bottom: -15 }}>
-                  {a.tags && a.tags.map(getTagDisplayInfo).map(t => t.icon ? <div style={{ backgroundColor: t.color || tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon key={t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.icon}</Icon></div> : null)}
+                  {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div style={{ backgroundColor: t.display.color || tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon title={t.display.name || t.name} key={t.display.name || t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.display.icon}</Icon></div> : null) : null)}
                 </div>
 
               </div>

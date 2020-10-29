@@ -226,7 +226,7 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
       ports: lget(microservice, 'container.ports', []).map(p => ({ ...p, publicPort: p.public })),
       volumeMappings: lget(microservice, 'container.volumes', []),
       cmd: lget(microservice, 'container.commands', []),
-      env: lget(microservice, 'container.env', []),
+      env: lget(microservice, 'container.env', []).map(e => ({ key: e.key.toString(), value: e.value.toString() })),
       images,
       extraHosts: lget(microservice, 'container.extraHosts', [])
     }

@@ -17,7 +17,6 @@ import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
 import SimpleTabs from '../../Utils/Tabs'
 import Icon from '@material-ui/core/Icon'
-import { useConfig } from '../../providers/Config'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
@@ -104,7 +103,6 @@ const TagChip = ({ tag, first }) => {
 
 export default function AgentList (props) {
   const classes = useStyles()
-  const { getTagDisplayInfo } = useConfig()
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [openConnectNodeModal, setOpenConnectNodeModal] = React.useState(false)
   const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
@@ -145,7 +143,7 @@ export default function AgentList (props) {
       >
         {(loading ? [1, 2, 3].map((idx) => <ListItem key={idx}><ListItemText><Skeleton height={72} /></ListItemText></ListItem>) : agents.map(a => {
           const msvcs = msvcsPerAgent[a.uuid] || []
-          const tags = (a.tags || []).map(getTagDisplayInfo)
+          const edgeResources = a.edgeResources || []
           return (
             <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
               <ListItemAvatar>
@@ -155,8 +153,8 @@ export default function AgentList (props) {
               </ListItemAvatar>
               <ListItemText primary={a.name} secondary={`${msvcs.length} Microservices`} />
               <div className={classes.msvcChipList}>
-                {tags.map((t, idx) => (
-                  <TagChip key={t.value} tag={t} first={!idx} />
+                {edgeResources.map((eR, idx) => (
+                  <TagChip key={eR.name} tag={{ value: eR.display ? eR.display.name : eR.name, ...eR.display }} first={!idx} />
                 ))}
               </div>
               <div className={classes.msvcChipList}>

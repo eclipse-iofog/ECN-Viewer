@@ -11,8 +11,8 @@ import ECNViewer from '../ECNViewer'
 import Catalog from '../Catalog'
 import Modal from '../Utils/Modal'
 import Config from '../Config'
-import ECNViewerConfig from '../ECNViewerConfig'
-import SimpleTabs from '../Utils/Tabs'
+// import ECNViewerConfig from '../ECNViewerConfig'
+// import SimpleTabs from '../Utils/Tabs'
 import { ControllerContext } from '../ControllerProvider'
 
 import logomark from '../assets/logomark.svg'
@@ -142,10 +142,10 @@ export default function Layout () {
           onClose: () => setSettingsOpen(false)
         }}
       >
-        <SimpleTabs>
-          <Config title={controller.dev ? 'Controller details' : 'User credentials'} {...{ onSave: () => setSettingsOpen(false) }} />
-          <ECNViewerConfig title='ECN Viewer' {...{ onSave: () => setSettingsOpen(false) }} />
-        </SimpleTabs>
+        {/* <SimpleTabs> */}
+        <Config title={controller.dev ? 'Controller details' : 'User credentials'} {...{ onSave: () => setSettingsOpen(false) }} />
+        {/* <ECNViewerConfig title='ECN Viewer' {...{ onSave: () => setSettingsOpen(false) }} /> */}
+        {/* </SimpleTabs> */}
       </Modal>
     </>
   )
