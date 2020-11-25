@@ -14,14 +14,14 @@ const useStyles = makeStyles({
 
 export default function ActiveResources (props) {
   const classes = useStyles()
-  const { activeFlows, activeAgents, activeMsvcs, loading } = props
+  const { applications, activeAgents, activeMsvcs, loading } = props
   return (
     <div>
       <Typography variant='h5'>Active resources</Typography>
       <br />
       <div className={classes.summary}>
         <Paper>
-          <Typography variant='h3'>{loading ? 0 : activeFlows.length}</Typography>
+          <Typography variant='h3'>{loading ? 0 : applications.length}</Typography>
           <Typography variant='subtitle1'>Applications</Typography>
         </Paper>
         <Paper>

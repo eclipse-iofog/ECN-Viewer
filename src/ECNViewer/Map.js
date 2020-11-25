@@ -1,17 +1,17 @@
 import React from 'react'
-import { isFinite, get } from 'lodash'
 
 import GoogleMapReact from 'google-map-react'
-import { fitBounds } from 'google-map-react/utils'
 
 import { Badge, Avatar } from '@material-ui/core'
 
 import MemoryIcon from '@material-ui/icons/Memory'
 import CtrlIcon from '@material-ui/icons/DeveloperBoard'
+import Icon from '@material-ui/core/Icon'
 
 import { makeStyles, useTheme } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor } from './utils'
+import { statusColor, msvcStatusColor, tagColor } from './utils'
+import { useMap } from '../providers/Map'
 
 const useStyles = makeStyles(theme => ({
   mapMarkerTransform: {
@@ -50,60 +50,14 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const hasValidCoordinates = (coordinates) => {
-  return isFinite(coordinates[0]) && isFinite(coordinates[1])
-}
-
 export default function Map (props) {
   const classes = useStyles()
   const theme = useTheme()
-  const DomElementRef = React.useRef()
-  const { controller, agent, setAgent, msvcsPerAgent, map, autozoom, loading } = props
-
-  const setMap = () => {
-    const bounds = new window.google.maps.LatLngBounds() // need handler incase `google` not yet available
-
-    const agents = (controller.agents || []).filter(a => hasValidCoordinates([a.latitude, a.longitude]))
-
-    if (!agents.length) {
-      map.center = [get(controller, 'info.location.lat', 0), get(controller, 'info.location.lon', 0)]
-      map.zoom = 9
-      return
-    }
-
-    agents.forEach(marker => {
-      bounds.extend(new window.google.maps.LatLng(get(marker, 'latitude', 0), get(marker, 'longitude', 0)))
-    })
-
-    bounds.extend(new window.google.maps.LatLng(get(controller, 'info.location.lat', 0), get(controller, 'info.location.lon', 0)))
-
-    const newBounds = {
-      ne: {
-        lat: bounds.getNorthEast().lat(),
-        lng: bounds.getNorthEast().lng()
-      },
-      sw: {
-        lat: bounds.getSouthWest().lat(),
-        lng: bounds.getSouthWest().lng()
-      }
-    }
-
-    const size = {
-      width: get(DomElementRef, 'current.offsetWidth', 600),
-      height: get(DomElementRef, 'current.offsetHeight', 800)
-    }
-
-    const { center, zoom } = fitBounds(newBounds, size)
-    map.center = center
-    map.zoom = zoom
-  }
-
-  if (autozoom && window.google) {
-    setMap()
-  }
+  const { controller, agent, setAgent, msvcsPerAgent, loading } = props
+  const { map, mapRef, hasValidCoordinates } = useMap()
 
   return (
-    <div className={classes.mapWrapper} ref={DomElementRef}>
+    <div className={classes.mapWrapper} ref={mapRef}>
       <GoogleMapReact
         {...map}
         bootstrapURLKeys={{
@@ -117,13 +71,19 @@ export default function Map (props) {
             className={classes.mapMarkerTransform}
             onClick={() => setAgent(a)}
           >
-            <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).filter(m => m.flowActive).length} invisible={a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
-              <Avatar
-                style={{ '--markerColor': statusColor[a.daemonStatus] }}
-                className={classes.mapMarker}
-              >
-                <MemoryIcon />
-              </Avatar>
+            <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).filter(m => m.flowActive && m.status.status === 'RUNNING').length} invisible={a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Avatar
+                  style={{ '--markerColor': statusColor[a.daemonStatus] }}
+                  className={classes.mapMarker}
+                >
+                  <MemoryIcon />
+                </Avatar>
+                <div style={{ display: 'flex', position: 'absolute', bottom: -15 }}>
+                  {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div style={{ backgroundColor: t.display.color || tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon title={t.display.name || t.name} key={t.display.name || t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.display.icon}</Icon></div> : null) : null)}
+                </div>
+
+              </div>
             </Badge>
           </div>
         )}

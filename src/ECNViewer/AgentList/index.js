@@ -1,20 +1,22 @@
 import React from 'react'
 import ReactJson from 'react-json-view'
+import Skeleton from 'react-loading-skeleton'
 
-import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem, Typography } from '@material-ui/core'
+import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor } from '../utils'
+import { statusColor, msvcStatusColor, tagColor } from '../utils'
 import Modal from '../../Utils/Modal'
 
 import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
-import SimpleTabs from './Tabs'
+import SimpleTabs from '../../Utils/Tabs'
+import Icon from '@material-ui/core/Icon'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
@@ -67,6 +69,38 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+const TagChip = ({ tag, first }) => {
+  const classes = useStyles()
+  if (!tag.icon) {
+    return (
+      <Chip
+        size='small'
+        label={tag.value}
+        style={{
+          '--mTop': first ? '0px' : '2px',
+          '--color': tag.color || tagColor,
+          color: 'white'
+        }}
+        className={classes.msvcChip}
+        title={tag.value}
+      />)
+  }
+  return (
+    <Chip
+      icon={<Icon style={{ fontSize: 16, color: 'white' }}>{tag.icon}</Icon>}
+      size='small'
+      label={tag.value}
+      style={{
+        '--mTop': first ? '0px' : '2px',
+        '--color': tag.color || tagColor,
+        color: 'white'
+      }}
+      className={classes.msvcChip}
+      title={tag.value}
+    />
+  )
+}
+
 export default function AgentList (props) {
   const classes = useStyles()
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
@@ -95,10 +129,10 @@ export default function AgentList (props) {
     <>
       <List
         subheader={
-          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative' }} disableGutters disableSticky>
+          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative', marginBottom: '5px' }} disableGutters disableSticky>
             <div className={classes.listTitle}>
               <div>
-                <Typography variant='h5'>Agents - <small>{loading ? 0 : agents.length} nodes</small></Typography>
+                {/* <Typography variant='h5'><small>{loading ? 0 : agents.length} nodes</small></Typography> */}
               </div>
               <div>
                 <small className={classes.link} onClick={() => setAutozoom(true)}>See all ECN</small>
@@ -107,8 +141,9 @@ export default function AgentList (props) {
           </ListSubheader>
         }
       >
-        {(loading ? [] : agents).map(a => {
+        {(loading ? [1, 2, 3].map((idx) => <ListItem key={idx}><ListItemText><Skeleton height={72} /></ListItemText></ListItem>) : agents.map(a => {
           const msvcs = msvcsPerAgent[a.uuid] || []
+          const edgeResources = a.edgeResources || []
           return (
             <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
               <ListItemAvatar>
@@ -117,6 +152,11 @@ export default function AgentList (props) {
                 </Avatar>
               </ListItemAvatar>
               <ListItemText primary={a.name} secondary={`${msvcs.length} Microservices`} />
+              <div className={classes.msvcChipList}>
+                {edgeResources.map((eR, idx) => (
+                  <TagChip key={eR.name} tag={{ value: eR.display ? eR.display.name : eR.name, ...eR.display }} first={!idx} />
+                ))}
+              </div>
               <div className={classes.msvcChipList}>
                 {msvcs.length > 4
                   ? (
@@ -138,7 +178,7 @@ export default function AgentList (props) {
                         label={m.name}
                         style={{
                           '--mTop': idx ? '2px' : '0px',
-                          '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING' && m.flowActive) ? 'RUNNING' : 'UNKNOWN']
+                          '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING' && m.status.status === 'RUNNING' && m.flowActive) ? 'RUNNING' : 'UNKNOWN']
                         }}
                         className={classes.msvcChip}
                         title={m.name}
@@ -149,7 +189,7 @@ export default function AgentList (props) {
               <MoreIcon onClick={openMenu} />
             </ListItem>
           )
-        })}
+        }))}
       </List>
       <Modal
         {...{

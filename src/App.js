@@ -10,6 +10,7 @@ import './App.css'
 import FeedbackContext from './Utils/FeedbackContext'
 import ThemeContext from './Theme/ThemeProvider'
 import ControllerContext from './ControllerProvider'
+import { ConfigProvider } from './providers/Config'
 
 function App () {
   console.log(' ======> Rendering app ')
@@ -19,9 +20,11 @@ function App () {
       <ThemeContext>
         <DndProvider backend={Backend}>
           <ControllerContext>
-            <FeedbackContext>
-              <Layout />
-            </FeedbackContext>
+            <ConfigProvider>
+              <FeedbackContext>
+                <Layout />
+              </FeedbackContext>
+            </ConfigProvider>
           </ControllerContext>
         </DndProvider>
       </ThemeContext>

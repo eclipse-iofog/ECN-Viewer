@@ -11,12 +11,15 @@ import ECNViewer from '../ECNViewer'
 import Catalog from '../Catalog'
 import Modal from '../Utils/Modal'
 import Config from '../Config'
+// import ECNViewerConfig from '../ECNViewerConfig'
+// import SimpleTabs from '../Utils/Tabs'
 import { ControllerContext } from '../ControllerProvider'
 
 import logomark from '../assets/logomark.svg'
 import './layout.scss'
 
 import { makeStyles } from '@material-ui/styles'
+import { MapProvider } from '../providers/Map'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -120,7 +123,7 @@ export default function Layout () {
           <div className='content'>
             <Switch>
               <Route path='/catalog' component={Catalog} />
-              <Route path='/overview' component={ECNViewer} />
+              <Route path='/overview' component={() => <MapProvider><ECNViewer /></MapProvider>} />
               <Route component={() => <Redirect to='/overview' />} />
             </Switch>
           </div>
@@ -135,11 +138,14 @@ export default function Layout () {
       <Modal
         {...{
           open: settingsOpen,
-          title: controller.dev ? 'Controller details' : 'User credentials',
+          title: 'Configuration',
           onClose: () => setSettingsOpen(false)
         }}
       >
-        <Config {...{ onSave: () => setSettingsOpen(false) }} />
+        {/* <SimpleTabs> */}
+        <Config title={controller.dev ? 'Controller details' : 'User credentials'} {...{ onSave: () => setSettingsOpen(false) }} />
+        {/* <ECNViewerConfig title='ECN Viewer' {...{ onSave: () => setSettingsOpen(false) }} /> */}
+        {/* </SimpleTabs> */}
       </Modal>
     </>
   )

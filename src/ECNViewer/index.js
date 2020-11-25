@@ -8,13 +8,16 @@ import { makeStyles } from '@material-ui/styles'
 import ControllerInfo from './ControllerInfo'
 import ActiveResources from './ActiveResources'
 import AgentList from './AgentList'
+import ApplicationList from './ApplicationList'
 import Map from './Map'
+import SimpleTabs from '../Utils/Tabs'
 
 // import logo from '../assets/logo.png'
 import './layout.scss'
 
-import mapStyle from './mapStyle.json'
 import { ControllerContext } from '../ControllerProvider'
+import { useConfig } from '../providers/Config'
+import { useMap } from '../providers/Map'
 
 const useStyles = makeStyles({
   divider: {
@@ -34,9 +37,9 @@ const initState = {
   },
   agent: {},
   activeAgents: [],
-  activeFlows: [],
   activeMsvcs: [],
-  msvcsPerAgent: []
+  msvcsPerAgent: [],
+  applications: []
 }
 
 export const actions = {
@@ -48,7 +51,7 @@ const updateData = (state, newController) => {
   if (!newController) {
     return state
   }
-  const activeFlows = newController.flows.filter(f => f.isActivated === true)
+  const activeFlows = newController.applications.filter(f => f.isActivated === true)
   const activeAgents = newController.agents.filter(a => a.daemonStatus === 'RUNNING')
   const msvcsPerAgent = groupBy(newController.microservices.map(m => ({
     ...m,
@@ -63,6 +66,7 @@ const updateData = (state, newController) => {
   return {
     ...state,
     controller: newController,
+    applications: newController.applications,
     activeFlows,
     activeAgents,
     activeMsvcs,
@@ -86,19 +90,13 @@ const reducer = (state, action) => {
 
 export default function ECNViewer () {
   const classes = useStyles()
+  const { updateTags } = useConfig()
   const [state, dispatch] = React.useReducer(reducer, initState)
-  const [autozoom, setAutozoom] = useState(true)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
-  const [map, setMap] = useState({
-    center: [0, 0],
-    zoom: 15,
-    options: {
-      styles: mapStyle
-    }
-  })
   const { controller: controllerInfo, request } = React.useContext(ControllerContext)
   const timeout = +controllerInfo.refresh || 3000
+  const { setMap } = useMap()
   React.useEffect(() => {
     setLoading(true)
     setError(null)
@@ -111,29 +109,33 @@ export default function ECNViewer () {
       return
     }
     const agents = (await agentsResponse.json()).fogs
-    const flowsResponse = await request('/api/v3/flow')
-    if (!flowsResponse.ok) {
-      setError({ message: agentsResponse.statusText })
+    const applicationResponse = await request('/api/v3/application')
+    if (!applicationResponse.ok) {
+      setError({ message: applicationResponse.statusText })
       return
     }
-    const flows = (await flowsResponse.json()).flows
+    const applications = (await applicationResponse.json()).applications
 
     let microservices = []
-    for (const flow of flows) {
-      const microservicesResponse = await request(`/api/v3/microservices?flowId=${flow.id}`)
-      if (!flowsResponse.ok) {
-        setError({ message: agentsResponse.statusText })
+    for (const application of applications) {
+      const microservicesResponse = await request(`/api/v3/microservices?application=${application.name}`)
+      if (!microservicesResponse.ok) {
+        setError({ message: microservicesResponse.statusText })
         return
       }
-      microservices = microservices.concat((await microservicesResponse.json()).microservices)
+      const newMicroservices = (await microservicesResponse.json()).microservices
+      microservices = microservices.concat(newMicroservices)
+      application.microservices = newMicroservices
     }
     if (loading) {
+      setMap(agents, controllerInfo, true)
       setLoading(false)
     }
     if (error) {
       setError(false)
     }
-    dispatch({ type: actions.UPDATE, data: { agents, flows, microservices } })
+    updateTags(agents)
+    dispatch({ type: actions.UPDATE, data: { agents, applications, microservices } })
   }
 
   useRecursiveTimeout(update, timeout)
@@ -143,30 +145,34 @@ export default function ECNViewer () {
   const selectAgent = (a) => {
     setAgent(a)
     if (isFinite(a.latitude) && isFinite(a.longitude)) {
-      setMap({ ...map, center: [a.latitude, a.longitude], zoom: 15 })
-      setAutozoom(false)
+      setMap([a], controllerInfo, false)
     }
   }
 
   const selectController = () => {
-    setMap({ ...map, center: [controllerInfo.location.lat, controllerInfo.location.lon], zoom: 15 })
-    setAutozoom(false)
+    setMap([], controllerInfo, true)
   }
 
-  const centerMap = (coordinates) => { setMap({ ...map, center: coordinates }) }
+  const setAutozoom = () => {
+    setMap(state.controller.agents, controllerInfo, true)
+  }
 
-  const { controller, activeAgents, activeFlows, activeMsvcs, agent, msvcsPerAgent } = state
+  const { controller, activeAgents, applications, activeMsvcs, agent, msvcsPerAgent } = state
   return (
     <div className='viewer-layout-container'>
       <div className='box sidebar'>
         <ControllerInfo {...{ controller: controllerInfo, selectController, loading, error }} />
         <Divider className={classes.divider} />
-        <ActiveResources {...{ activeAgents, activeFlows, activeMsvcs, loading }} />
+        <ActiveResources {...{ activeAgents, applications, activeMsvcs, loading }} />
         <Divider className={classes.divider} />
-        <AgentList {...{ msvcsPerAgent, loading, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, centerMap, setAutozoom, controller: controller.info }} />
+
+        <SimpleTabs>
+          <AgentList title='Agents' {...{ msvcsPerAgent, loading, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, setAutozoom, controller: controller.info }} />
+          <ApplicationList title='Applications' {...{ applications, controllerInfo, loading, agents: controller.agents, setAutozoom }} />
+        </SimpleTabs>
       </div>
       <div className='map-grid-container'>
-        <Map {...{ controller: { ...controller, info: controllerInfo }, agent, setAgent, msvcsPerAgent, map, autozoom, setAutozoom, loading }} />
+        <Map {...{ controller: { ...controller, info: controllerInfo }, agent, setAgent, msvcsPerAgent, loading }} />
       </div>
     </div>
   )
