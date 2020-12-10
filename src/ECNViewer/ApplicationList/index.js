@@ -269,7 +269,7 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
     <>
       <List
         subheader={
-          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative', marginBottom: '5px' }} disableGutters disableSticky>
+          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative', marginBottom: '30px' }} disableGutters disableSticky>
             <div className={classes.listTitle}>
               <FileDrop {...{ onDrop: readApplicationFile, loading: fileParsing }}>
                 <div className={classes.flexColumn}>

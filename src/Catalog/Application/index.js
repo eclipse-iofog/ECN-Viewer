@@ -224,7 +224,9 @@ export default function Catalog () {
           removeCatalogItem(selectedItem)
           setOpenRemoveConfirm(false)
         }}
-      />
+      >
+        <span>This is not reversible.</span>
+      </Confirm>
       <Menu
         id='catalog-menu'
         anchorEl={menuAnchorEl}

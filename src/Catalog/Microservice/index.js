@@ -297,6 +297,7 @@ export default function Catalog () {
           removeCatalogItem(selectedItem)
           setOpenRemoveConfirm(false)
         }}
+        description='This is not reversible.'
       />
       <Menu
         id='catalog-menu'
