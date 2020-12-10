@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 
-import controllerJson from './controller.json'
+const controllerJson = window.controllerConfig
 
 const initControllerState = (() => {
   const localUser = window.localStorage.getItem('iofogUser')
@@ -65,7 +65,7 @@ const getControllerStatus = async (controllerConfig) => {
   if (response.ok) {
     return response.json()
   } else {
-    throw new Error(response.statusText)
+    console.log('Controller status unreachable', { status: response.statusText })
   }
 }
 
