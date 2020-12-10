@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
   dropZone: {
     width: '100%',
     border: '1px dashed',
-    height: '50px',
+    minHeight: '50px',
     // padding: '1rem',
     textAlign: 'center',
     verticalAlign: 'center',
@@ -20,7 +20,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: '10px'
   },
   active: {
     backgroundColor: '#d8dfe5'
