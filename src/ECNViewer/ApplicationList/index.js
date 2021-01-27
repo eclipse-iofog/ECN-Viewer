@@ -108,7 +108,7 @@ const TagChip = ({ tag, first }) => {
   )
 }
 
-export default function ApplicationList ({ applications, loading, setAutozoom, agents, controllerInfo }) {
+export default function ApplicationList ({ applications, loading, setAutozoom, agents }) {
   const classes = useStyles()
   const { getTagDisplayInfo } = useConfig()
   const { request } = useController()

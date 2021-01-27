@@ -11,6 +11,7 @@ import FeedbackContext from './Utils/FeedbackContext'
 import ThemeContext from './Theme/ThemeProvider'
 import ControllerContext from './ControllerProvider'
 import { ConfigProvider } from './providers/Config'
+import { DataProvider } from './providers/Data'
 
 function App () {
   console.log(' ======> Rendering app ')
@@ -21,9 +22,11 @@ function App () {
         <DndProvider backend={Backend}>
           <ControllerContext>
             <ConfigProvider>
-              <FeedbackContext>
-                <Layout />
-              </FeedbackContext>
+              <DataProvider>
+                <FeedbackContext>
+                  <Layout />
+                </FeedbackContext>
+              </DataProvider>
             </ConfigProvider>
           </ControllerContext>
         </DndProvider>

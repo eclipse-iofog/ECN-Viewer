@@ -14,13 +14,13 @@ const useStyles = makeStyles({
 export default function Config (props) {
   const classes = useStyles()
   const { pushFeedback } = React.useContext(FeedbackContext)
-  const { controller, updateController } = React.useContext(ControllerContext)
-  const [data, setData] = React.useState({ ...controller })
+  const { user, refresh, updateController } = React.useContext(ControllerContext)
+  const [data, setData] = React.useState({ user, refresh })
 
   const save = async () => {
     try {
       await updateController(data)
-      pushFeedback({ message: data.dev ? 'Controller details saved!' : 'Authenticated!', type: 'success' })
+      pushFeedback({ message: 'Authenticated!', type: 'success' })
       props.onSave()
     } catch (e) {
       pushFeedback({ message: e.message, type: 'error' })
@@ -35,33 +35,6 @@ export default function Config (props) {
   }
   return (
     <>
-      {data.dev &&
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id='ip'
-              label='IP'
-              onChange={handleChange('ip')}
-              value={data.ip}
-              fullWidth
-              className={classes.textField}
-              margin='normal'
-              variant='outlined'
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id='port'
-              label='Port'
-              onChange={handleChange('port')}
-              value={data.port}
-              fullWidth
-              className={classes.textField}
-              margin='normal'
-              variant='outlined'
-            />
-          </Grid>
-        </Grid>}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -95,7 +68,7 @@ export default function Config (props) {
         <Grid item xs={12} sm={6}>
           <TextField
             id='refresh'
-            label='Refresh'
+            label='Update Frequency'
             type='number'
             onChange={handleChange('refresh')}
             value={data.refresh}

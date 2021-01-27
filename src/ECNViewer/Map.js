@@ -60,9 +60,9 @@ export default function Map (props) {
     <div className={classes.mapWrapper} ref={mapRef}>
       <GoogleMapReact
         {...map}
-        bootstrapURLKeys={{
-          key: 'AIzaSyChp_fUXiK05ulRl_ewRGKWsQ1k0ULIFkA'
-        }}
+        // bootstrapURLKeys={{
+        //   key: 'AIzaSyChp_fUXiK05ulRl_ewRGKWsQ1k0ULIFkA'
+        // }}
       >
         {(loading ? [] : controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
           <div
