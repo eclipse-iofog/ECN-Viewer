@@ -3,7 +3,6 @@ import { isFinite, get } from 'lodash'
 import { fitBounds } from 'google-map-react/utils'
 
 import mapStyle from './mapStyle.json'
-import MapComponent from './Map'
 
 export const MapContext = React.createContext()
 export const useMap = () => React.useContext(MapContext)
@@ -73,16 +72,13 @@ export const MapProvider = ({
     _setMap({ ...map, ...newMap })
   }
 
-  const RenderedMapComponent = <MapComponent {...{ map, mapRef, hasValidCoordinates }} />
-
   return (
     <MapContext.Provider
       value={{
         map,
         mapRef,
         hasValidCoordinates,
-        setMap,
-        RenderedMapComponent
+        setMap
       }}
     >
       {children}
