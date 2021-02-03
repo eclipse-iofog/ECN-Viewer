@@ -22,6 +22,8 @@ import { useController } from '../../ControllerProvider'
 import { useFeedback } from '../../Utils/FeedbackContext'
 import { get as lget, uniqBy } from 'lodash'
 
+import { parseMicroservice } from '../../Utils/ApplicationParser'
+
 const useStyles = makeStyles(theme => ({
   avatarList: {
     color: 'white',
@@ -106,7 +108,7 @@ const TagChip = ({ tag, first }) => {
   )
 }
 
-export default function ApplicationList ({ applications, loading, setAutozoom, agents, controllerInfo }) {
+export default function ApplicationList ({ applications, loading, setAutozoom, agents }) {
   const classes = useStyles()
   const { getTagDisplayInfo } = useConfig()
   const { request } = useController()
@@ -118,7 +120,6 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
   const [openDeleteApplicationModal, setOpenDeleteApplicationModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
   const [application, setApplication] = React.useState(applications[0] || {})
-  const [agentsByName, setAgentsByName] = React.useState((agents || {}).reduce((res, agent) => { res[agent.name] = agent; return res }, {}))
   const [agentsByUUID, setAgentsByUUID] = React.useState((agents || {}).reduce((res, agent) => { res[agent.uuid] = agent; return res }, {}))
 
   React.useEffect(() => {
@@ -126,7 +127,6 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
       byName: {},
       byUUID: {}
     })
-    setAgentsByName(reduced.byName)
     setAgentsByUUID(reduced.byUUID)
   }, [agents])
 
@@ -179,59 +179,6 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
     } catch (e) {
       pushFeedback({ message: e.message, type: 'error' })
     }
-  }
-
-  const mapImages = (images) => {
-    const imgs = []
-    if (images.x86) {
-      imgs.push({
-        fogTypeId: 1,
-        containerImage: images.x86
-      })
-    }
-    if (images.arm) {
-      imgs.push({
-        fogTypeId: 2,
-        containerImage: images.arm
-      })
-    }
-    return imgs
-  }
-
-  const parseMicroserviceImages = async (fileImages) => {
-    if (fileImages.catalogId) {
-      return { registryId: undefined, images: undefined, catalogItemId: fileImages.catalogId }
-    }
-    const registryByName = {
-      remote: 1,
-      local: 2
-    }
-    const images = mapImages(fileImages)
-    const registryId = fileImages.registry ? registryByName[fileImages.registry] || window.parseInt(fileImages.registry) : 1
-    return { registryId, catalogItemId: undefined, images }
-  }
-
-  const _deleteUndefinedFields = (obj) => Object.keys(obj).forEach(key => obj[key] === undefined && delete obj[key])
-
-  const parseMicroservice = async (microservice) => {
-    const { registryId, catalogItemId, images } = await parseMicroserviceImages(microservice.images)
-    const microserviceData = {
-      config: microservice.config ? JSON.stringify(microservice.config) : undefined,
-      name: microservice.name,
-      logSize: microservice.logSize,
-      catalogItemId,
-      iofogUuid: agentsByName[microservice.agent.name].uuid,
-      registryId,
-      ...microservice.container,
-      ports: lget(microservice, 'container.ports', []).map(p => ({ ...p, publicPort: p.public })),
-      volumeMappings: lget(microservice, 'container.volumes', []),
-      cmd: lget(microservice, 'container.commands', []),
-      env: lget(microservice, 'container.env', []).map(e => ({ key: e.key.toString(), value: e.value.toString() })),
-      images,
-      extraHosts: lget(microservice, 'container.extraHosts', [])
-    }
-    _deleteUndefinedFields(microserviceData)
-    return microserviceData
   }
 
   const parseApplicationFile = async (doc) => {
@@ -322,7 +269,7 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
     <>
       <List
         subheader={
-          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative', marginBottom: '5px' }} disableGutters disableSticky>
+          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative', marginBottom: '30px' }} disableGutters disableSticky>
             <div className={classes.listTitle}>
               <FileDrop {...{ onDrop: readApplicationFile, loading: fileParsing }}>
                 <div className={classes.flexColumn}>

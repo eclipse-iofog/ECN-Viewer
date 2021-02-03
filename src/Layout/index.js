@@ -86,8 +86,8 @@ const useStyles = makeStyles(theme => ({
 
 export default function Layout () {
   const classes = useStyles()
-  const { controller } = React.useContext(ControllerContext)
-  const [settingsOpen, setSettingsOpen] = React.useState(!(controller.user.email && controller.user.password))
+  const { user, status } = React.useContext(ControllerContext)
+  const [settingsOpen, setSettingsOpen] = React.useState(!(user.email && user.password))
 
   console.log(' ====> Rendering layout')
 
@@ -117,7 +117,7 @@ export default function Layout () {
               </Avatar>
             </NavLink>
             <Avatar className={classes.latIcons}>
-              <SettingsIcon onClick={() => setSettingsOpen(!settingsOpen)} />
+              <SettingsIcon onClick={() => setSettingsOpen(v => !v)} />
             </Avatar>
           </div>
           <div className='content'>
@@ -129,7 +129,7 @@ export default function Layout () {
           </div>
           <div className={`${classes.footerContainer} footer`}>
             <span className={classes.footer}>
-              <span>Controller v{controller.status.versions.controller} - ECN Viewer v{controller.status.versions.ecnViewer}</span>
+              <span>Controller v{status.versions.controller} - ECN Viewer v{status.versions.ecnViewer}</span>
               <a style={{ margin: 'auto' }} href='http://www.eclipse.org/legal/copyright.php'>© 2020 Eclipse Foundation, Inc.</a>
             </span>
           </div>
@@ -143,7 +143,7 @@ export default function Layout () {
         }}
       >
         {/* <SimpleTabs> */}
-        <Config title={controller.dev ? 'Controller details' : 'User credentials'} {...{ onSave: () => setSettingsOpen(false) }} />
+        <Config title='User credentials' {...{ onSave: () => setSettingsOpen(false) }} />
         {/* <ECNViewerConfig title='ECN Viewer' {...{ onSave: () => setSettingsOpen(false) }} /> */}
         {/* </SimpleTabs> */}
       </Modal>

@@ -32,16 +32,25 @@ export default function SimpleTabs (props) {
     setValue(newValue)
   }
 
+  const children = props.children.filter(c => !!c)
+
   return (
     <div className={classes.root}>
-      <Tabs value={value} onChange={handleChange}>
-        {props.children.map((child, idx) => {
-          return (
-            <Tab key={child.id || idx} label={child.props.title} />
-          )
-        })}
-      </Tabs>
-      <TabContainer>{props.children[value]}</TabContainer>
+      {
+        children.length === 1
+          ? children
+          : (
+            <>
+              <Tabs value={value} onChange={handleChange}>
+                {children.map((child, idx) => {
+                  return (
+                    child && <Tab key={child.id || idx} label={child.props.title} />
+                  )
+                })}
+              </Tabs>
+              <TabContainer>{props.children[value]}</TabContainer>
+            </>)
+      }
     </div>
   )
 }
