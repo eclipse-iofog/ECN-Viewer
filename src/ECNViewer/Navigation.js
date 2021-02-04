@@ -61,7 +61,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export default function Navigation ({ view, agent, views, seeAllECN }) {
+export default function Navigation ({ view, selectedElement, views, back }) {
   const classes = useStyles()
   const theme = useTheme()
   const { error } = useData()
@@ -100,8 +100,8 @@ export default function Navigation ({ view, agent, views, seeAllECN }) {
       case views.MICROSERVICE_DETAILS:
         return (
           <Typography className={classes.navBar} variant='h5'>
-            <div onClick={seeAllECN} className={classes.navArrow}><ArrowBackIcon /></div>
-            <span>{agent.name}</span>
+            <div onClick={back} className={classes.navArrow}><ArrowBackIcon /></div>
+            <span>{selectedElement && selectedElement.name}</span>
           </Typography>
 
         )

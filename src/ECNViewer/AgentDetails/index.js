@@ -1,7 +1,13 @@
 import React from 'react'
 
 import ReactJson from 'react-json-view'
-import { Paper, Typography, makeStyles, Icon } from '@material-ui/core'
+import { Paper, Typography, makeStyles, Icon, Table, TableHead, TableRow, TableBody, TableCell } from '@material-ui/core'
+
+import PlayIcon from '@material-ui/icons/PlayArrow'
+import StopIcon from '@material-ui/icons/Stop'
+import RestartIcon from '@material-ui/icons/Replay'
+import DetailsIcon from '@material-ui/icons/ArrowForward'
+import DeleteIcon from '@material-ui/icons/HighlightOff'
 
 import { useData } from '../../providers/Data'
 
@@ -16,7 +22,9 @@ const useStyles = makeStyles(theme => ({
     top: 0,
     backgroundColor: 'white',
     zIndex: 2,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    display: 'flex',
+    justifyContent: 'space-between'
   },
   multiSections: {
     display: 'flex',
@@ -61,6 +69,17 @@ const useStyles = makeStyles(theme => ({
   erIcon: {
     fontSize: 22,
     color: 'white'
+  },
+  tableTitle: {
+    textTransform: 'uppercase'
+  },
+  actions: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    minWidth: '150px'
+  },
+  action: {
+    cursor: 'pointer'
   }
 }))
 
@@ -73,12 +92,23 @@ const _fogTypes = {
 const dateFormat = 'YYYY/MM/DD hh:mm:ss a'
 const MiBFactor = 1048576
 
-export default function AgentDetails ({ views, setView, agent: selectedAgent }) {
+export default function AgentDetails ({ agent: selectedAgent, selectApplication, selectMicroservice }) {
   const { data } = useData()
   const classes = useStyles()
 
-  const { msvcsPerAgent, controller } = data
+  const { msvcsPerAgent, controller, applications } = data
   const agent = (controller.agents || []).find(a => selectedAgent.uuid === a.uuid) || selectedAgent // Get live updates from data
+  const applicationsByName = React.useMemo(() => {
+    return msvcsPerAgent[agent.uuid].reduce((acc, m) => {
+      if (acc[m.application]) { acc[m.application].microservices.push(m) } else {
+        acc[m.application] = {
+          microservices: [m],
+          application: applications.find(a => a.name === m.application)
+        }
+      }
+      return acc
+    }, {})
+  }, [msvcsPerAgent, agent])
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
@@ -140,16 +170,57 @@ export default function AgentDetails ({ views, setView, agent: selectedAgent }) 
           ))}
         </div>
       </Paper>
+      {Object.keys(applicationsByName).map(applicationName => (
+        <Paper key={applicationName} className='section'>
+          <div className={classes.section}>
+            <Typography variant='subtitle2' className={classes.title}>
+              <span>{applicationName}</span>
+              <div className={classes.actions}>
+                {applicationsByName[applicationName].isActivated
+                  ? <StopIcon className={classes.action} title='Stop application' />
+                  : <PlayIcon className={classes.action} title='Start application' />}
+                <RestartIcon className={classes.action} title='Restart application' />
+                <DeleteIcon className={classes.action} title='Delete application' />
+                <DetailsIcon className={classes.action} onClick={() => selectApplication(applicationsByName[applicationName].application)} title='Application Details' />
+              </div>
+            </Typography>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell className={classes.tableTitle}>Microservice Name</TableCell>
+                  <TableCell className={classes.tableTitle} align='right'>Status</TableCell>
+                  <TableCell className={classes.tableTitle} align='right'>Ports</TableCell>
+                  <TableCell className={classes.tableTitle} align='right'>Volumes</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {applicationsByName[applicationName].microservices.map((row) => (
+                  <TableRow key={row.uuid}>
+                    <TableCell component='th' scope='row' onClick={() => selectMicroservice(row)}>
+                      {row.name}
+                    </TableCell>
+                    <TableCell align='right'>{row.status.status}{row.status.status === 'PULLING' && ` (${row.status.percentage}%)`}</TableCell>
+                    <TableCell align='right'>
+                      {row.ports.map(p => (
+                        <div key={p.internal}>{p.internal}:{p.external}/{p.protocol === 'udp' ? 'udp' : 'tcp'}</div>
+                      ))}
+                    </TableCell>
+                    <TableCell align='right'>
+                      {row.volumeMappings.map(p => (
+                        <div key={p.id}>{p.hostDestination}:{p.containerDestination}:{p.accessMode}</div>
+                      ))}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </Paper>
+      ))}
       <Paper className='section'>
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>Agent JSON</Typography>
           <ReactJson title='Agent' src={agent} name={false} collapsed />
-        </div>
-      </Paper>
-      <Paper className='section'>
-        <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>Microservices JSON</Typography>
-          <ReactJson title='Microservices' src={msvcsPerAgent[agent.uuid]} name={false} collapsed />
         </div>
       </Paper>
     </>

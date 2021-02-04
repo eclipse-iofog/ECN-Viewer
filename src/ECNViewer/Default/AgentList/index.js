@@ -139,7 +139,7 @@ export default function AgentList (props) {
           const msvcs = msvcsPerAgent[a.uuid] || []
           const edgeResources = a.edgeResources || []
           return (
-            <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={a.uuid === agent.uuid}>
+            <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={agent && a.uuid === agent.uuid}>
               <ListItemAvatar>
                 <Avatar style={{ '--statusColor': statusColor[a.daemonStatus] }} className={classes.avatarList}>
                   <MemoryIcon />
@@ -185,49 +185,52 @@ export default function AgentList (props) {
           )
         }))}
       </List>
-      <Modal
-        {...{
-          open: openAddMicroserviceModal,
-          title: `Deploy microservice to ${agent.name}`,
-          onClose: () => setOpenAddMicroserviceModal(false)
-        }}
-      >
-        <AddMicroservice {...{
-          target: agent,
-          microservices: msvcs,
-          onSuccess: () => setOpenAddMicroserviceModal(false)
-        }}
-        />
-      </Modal>
-      <Modal
-        {...{
-          open: openRemoveMicroserviceModal,
-          title: `Remove microservice from ${agent.name}`,
-          onClose: () => setOpenRemoveMicroserviceModal(false)
-        }}
-      >
-        <RemoveMicroservice
-          {...{
-            target: agent,
-            msvcs: msvcsPerAgent[agent.uuid] || [],
-            onSuccess: () => setOpenRemoveMicroserviceModal(false)
-          }}
-        />
-      </Modal>
-      <Modal
-        {...{
-          open: openConnectNodeModal,
-          title: 'Connect agent',
-          onClose: () => setOpenConnectNodeModal(false)
-        }}
-      >
-        <ConnectNode
-          {...{
-            controller: props.controller,
-            onSuccess: () => setOpenConnectNodeModal(false)
-          }}
-        />
-      </Modal>
+      {agent &&
+        <>
+          <Modal
+            {...{
+              open: openAddMicroserviceModal,
+              title: `Deploy microservice to ${agent.name}`,
+              onClose: () => setOpenAddMicroserviceModal(false)
+            }}
+          >
+            <AddMicroservice {...{
+              target: agent,
+              microservices: msvcs,
+              onSuccess: () => setOpenAddMicroserviceModal(false)
+            }}
+            />
+          </Modal>
+          <Modal
+            {...{
+              open: openRemoveMicroserviceModal,
+              title: `Remove microservice from ${agent.name}`,
+              onClose: () => setOpenRemoveMicroserviceModal(false)
+            }}
+          >
+            <RemoveMicroservice
+              {...{
+                target: agent,
+                msvcs: msvcsPerAgent[agent.uuid] || [],
+                onSuccess: () => setOpenRemoveMicroserviceModal(false)
+              }}
+            />
+          </Modal>
+          <Modal
+            {...{
+              open: openConnectNodeModal,
+              title: 'Connect agent',
+              onClose: () => setOpenConnectNodeModal(false)
+            }}
+          >
+            <ConnectNode
+              {...{
+                controller: props.controller,
+                onSuccess: () => setOpenConnectNodeModal(false)
+              }}
+            />
+          </Modal>
+        </>}
       <Menu
         id='agent-menu'
         anchorEl={menuAnchorEl}

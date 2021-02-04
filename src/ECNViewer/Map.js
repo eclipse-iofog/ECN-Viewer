@@ -61,7 +61,7 @@ export default function Map (props) {
             className={classes.mapMarkerTransform}
             onClick={() => setAgent(a)}
           >
-            <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).filter(m => m.flowActive && m.status.status === 'RUNNING').length} invisible={a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
+            <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).filter(m => m.flowActive && m.status.status === 'RUNNING').length} invisible={!agent || a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <Avatar
                   style={{ '--markerColor': statusColor[a.daemonStatus] }}
