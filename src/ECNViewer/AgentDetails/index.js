@@ -72,7 +72,6 @@ const _fogTypes = {
 
 const dateFormat = 'YYYY/MM/DD hh:mm:ss a'
 const MiBFactor = 1048576
-const MBFactor = 1000000
 
 export default function AgentDetails ({ views, setView, agent: selectedAgent }) {
   const { data } = useData()
