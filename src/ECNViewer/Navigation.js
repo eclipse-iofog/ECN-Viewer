@@ -1,8 +1,12 @@
 import React from 'react'
 
 import { Typography, Chip, Tooltip, Input } from '@material-ui/core'
+import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 
 import { makeStyles, useTheme } from '@material-ui/styles'
+
+import { ControllerContext } from '../ControllerProvider'
+import { useData } from '../providers/Data'
 
 const CONTROLLER_NAME_KEY = 'ControllerName'
 const DEFAULT_CONTROLLER_NAME = 'Controller'
@@ -38,16 +42,32 @@ const useStyles = makeStyles(theme => ({
     '& input': {
       textTransform: 'uppercase !important'
       // color: 'white'
+    },
+    paddingLeft: '5px'
+  },
+  navArrow: {
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  navBar: {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+    '& span': {
+      marginLeft: '5px',
+      textTransform: 'uppercase'
     }
   }
 }))
 
-export default function ControllerInfo (props) {
+export default function Navigation ({ view, agent, views, seeAllECN }) {
   const classes = useStyles()
   const theme = useTheme()
-  const { controller, error } = props
+  const { error } = useData()
+  const { error: controllerContextError } = React.useContext(ControllerContext)
 
-  const controllerError = error || controller.error || null
+  const controllerError = error || controllerContextError || null
   const [controllerName, setControllerName] = React.useState(() => {
     return window.localStorage.getItem(CONTROLLER_NAME_KEY) || DEFAULT_CONTROLLER_NAME
   })
@@ -73,12 +93,31 @@ export default function ControllerInfo (props) {
     window.document.title = controllerName
   }, [controllerName])
 
+  const _getContent = (view) => {
+    switch (view) {
+      case views.AGENT_DETAILS:
+      case views.APPLICATION_DETAILS:
+      case views.MICROSERVICE_DETAILS:
+        return (
+          <Typography className={classes.navBar} variant='h5'>
+            <div onClick={seeAllECN} className={classes.navArrow}><ArrowBackIcon /></div>
+            <span>{agent.name}</span>
+          </Typography>
+
+        )
+      case views.DEFAULT:
+      default:
+        return (
+          <Typography style={{ width: '100%' }} variant='h5'>
+            <Input className={classes.controllerName} value={controllerName} onChange={updateControllerName} onKeyDown={loseFocus} />
+          </Typography>)
+    }
+  }
+
   return (
     <div className={classes.controllerInfo}>
       <div className={classes.controllerTitle}>
-        <Typography style={{ width: '100%' }} variant='h5'>
-          <Input className={classes.controllerName} value={controllerName} onChange={updateControllerName} onKeyDown={loseFocus} />
-        </Typography>
+        {_getContent(view)}
         {controllerError &&
           <Tooltip title={controllerError.message} aria-label='Error'>
             <Chip label='The controller is not reachable' style={{ '--color': theme.colors.gold }} className={classes.warningChip} />

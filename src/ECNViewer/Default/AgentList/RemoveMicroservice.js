@@ -3,8 +3,8 @@ import React from 'react'
 import { FormControl, Divider, Grid, Button, Input, InputLabel, Select, MenuItem, Checkbox, ListItemText, Chip } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/styles'
-import { FeedbackContext } from '../../Utils/FeedbackContext'
-import { ControllerContext } from '../../ControllerProvider'
+import { FeedbackContext } from '../../../Utils/FeedbackContext'
+import { ControllerContext } from '../../../ControllerProvider'
 const useStyles = makeStyles({
   chips: {
     display: 'flex',

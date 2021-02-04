@@ -6,11 +6,11 @@ import { Grid, Paper, Typography, TextField, Divider, Select, Input, Button, Inp
 import CloseIcon from '@material-ui/icons/Close'
 import SwapIcon from '@material-ui/icons/SwapHoriz'
 
-import Autocomplete from '../../Utils/Autocomplete'
+import Autocomplete from '../../../Utils/Autocomplete'
 
 import { makeStyles } from '@material-ui/styles'
-import { FeedbackContext } from '../../Utils/FeedbackContext'
-import { ControllerContext } from '../../ControllerProvider'
+import { FeedbackContext } from '../../../Utils/FeedbackContext'
+import { ControllerContext } from '../../../ControllerProvider'
 
 const useStyles = makeStyles({
   divider: {

@@ -1,21 +1,19 @@
 import React from 'react'
-import ReactJson from 'react-json-view'
 import Skeleton from 'react-loading-skeleton'
 
-import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem } from '@material-ui/core'
+import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor, tagColor } from '../utils'
-import Modal from '../../Utils/Modal'
+import { statusColor, msvcStatusColor, tagColor } from '../../utils'
+import Modal from '../../../Utils/Modal'
 
 import ConnectNode from './ConnectNode'
 import AddMicroservice from './AddMicroservice'
 import RemoveMicroservice from './RemoveMicroservice'
-import SimpleTabs from '../../Utils/Tabs'
 import Icon from '@material-ui/core/Icon'
 
 const useStyles = makeStyles(theme => ({
@@ -103,7 +101,6 @@ const TagChip = ({ tag, first }) => {
 
 export default function AgentList (props) {
   const classes = useStyles()
-  const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [openConnectNodeModal, setOpenConnectNodeModal] = React.useState(false)
   const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
   const [openRemoveMicroserviceModal, setOpenRemoveMicroserviceModal] = React.useState(false)
@@ -112,10 +109,7 @@ export default function AgentList (props) {
 
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
-  const openDetails = () => {
-    setOpenDetailsModal(true)
-    handleCloseMenu()
-  }
+
   // const openAddMicroservice = () => {
   //   setOpenAddMicroserviceModal(true)
   //   handleCloseMenu()
@@ -193,18 +187,6 @@ export default function AgentList (props) {
       </List>
       <Modal
         {...{
-          open: openDetailsModal,
-          title: `${agent.name} details`,
-          onClose: () => setOpenDetailsModal(false)
-        }}
-      >
-        <SimpleTabs>
-          <ReactJson title='Agent' src={agent} name={false} />
-          <ReactJson title='Microservices' src={msvcsPerAgent[agent.uuid]} name={false} />
-        </SimpleTabs>
-      </Modal>
-      <Modal
-        {...{
           open: openAddMicroserviceModal,
           title: `Deploy microservice to ${agent.name}`,
           onClose: () => setOpenAddMicroserviceModal(false)
@@ -253,7 +235,6 @@ export default function AgentList (props) {
         open={Boolean(menuAnchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={openDetails}>Details</MenuItem>
         {/* <Divider />
         <MenuItem onClick={openAddMicroservice}>Add microservice</MenuItem>
         <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem> */}

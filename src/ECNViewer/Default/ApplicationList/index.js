@@ -10,19 +10,19 @@ import AppsIcon from '@material-ui/icons/ViewQuilt'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor, tagColor } from '../utils'
-import Modal from '../../Utils/Modal'
-import FileDrop from '../../Utils/FileDrop'
-import { API_VERSIONS } from '../../Utils/constants'
+import { statusColor, msvcStatusColor, tagColor } from '../../utils'
+import Modal from '../../../Utils/Modal'
+import FileDrop from '../../../Utils/FileDrop'
+import { API_VERSIONS } from '../../../Utils/constants'
 
 import Icon from '@material-ui/core/Icon'
-import { useConfig } from '../../providers/Config'
-import { useMap } from '../../providers/Map'
-import { useController } from '../../ControllerProvider'
-import { useFeedback } from '../../Utils/FeedbackContext'
+import { useConfig } from '../../../providers/Config'
+import { useMap } from '../../../providers/Map'
+import { useController } from '../../../ControllerProvider'
+import { useFeedback } from '../../../Utils/FeedbackContext'
 import { get as lget, uniqBy } from 'lodash'
 
-import { parseMicroservice } from '../../Utils/ApplicationParser'
+import { parseMicroservice } from '../../../Utils/ApplicationParser'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
