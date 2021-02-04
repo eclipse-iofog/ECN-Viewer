@@ -34,19 +34,9 @@ const useStyles = makeStyles(theme => ({
   },
   mapWrapper: {
     boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12)',
-    borderRadius: '4px',
-    width: '100%',
+    width: '160%',
     height: '100%',
-    maxHeight: '700px',
-    position: 'sticky',
-    top: '25px',
-    borderColor: theme.colors.aluminium,
-    '& div': {
-      borderRadius: '4px',
-      '& div': {
-        borderRadius: '4px'
-      }
-    }
+    borderColor: theme.colors.aluminium
   }
 }))
 
@@ -60,9 +50,9 @@ export default function Map (props) {
     <div className={classes.mapWrapper} ref={mapRef}>
       <GoogleMapReact
         {...map}
-        // bootstrapURLKeys={{
-        //   key: 'AIzaSyChp_fUXiK05ulRl_ewRGKWsQ1k0ULIFkA'
-        // }}
+        bootstrapURLKeys={{
+          key: 'AIzaSyChp_fUXiK05ulRl_ewRGKWsQ1k0ULIFkA'
+        }}
       >
         {(loading ? [] : controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
           <div

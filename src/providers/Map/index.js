@@ -19,7 +19,9 @@ export const MapProvider = ({
     center: [0, 0],
     zoom: 15,
     options: {
-      styles: mapStyle
+      styles: mapStyle,
+      zoomControl: false,
+      fullscreenControl: false
     }
   })
 

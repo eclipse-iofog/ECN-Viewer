@@ -5,6 +5,7 @@ import { Typography, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles({
   summary: {
+    marginTop: '15px',
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
     gridColumnGap: '15px',
@@ -17,8 +18,6 @@ export default function ActiveResources (props) {
   const { applications, activeAgents, activeMsvcs, loading } = props
   return (
     <div>
-      <Typography variant='h5'>Active resources</Typography>
-      <br />
       <div className={classes.summary}>
         <Paper>
           <Typography variant='h3'>{loading ? 0 : applications.length}</Typography>

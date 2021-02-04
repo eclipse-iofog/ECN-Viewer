@@ -1,11 +1,6 @@
 import React from 'react'
-import Skeleton from 'react-loading-skeleton'
 
-import { Typography, List, ListItem, ListItemIcon, ListItemText, Chip, Tooltip, Input } from '@material-ui/core'
-
-import LocationCityIcon from '@material-ui/icons/LocationCity'
-import GPSFixedIcon from '@material-ui/icons/GpsFixed'
-import IPIcon from '@material-ui/icons/WifiTethering'
+import { Typography, Chip, Tooltip, Input } from '@material-ui/core'
 
 import { makeStyles, useTheme } from '@material-ui/styles'
 
@@ -37,16 +32,20 @@ const useStyles = makeStyles(theme => ({
   controllerTitle: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
-    textEmphasis: 'bold'
+    alignItems: 'center',
+    textEmphasis: 'bold',
+    height: '60px',
+    '& input': {
+      textTransform: 'uppercase !important'
+      // color: 'white'
+    }
   }
 }))
 
 export default function ControllerInfo (props) {
   const classes = useStyles()
   const theme = useTheme()
-  const { controller, loading, error } = props
-  const { city, country, lat, lon, query } = controller.location || {}
+  const { controller, error } = props
 
   const controllerError = error || controller.error || null
   const [controllerName, setControllerName] = React.useState(() => {
@@ -85,20 +84,6 @@ export default function ControllerInfo (props) {
             <Chip label='The controller is not reachable' style={{ '--color': theme.colors.gold }} className={classes.warningChip} />
           </Tooltip>}
       </div>
-      <List>
-        <ListItem>
-          <ListItemIcon><LocationCityIcon /></ListItemIcon>
-          {loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={`${city}, ${country}`} />}
-        </ListItem>
-        <ListItem style={{ cursor: 'pointer' }} onClick={() => props.selectController()}>
-          <ListItemIcon><GPSFixedIcon /></ListItemIcon>
-          {loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={`${lat}, ${lon}`} />}
-        </ListItem>
-        <ListItem>
-          <ListItemIcon><IPIcon /></ListItemIcon>
-          {loading ? <ListItemText><Skeleton /></ListItemText> : <ListItemText primary={query} />}
-        </ListItem>
-      </List>
     </div>
   )
 }

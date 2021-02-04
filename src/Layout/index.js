@@ -1,8 +1,6 @@
 import React from 'react'
 import { HashRouter, Route, Switch, NavLink, Redirect } from 'react-router-dom'
 import Avatar from '@material-ui/core/Avatar'
-import SearchIcon from '@material-ui/icons/Search'
-import NotificationsIcon from '@material-ui/icons/NotificationsOutlined'
 import HomeIcon from '@material-ui/icons/HomeOutlined'
 import CatalogIcon from '@material-ui/icons/GraphicEqOutlined'
 import SettingsIcon from '@material-ui/icons/SettingsOutlined'
@@ -99,11 +97,6 @@ export default function Layout () {
             <NavLink to='/overview'>
               <img src={logomark} alt='Edgeworx logomark' />
             </NavLink>
-          </div>
-          <div className='topnav'>
-            <SearchIcon className={classes.topIcons} />
-            <NotificationsIcon className={classes.topIcons} />
-            <Avatar className={classes.avatarContainer}>M</Avatar>
           </div>
           <div className={classes.latNav + ' latnav'}>
             <NavLink to='/overview'>
