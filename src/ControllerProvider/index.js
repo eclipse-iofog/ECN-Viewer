@@ -4,7 +4,7 @@ const controllerJson = window.controllerConfig
 
 const initControllerState = (() => {
   const localUser = window.localStorage.getItem('iofogUser')
-  if (localUser) {
+  if ((!controllerJson.user || !controllerJson.user.email) && localUser) {
     controllerJson.user = JSON.parse(localUser)
   }
   return {

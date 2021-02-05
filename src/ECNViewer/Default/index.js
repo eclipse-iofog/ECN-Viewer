@@ -13,6 +13,7 @@ export default function Default ({ selectAgent, selectController, selectApplicat
   const { data, loading } = useData()
 
   const { controller, activeAgents, applications, activeMsvcs, msvcsPerAgent } = data
+
   return (
     <>
       <ActiveResources {...{ activeAgents, applications, activeMsvcs, loading }} />

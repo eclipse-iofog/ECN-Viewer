@@ -1,35 +1,117 @@
 import React from 'react'
 
-import { Typography, Paper } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/styles'
-const useStyles = makeStyles({
+import { useData } from '../../providers/Data'
+const useStyles = makeStyles(theme => ({
   summary: {
     marginTop: '15px',
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
     gridColumnGap: '15px',
     textAlign: 'center'
+  },
+  container: {
+    display: 'flex',
+    height: '100px'
+  },
+  mainNumber: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: '2 1 0px',
+    fontWeight: '400',
+    fontSize: '4rem'
+  },
+  detailsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    paddingTop: '20px',
+    flex: '4 1 0px',
+    textAlign: 'left'
+  },
+  unitType: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    textTransform: 'uppercase'
+  },
+  detailsText: {
+    fontSize: '0.8rem',
+    color: `var(--color, ${theme.colors.carbon})`,
+    textTransform: 'uppercase'
   }
-})
+}))
 
-export default function ActiveResources (props) {
+export default function ActiveResources () {
   const classes = useStyles()
-  const { applications, activeAgents, activeMsvcs, loading } = props
+  const { data } = useData()
+  const { controller, loading } = data
+  const { agents, applications, microservices } = controller
+  const applicationCount = applications.reduce((acc, app) => {
+    if (app.isActivated) { acc.running += 1 } else { acc.stopped += 1 }
+    // TODO: HAndle errored app
+    return acc
+  }, {
+    running: 0,
+    stopped: 0,
+    error: 0
+  })
+  const agentCount = applications.reduce((acc, a) => {
+    if (a.status === 'RUNNING') { acc.running += 1 } else { acc.unknown += 1 }
+    // TODO: HAndle errored app
+    return acc
+  }, {
+    running: 0,
+    unknown: 0,
+    alert: 0
+  })
+  const microserviceCount = microservices.reduce((acc, a) => {
+    if (a.status.status === 'RUNNING') {
+      acc.running += 1
+    } else if (a.status.status === 'FAILED') {
+      acc.error += 1
+    } else {
+      acc.stopped += 1
+    }
+    return acc
+  }, {
+    running: 0,
+    stopped: 0,
+    error: 0
+  })
   return (
     <div>
       <div className={classes.summary}>
-        <Paper>
-          <Typography variant='h3'>{loading ? 0 : applications.length}</Typography>
-          <Typography variant='subtitle1'>Applications</Typography>
+        <Paper className={classes.container}>
+          <div className={classes.mainNumber}>
+            <div>{loading ? 0 : agents.length}</div>
+          </div>
+          <div className={classes.detailsContainer}>
+            <div className={classes.unitType}>Agents</div>
+            <div className={classes.detailsText}>{agentCount.running} running &bull; {agentCount.unknown} unknown</div>
+            <div className={classes.detailsText}>{agentCount.alert} alerts</div>
+          </div>
         </Paper>
-        <Paper>
-          <Typography variant='h3'>{loading ? 0 : activeAgents.length}</Typography>
-          <Typography variant='subtitle1'>Agents</Typography>
+        <Paper className={classes.container}>
+          <div className={classes.mainNumber}>
+            <div>{loading ? 0 : applications.length}</div>
+          </div>
+          <div className={classes.detailsContainer}>
+            <div className={classes.unitType}>Applications</div>
+            <div className={classes.detailsText}>{applicationCount.running} running &bull; {applicationCount.stopped} stopped</div>
+            <div className={classes.detailsText}>{applicationCount.error} errors</div>
+          </div>
         </Paper>
-        <Paper>
-          <Typography variant='h3'>{loading ? 0 : activeMsvcs.length}</Typography>
-          <Typography variant='subtitle1'>Microservices</Typography>
+        <Paper className={classes.container}>
+          <div className={classes.mainNumber}>
+            <div>{loading ? 0 : microservices.length}</div>
+          </div>
+          <div className={classes.detailsContainer}>
+            <div className={classes.unitType}>Microservices</div>
+            <div className={classes.detailsText}>{microserviceCount.running} running &bull; {microserviceCount.stopped} stopped</div>
+            <div className={classes.detailsText}>{microserviceCount.error} errors</div>
+          </div>
         </Paper>
       </div>
     </div>

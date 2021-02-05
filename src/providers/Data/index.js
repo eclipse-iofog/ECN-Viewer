@@ -14,7 +14,8 @@ const initState = {
     },
     agents: [],
     flows: [],
-    microservices: []
+    microservices: [],
+    applications: []
   },
   activeAgents: [],
   activeMsvcs: [],
@@ -31,6 +32,21 @@ const updateData = (state, newController) => {
   if (!newController) {
     return state
   }
+  newController.agents.sort((a, b) => {
+    const statusOrder = {
+      RUNNING: 1,
+      UNKOWN: 2
+    }
+    if (a.daemonStatus === b.daemonStatus) {
+      return a.name.localeCompare(b.name)
+    } else {
+      return (statusOrder[a.daemonStatus] || 3) - (statusOrder[b.daemonStatus] || 3)
+    }
+  })
+  newController.applications.sort((a, b) => {
+    if (a.isActivated === b.isActivated) { return a.name.localeCompare(b.name) }
+    return (a.isActivated ? 1 : 2) - (b.isActivated ? 1 : 2)
+  })
   const reducedAgents = newController.agents.reduce((acc, a) => {
     acc.byUUID[a.uuid] = a
     acc.byName[a.name] = a
