@@ -80,7 +80,8 @@ export const MapProvider = ({
         map,
         mapRef,
         hasValidCoordinates,
-        setMap
+        setMap,
+        restoreMapToState: _setMap
       }}
     >
       {children}

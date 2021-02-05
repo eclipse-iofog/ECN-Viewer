@@ -10,87 +10,16 @@ import DetailsIcon from '@material-ui/icons/ArrowForward'
 import DeleteIcon from '@material-ui/icons/HighlightOff'
 
 import { useData } from '../../providers/Data'
+import { dateFormat, MiBFactor, fogTypes } from '../utils'
+
+import getSharedStyle from '../sharedStyles'
 
 import moment from 'moment'
 import prettyBytes from 'pretty-bytes'
 
 const useStyles = makeStyles(theme => ({
-  title: {
-    paddingBottom: '10px',
-    paddingTop: '10px',
-    position: 'sticky',
-    top: 0,
-    backgroundColor: 'white',
-    zIndex: 2,
-    textTransform: 'uppercase',
-    display: 'flex',
-    justifyContent: 'space-between'
-  },
-  multiSections: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between'
-  },
-  section: {
-    flex: '1 1 0px',
-    display: 'flex',
-    flexDirection: 'column',
-    paddingBottom: '15px'
-  },
-  subTitle: {
-    fontSize: '14px',
-    fontWeight: 'bold'
-  },
-  subSection: {
-    display: 'flex',
-    flexDirection: 'column',
-    paddingBottom: '5px'
-  },
-  edgeResource: {
-    display: 'flex',
-    alignItems: 'center',
-    paddingBottom: '5px'
-  },
-  text: {
-    fontSize: '14px',
-    fontWeight: 'normal'
-  },
-  erIconContainer: {
-    backgroundColor: `var(--color, ${theme.colors.carbon})`,
-    margin: '2px',
-    padding: '4px',
-    borderRadius: '4px',
-    width: '38px',
-    height: '38px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  erIcon: {
-    fontSize: 22,
-    color: 'white'
-  },
-  tableTitle: {
-    textTransform: 'uppercase'
-  },
-  actions: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    minWidth: '150px'
-  },
-  action: {
-    cursor: 'pointer'
-  }
+  ...getSharedStyle(theme)
 }))
-
-const _fogTypes = {
-  0: 'auto-detect',
-  1: 'x86',
-  2: 'ARM'
-}
-
-const dateFormat = 'YYYY/MM/DD hh:mm:ss a'
-const MiBFactor = 1048576
 
 export default function AgentDetails ({ agent: selectedAgent, selectApplication, selectMicroservice }) {
   const { data } = useData()
@@ -119,7 +48,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>Info</Typography>
           <span className={classes.subTitle}>Status: <span className={classes.text}>{agent.daemonStatus}</span></span>
-          <span className={classes.subTitle}>Type: <span className={classes.text}>{_fogTypes[agent.fogTypeId]}</span></span>
+          <span className={classes.subTitle}>Type: <span className={classes.text}>{fogTypes[agent.fogTypeId]}</span></span>
           <span className={classes.subTitle}>Version: <span className={classes.text}>{agent.version}</span></span>
         </div>
       </Paper>

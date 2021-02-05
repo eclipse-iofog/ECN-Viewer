@@ -13,3 +13,12 @@ export const msvcStatusColor = {
 }
 
 export const tagColor = theme.colors.cobalt
+
+export const dateFormat = 'YYYY/MM/DD hh:mm:ss a'
+export const MiBFactor = 1048576
+
+export const fogTypes = {
+  0: 'auto-detect',
+  1: 'x86',
+  2: 'ARM'
+}

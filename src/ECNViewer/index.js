@@ -1,5 +1,5 @@
 import React from 'react'
-import { isFinite } from 'lodash'
+import { isFinite, uniqBy } from 'lodash'
 
 import Map from './Map'
 import Default from './Default'
@@ -25,14 +25,18 @@ const views = {
 export default function ECNViewer () {
   const { data, loading } = useData()
   const { location } = React.useContext(ControllerContext)
-  const { setMap } = useMap()
+  const { setMap, map, restoreMapToState } = useMap()
   const [selectedElement, selectElement] = React.useState(null)
   const [history, setHistory] = React.useState([])
   const [view, setView] = React.useState(views.DEFAULT)
 
+  const saveHistory = () => {
+    setHistory(h => [...h, { view, selectedElement, map }])
+  }
+
   const selectAgent = (a) => {
     const copy = { ...a }
-    setHistory(h => [...h, { view, selectedElement }])
+    saveHistory()
     selectElement(copy)
     if (isFinite(a.latitude) && isFinite(a.longitude)) {
       setMap([copy], { location }, false)
@@ -41,20 +45,18 @@ export default function ECNViewer () {
   }
 
   const selectApplication = (a) => {
-    console.log('Selection application')
     const copy = { ...a }
-    console.log({ app: copy, view, selectedElement })
-    setHistory(h => [...h, { view, selectedElement }])
+    saveHistory()
     selectElement(copy)
-    // TODO: SET MAP
+    setMap(uniqBy(a.microservices.map(m => data.reducedAgents.byUUID[m.iofogUuid]), a => a.uuid), null, false)
     setView(views.APPLICATION_DETAILS)
   }
 
   const selectMicroservice = (a) => {
     const copy = { ...a }
-    setHistory(h => [...h, { view, selectedElement }])
+    saveHistory()
     selectElement(copy)
-    // TODO: SET MAP
+    setMap([data.reducedAgents.byUUID[a.iofogUuid]], null, false)
     setView(views.MICROSERVICE_DETAILS)
   }
 
@@ -68,9 +70,9 @@ export default function ECNViewer () {
   const back = () => {
     if (history.length) {
       const previousState = history[history.length - 1]
-      console.log({ previousState })
       setView(previousState.view)
       selectElement(previousState.selectedElement)
+      restoreMapToState(previousState.map)
       setHistory(h => {
         h.pop()
         return h
@@ -113,9 +115,9 @@ export default function ECNViewer () {
           <ApplicationDetails
             {
               ...{
-                views,
                 application: selectedElement,
-                setView
+                selectMicroservice,
+                selectAgent
               }
             }
           />
@@ -125,9 +127,9 @@ export default function ECNViewer () {
           <MicroserviceDetails
             {
               ...{
-                views,
                 microservice: selectedElement,
-                setView
+                selectApplication,
+                selectAgent
               }
             }
           />
@@ -140,7 +142,8 @@ export default function ECNViewer () {
               setAutozoom,
               selectController,
               selectAgent,
-              agent: selectedElement,
+              selectApplication,
+              selectedElement,
               setView,
               views
             }

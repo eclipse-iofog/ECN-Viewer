@@ -31,6 +31,14 @@ const updateData = (state, newController) => {
   if (!newController) {
     return state
   }
+  const reducedAgents = newController.agents.reduce((acc, a) => {
+    acc.byUUID[a.uuid] = a
+    acc.byName[a.name] = a
+    return acc
+  }, {
+    byUUID: {},
+    byName: {}
+  })
   const activeFlows = newController.applications.filter(f => f.isActivated === true)
   const activeAgents = newController.agents.filter(a => a.daemonStatus === 'RUNNING')
   const msvcsPerAgent = groupBy(newController.microservices.map(m => ({
@@ -50,7 +58,8 @@ const updateData = (state, newController) => {
     activeFlows,
     activeAgents,
     activeMsvcs,
-    msvcsPerAgent
+    msvcsPerAgent,
+    reducedAgents
   }
 }
 

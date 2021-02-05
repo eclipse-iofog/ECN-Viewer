@@ -3,24 +3,21 @@ import ReactJson from 'react-json-view'
 import Skeleton from 'react-loading-skeleton'
 import yaml from 'js-yaml'
 
-import { List, ListItem, ListSubheader, Divider, ListItemAvatar, Chip, Avatar, ListItemText, Menu, MenuItem, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText, Button } from '@material-ui/core'
+import { Table, TableHead, TableBody, TableRow, TableCell, Divider, Avatar, Menu, MenuItem, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText, Button } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import AppsIcon from '@material-ui/icons/ViewQuilt'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor, tagColor } from '../../utils'
+import { statusColor } from '../../utils'
 import Modal from '../../../Utils/Modal'
 import FileDrop from '../../../Utils/FileDrop'
 import { API_VERSIONS } from '../../../Utils/constants'
 
-import Icon from '@material-ui/core/Icon'
-import { useConfig } from '../../../providers/Config'
-import { useMap } from '../../../providers/Map'
 import { useController } from '../../../ControllerProvider'
 import { useFeedback } from '../../../Utils/FeedbackContext'
-import { get as lget, uniqBy } from 'lodash'
+import { get as lget } from 'lodash'
 
 import { parseMicroservice } from '../../../Utils/ApplicationParser'
 
@@ -68,7 +65,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.primary
   },
   link: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     cursor: 'pointer',
     '&:hover': {
       textDecoration: 'underline'
@@ -76,62 +73,22 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const TagChip = ({ tag, first }) => {
+export default function ApplicationList ({ applications, loading, application, agents, selectApplication }) {
   const classes = useStyles()
-  if (!tag.icon) {
-    return (
-      <Chip
-        size='small'
-        label={tag.value}
-        style={{
-          '--mTop': first ? '0px' : '2px',
-          '--color': tag.color || tagColor,
-          color: 'white'
-        }}
-        className={classes.msvcChip}
-        title={tag.value}
-      />)
-  }
-  return (
-    <Chip
-      icon={<Icon style={{ fontSize: 16, color: 'white' }}>{tag.icon}</Icon>}
-      size='small'
-      label={tag.value}
-      style={{
-        '--mTop': first ? '0px' : '2px',
-        '--color': tag.color || tagColor,
-        color: 'white'
-      }}
-      className={classes.msvcChip}
-      title={tag.value}
-    />
-  )
-}
-
-export default function ApplicationList ({ applications, loading, setAutozoom, agents }) {
-  const classes = useStyles()
-  const { getTagDisplayInfo } = useConfig()
   const { request } = useController()
-  const { setMap } = useMap()
   const { pushFeedback } = useFeedback()
   const [fileParsing, setFileParsing] = React.useState(false)
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [openStartStopModal, setOpenStartStopModal] = React.useState(false)
   const [openDeleteApplicationModal, setOpenDeleteApplicationModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
-  const [application, setApplication] = React.useState(applications[0] || {})
-  const [agentsByUUID, setAgentsByUUID] = React.useState((agents || {}).reduce((res, agent) => { res[agent.uuid] = agent; return res }, {}))
-
-  React.useEffect(() => {
-    const reduced = (agents || []).reduce((res, agent) => { res.byName[agent.name] = agent; res.byUUID[agent.uuid] = agent; return res }, {
-      byName: {},
-      byUUID: {}
-    })
-    setAgentsByUUID(reduced.byUUID)
-  }, [agents])
+  const [applicationMenu, setApplicationMenu] = React.useState(applications[0])
 
   const handleCloseMenu = () => setMenuAnchorEl(null)
-  const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
+  const openMenu = (a, e) => {
+    setApplicationMenu(a)
+    setMenuAnchorEl(e.currentTarget)
+  }
   const openDetails = () => {
     setOpenDetailsModal(true)
     handleCloseMenu()
@@ -260,101 +217,67 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
     }
   }
 
-  const selectApplication = (application) => {
-    setApplication(application)
-    setMap(uniqBy(application.microservices.map(m => agentsByUUID[m.iofogUuid]), a => a.uuid), null, false)
-  }
-
   return (
     <>
-      <List
-        subheader={
-          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative', marginBottom: '30px' }} disableGutters disableSticky>
-            <div className={classes.listTitle}>
-              <FileDrop {...{ onDrop: readApplicationFile, loading: fileParsing }}>
-                <div className={classes.flexColumn}>
-                  <span>Drag a file here to deploy an application</span>
-                </div>
-              </FileDrop>
-            </div>
-          </ListSubheader>
-        }
-      >
-        {(loading ? [1, 2, 3].map((idx) => <ListItem key={idx}><ListItemText><Skeleton height={72} /></ListItemText></ListItem>) : applications.map(a => {
-          const msvcs = a.microservices || []
-          const tags = (a.tags || []).map(getTagDisplayInfo)
-          return (
-            <ListItem button key={a.id} onClick={() => selectApplication(a)} selected={a.id === application.id}>
-              <ListItemAvatar>
-                <Avatar style={{ '--statusColor': statusColor[a.isActivated ? 'RUNNING' : 'OFFLINE'] }} className={classes.avatarList}>
-                  <AppsIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText style={{ width: '100px', textOverflow: 'ellipsis' }} primary={a.name} secondary={`${msvcs.length} Microservices`} />
-              <div className={classes.msvcChipList}>
-                {tags.map((t, idx) => (
-                  <TagChip key={t.value} tag={t} first={!idx} />
-                ))}
-              </div>
-              <div className={classes.msvcChipList}>
-                {msvcs.length > 4
-                  ? (
-                    <Chip
-                      size='small'
-                      label={`${msvcs.length} microservices`}
-                      style={{
-                        '--mTop': '0px',
-                        '--color': msvcStatusColor[a.isActivated ? 'RUNNING' : 'UNKNOWN']
-                      }}
-                      className={classes.msvcChip}
-                      title={`${msvcs.length} microservices`}
-                    />
-                  )
-                  : msvcs.map((m, idx) => (
-                    <React.Fragment key={m.uuid}>
-                      <Chip
-                        size='small'
-                        label={m.name}
-                        style={{
-                          '--mTop': idx ? '2px' : '0px',
-                          '--color': msvcStatusColor[a.isActivated && m.status.status === 'RUNNING' ? 'RUNNING' : 'UNKNOWN']
-                        }}
-                        className={classes.msvcChip}
-                        title={m.name}
-                      />
-                    </React.Fragment>
-                  ))}
-              </div>
-              <MoreIcon onClick={openMenu} />
-            </ListItem>
-          )
-        }))}
-      </List>
+      <div className={classes.listTitle}>
+        <FileDrop {...{ onDrop: readApplicationFile, loading: fileParsing }}>
+          <div className={classes.flexColumn}>
+            <span>Drag a file here to deploy an application</span>
+          </div>
+        </FileDrop>
+      </div>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell className={classes.tableTitle}>Name</TableCell>
+            <TableCell className={classes.tableTitle} align='right'>Msvcs</TableCell>
+            <TableCell className={classes.tableTitle} align='right' />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {(loading ? [1, 2, 3].map((idx) => <TableRow key={idx}><TableCell colSpan={4}><Skeleton height={72} /></TableCell></TableRow>) : applications.map(a => {
+            return (
+              <TableRow button key={a.uuid}>
+                <TableCell onClick={() => selectApplication(a)} style={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar style={{ '--statusColor': statusColor[a.isActivated ? 'RUNNING' : 'OFFLINE'] }} className={classes.avatarList}>
+                    <AppsIcon />
+                  </Avatar>
+                  <span className={classes.link} style={{ marginLeft: '5px' }}>{a.name}</span>
+                </TableCell>
+                <TableCell align='right'>{a.microservices.length}</TableCell>
+                <TableCell align='right'>
+                  <MoreIcon className={classes.action} onClick={(e) => { e.stopPropagation(); openMenu(a, e) }} />
+                </TableCell>
+              </TableRow>
+            )
+          }))}
+        </TableBody>
+      </Table>
       <Modal
         {...{
           open: openDetailsModal,
-          title: `${application.name} details`,
+          title: `${applicationMenu.name} details`,
           onClose: () => setOpenDetailsModal(false)
         }}
       >
-        <ReactJson title='Application' src={application} name={false} />
+        <ReactJson title='Application' src={applicationMenu} name={false} />
       </Modal>
       <Dialog
         open={openStartStopModal}
         onClose={() => setOpenStartStopModal(false)}
       >
-        <DialogTitle id='alert-dialog-title'>{`${application.isActivated ? 'Stop' : 'Start'} ${application.name}?`}</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{`${applicationMenu.isActivated ? 'Stop' : 'Start'} ${applicationMenu.name}?`}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            {application.isActivated ? 'Stopping an application will stop all its microservices' : 'Starting an application will start all its microservices'}
+            {applicationMenu.isActivated ? 'Stopping an application will stop all its microservices' : 'Starting an application will start all its microservices'}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenStartStopModal(false)} color='primary'>
             Cancel
           </Button>
-          <Button onClick={() => toggleApplication(application)} color='primary' autoFocus>
-            {application.isActivated ? 'Stop' : 'Start'}
+          <Button onClick={() => toggleApplication(applicationMenu)} color='primary' autoFocus>
+            {applicationMenu.isActivated ? 'Stop' : 'Start'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -362,7 +285,7 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
         open={openDeleteApplicationModal}
         onClose={() => setOpenDeleteApplicationModal(false)}
       >
-        <DialogTitle id='alert-dialog-title'>Delete {application.name}?</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>Delete {applicationMenu.name}?</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
             <span>Deleting an application will delete all its microservices.</span><br />
@@ -373,7 +296,7 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
           <Button onClick={() => setOpenDeleteApplicationModal(false)} color='primary'>
             Cancel
           </Button>
-          <Button onClick={() => deleteApplication(application)} color='primary' autoFocus>
+          <Button onClick={() => deleteApplication(applicationMenu)} color='primary' autoFocus>
             Delete
           </Button>
         </DialogActions>
@@ -387,7 +310,7 @@ export default function ApplicationList ({ applications, loading, setAutozoom, a
       >
         <MenuItem onClick={openDetails}>Details</MenuItem>
         <Divider />
-        <MenuItem onClick={openStartStop}>{`${application.isActivated ? 'Stop' : 'Start'}`}</MenuItem>
+        <MenuItem onClick={openStartStop}>{`${applicationMenu.isActivated ? 'Stop' : 'Start'}`}</MenuItem>
         <MenuItem onClick={openDeleteApplication}>Delete</MenuItem>
       </Menu>
     </>

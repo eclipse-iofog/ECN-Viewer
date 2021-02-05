@@ -1,22 +1,22 @@
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { List, ListItem, ListSubheader, ListItemAvatar, Chip, Avatar, ListItemText, Menu } from '@material-ui/core'
+import { Avatar, Menu, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor, tagColor } from '../../utils'
-import Modal from '../../../Utils/Modal'
-
-import ConnectNode from './ConnectNode'
-import AddMicroservice from './AddMicroservice'
-import RemoveMicroservice from './RemoveMicroservice'
+import { statusColor, fogTypes } from '../../utils'
 import Icon from '@material-ui/core/Icon'
 
+import { theme } from '../../../Theme/ThemeProvider'
+
+import getSharedStyle from '../../sharedStyles/'
+
 const useStyles = makeStyles(theme => ({
+  ...getSharedStyle(theme),
   avatarList: {
     color: 'white',
     backgroundColor: 'var(--statusColor, white)',
@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.text.primary
   },
   link: {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
     cursor: 'pointer',
     '&:hover': {
       textDecoration: 'underline'
@@ -67,45 +67,10 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const TagChip = ({ tag, first }) => {
-  const classes = useStyles()
-  if (!tag.icon) {
-    return (
-      <Chip
-        size='small'
-        label={tag.value}
-        style={{
-          '--mTop': first ? '0px' : '2px',
-          '--color': tag.color || tagColor,
-          color: 'white'
-        }}
-        className={classes.msvcChip}
-        title={tag.value}
-      />)
-  }
-  return (
-    <Chip
-      icon={<Icon style={{ fontSize: 16, color: 'white' }}>{tag.icon}</Icon>}
-      size='small'
-      label={tag.value}
-      style={{
-        '--mTop': first ? '0px' : '2px',
-        '--color': tag.color || tagColor,
-        color: 'white'
-      }}
-      className={classes.msvcChip}
-      title={tag.value}
-    />
-  )
-}
-
 export default function AgentList (props) {
   const classes = useStyles()
-  const [openConnectNodeModal, setOpenConnectNodeModal] = React.useState(false)
-  const [openAddMicroserviceModal, setOpenAddMicroserviceModal] = React.useState(false)
-  const [openRemoveMicroserviceModal, setOpenRemoveMicroserviceModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
-  const { msvcsPerAgent, msvcs, agents, agent, setAgent, setAutozoom, loading } = props
+  const { msvcsPerAgent, agents, setAgent, loading } = props
 
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
@@ -121,116 +86,48 @@ export default function AgentList (props) {
 
   return (
     <>
-      <List
-        subheader={
-          <ListSubheader component='div' id='agent-list-subheader' style={{ position: 'relative', marginBottom: '5px' }} disableGutters disableSticky>
-            <div className={classes.listTitle}>
-              <div>
-                {/* <Typography variant='h5'><small>{loading ? 0 : agents.length} nodes</small></Typography> */}
-              </div>
-              <div>
-                <small className={classes.link} onClick={() => setAutozoom(true)}>See all ECN</small>
-              </div>
-            </div>
-          </ListSubheader>
-        }
-      >
-        {(loading ? [1, 2, 3].map((idx) => <ListItem key={idx}><ListItemText><Skeleton height={72} /></ListItemText></ListItem>) : agents.map(a => {
-          const msvcs = msvcsPerAgent[a.uuid] || []
-          const edgeResources = a.edgeResources || []
-          return (
-            <ListItem button key={a.uuid} onClick={() => setAgent(a)} selected={agent && a.uuid === agent.uuid}>
-              <ListItemAvatar>
-                <Avatar style={{ '--statusColor': statusColor[a.daemonStatus] }} className={classes.avatarList}>
-                  <MemoryIcon />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={a.name} secondary={`${msvcs.length} Microservices`} />
-              <div className={classes.msvcChipList}>
-                {edgeResources.map((eR, idx) => (
-                  <TagChip key={eR.name} tag={{ value: eR.display ? eR.display.name : eR.name, ...eR.display }} first={!idx} />
-                ))}
-              </div>
-              <div className={classes.msvcChipList}>
-                {msvcs.length > 4
-                  ? (
-                    <Chip
-                      size='small'
-                      label={`${msvcs.length} microservices`}
-                      style={{
-                        '--mTop': '0px',
-                        '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING') ? 'RUNNING' : 'UNKNOWN']
-                      }}
-                      className={classes.msvcChip}
-                      title={`${msvcs.length} microservices`}
-                    />
-                  )
-                  : msvcs.map((m, idx) => (
-                    <React.Fragment key={m.uuid}>
-                      <Chip
-                        size='small'
-                        label={m.name}
-                        style={{
-                          '--mTop': idx ? '2px' : '0px',
-                          '--color': msvcStatusColor[(a.daemonStatus === 'RUNNING' && m.status.status === 'RUNNING' && m.flowActive) ? 'RUNNING' : 'UNKNOWN']
-                        }}
-                        className={classes.msvcChip}
-                        title={m.name}
-                      />
-                    </React.Fragment>
-                  ))}
-              </div>
-              <MoreIcon onClick={openMenu} />
-            </ListItem>
-          )
-        }))}
-      </List>
-      {agent &&
-        <>
-          <Modal
-            {...{
-              open: openAddMicroserviceModal,
-              title: `Deploy microservice to ${agent.name}`,
-              onClose: () => setOpenAddMicroserviceModal(false)
-            }}
-          >
-            <AddMicroservice {...{
-              target: agent,
-              microservices: msvcs,
-              onSuccess: () => setOpenAddMicroserviceModal(false)
-            }}
-            />
-          </Modal>
-          <Modal
-            {...{
-              open: openRemoveMicroserviceModal,
-              title: `Remove microservice from ${agent.name}`,
-              onClose: () => setOpenRemoveMicroserviceModal(false)
-            }}
-          >
-            <RemoveMicroservice
-              {...{
-                target: agent,
-                msvcs: msvcsPerAgent[agent.uuid] || [],
-                onSuccess: () => setOpenRemoveMicroserviceModal(false)
-              }}
-            />
-          </Modal>
-          <Modal
-            {...{
-              open: openConnectNodeModal,
-              title: 'Connect agent',
-              onClose: () => setOpenConnectNodeModal(false)
-            }}
-          >
-            <ConnectNode
-              {...{
-                controller: props.controller,
-                onSuccess: () => setOpenConnectNodeModal(false)
-              }}
-            />
-          </Modal>
-        </>}
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell className={classes.tableTitle}>Name</TableCell>
+            <TableCell className={classes.tableTitle} align='right'>Version</TableCell>
+            <TableCell className={classes.tableTitle} align='right'>Apps</TableCell>
+            <TableCell className={classes.tableTitle} align='right'>Msvcs</TableCell>
+            <TableCell className={classes.tableTitle} align='right'>Type</TableCell>
+            <TableCell className={classes.tableTitle} align='right'>Resources</TableCell>
+            <TableCell className={classes.tableTitle} align='right' />
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {(loading ? [1, 2, 3].map((idx) => <TableRow key={idx}><TableCell colSpan={7}><Skeleton height={72} /></TableCell></TableRow>) : agents.map(a => {
+            const msvcs = msvcsPerAgent[a.uuid] || []
+            const applications = Object.keys(msvcs.reduce((acc, m) => ({ ...acc, [m.application]: true }), {}))
+            const edgeResources = a.edgeResources || []
+            return (
+              <TableRow button key={a.uuid}>
+                <TableCell onClick={() => setAgent(a)} style={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar style={{ '--statusColor': statusColor[a.daemonStatus] }} className={classes.avatarList}>
+                    <MemoryIcon />
+                  </Avatar>
+                  <span className={classes.link} style={{ marginLeft: '5px' }}>{a.name}</span>
+                </TableCell>
+                <TableCell align='right'>{a.version}</TableCell>
+                <TableCell align='right'>{applications.length}</TableCell>
+                <TableCell align='right'>{msvcs.length}</TableCell>
+                <TableCell align='right'>{fogTypes[a.fogTypeId]}</TableCell>
+                <TableCell align='right'>
+                  {edgeResources.map((er) => {
+                    return er.display && er.display.icon ? <Icon title={er.display.name || er.name} style={{ color: theme.colors.carbon }} className={classes.erIcon}>{er.display.icon}</Icon> : null
+                  })}
+                </TableCell>
+                <TableCell align='right'>
+                  <MoreIcon className={classes.action} onClick={(e) => { e.stopPropagation(); openMenu(e) }} />
+                </TableCell>
+              </TableRow>
+            )
+          }))}
+        </TableBody>
+      </Table>
       <Menu
         id='agent-menu'
         anchorEl={menuAnchorEl}

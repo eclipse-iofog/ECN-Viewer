@@ -9,7 +9,7 @@ import SimpleTabs from '../../Utils/Tabs'
 
 import { useData } from '../../providers/Data'
 
-export default function Default ({ selectAgent, selectController, setAutozoom, agent, setView, views }) {
+export default function Default ({ selectAgent, selectController, selectApplication, selectedElement, setView, views }) {
   const { data, loading } = useData()
 
   const { controller, activeAgents, applications, activeMsvcs, msvcsPerAgent } = data
@@ -19,8 +19,8 @@ export default function Default ({ selectAgent, selectController, setAutozoom, a
 
       <Paper className='section' style={{ maxHeight: '80vh' }}>
         <SimpleTabs>
-          <AgentList title='Agents' {...{ msvcsPerAgent, loading, msvcs: controller.microservices, agents: controller.agents, agent, setAgent: selectAgent, setAutozoom, controller: controller.info }} />
-          <ApplicationList title='Applications' {...{ applications, loading, agents: controller.agents, setAutozoom }} />
+          <AgentList title='Agents' {...{ msvcsPerAgent, loading, msvcs: controller.microservices, agents: controller.agents, agent: selectedElement, setAgent: selectAgent, controller: controller.info }} />
+          <ApplicationList title='Applications' {...{ applications, loading, agents: controller.agents, selectApplication, application: selectedElement }} />
         </SimpleTabs>
       </Paper>
     </>
