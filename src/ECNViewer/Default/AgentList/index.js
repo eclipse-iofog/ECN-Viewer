@@ -86,7 +86,7 @@ export default function AgentList (props) {
 
   return (
     <>
-      <Table>
+      <Table stickyHeader>
         <TableHead>
           <TableRow>
             <TableCell className={classes.tableTitle}>Name</TableCell>

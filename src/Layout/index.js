@@ -73,7 +73,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.colors.carbon,
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     fontSize: '9pt',
     '& a': {
       color: theme.colors.carbon,

@@ -18,7 +18,7 @@ export default function Default ({ selectAgent, selectController, selectApplicat
     <>
       <ActiveResources {...{ activeAgents, applications, activeMsvcs, loading }} />
 
-      <Paper className='section' style={{ maxHeight: '80vh' }}>
+      <Paper className='section' style={{ maxHeight: '80vh', padding: 0 }}>
         <SimpleTabs>
           <AgentList title='Agents' {...{ msvcsPerAgent, loading, msvcs: controller.microservices, agents: controller.agents, agent: selectedElement, setAgent: selectAgent, controller: controller.info }} />
           <ApplicationList title='Applications' {...{ applications, loading, agents: controller.agents, selectApplication, application: selectedElement }} />

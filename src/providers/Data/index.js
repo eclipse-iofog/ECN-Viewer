@@ -113,6 +113,7 @@ export const DataProvider = ({
 
     let microservices = []
     for (const application of applications) {
+      // We need this to get microservice details like Status
       const microservicesResponse = await request(`/api/v3/microservices?application=${application.name}`)
       if (!microservicesResponse.ok) {
         setError({ message: microservicesResponse.statusText })
@@ -121,6 +122,7 @@ export const DataProvider = ({
       const newMicroservices = (await microservicesResponse.json()).microservices
       microservices = microservices.concat(newMicroservices)
       application.microservices = newMicroservices
+      // microservices = microservices.concat(application.microservices)
     }
     if (loading) {
       setLoading(false)
