@@ -8,10 +8,11 @@ import lget from 'lodash/get'
 
 const useStyles = makeStyles(theme => ({
   variableSection: {
-    marginBottom: '40px'
+    marginBottom: '40px',
+    width: '100%'
   },
   input: {
-    width: '400px'
+    width: '100%'
   },
   container: {
     paddingTop: '20px',
@@ -21,7 +22,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center'
   },
   wrapper: {
-    width: '400px',
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center'
@@ -32,6 +33,9 @@ const useStyles = makeStyles(theme => ({
   },
   select: {
     display: 'flex'
+  },
+  formControl: {
+    width: '100%'
   }
 }))
 
@@ -151,7 +155,7 @@ export default function DeployApplicationTemplate ({ template, close }) {
     <div className={classes.container}>
       <div className={classes.wrapper}>
         <div className={classes.variableSection}>
-          <FormControl>
+          <FormControl className={classes.formControl}>
             <TextField
               className={classes.input}
               variant='outlined'
@@ -174,13 +178,13 @@ export default function DeployApplicationTemplate ({ template, close }) {
               : (v.isAgentName
                 ? (
                   <div className={classes.variableSection} key={key}>
-                    <FormControl variant='outlined'>
+                    <FormControl className={classes.formControl} variant='outlined'>
                       <InputLabel id='demo-simple-select-outlined-label'>{key}</InputLabel>
                       <Select
                         value={v.value}
                         onChange={e => handleChange(key, e.target.value)}
                         label={key}
-                        style={{ width: '400px' }}
+                        style={{ width: '100%' }}
                         classes={{
                           select: classes.select
                         }}
@@ -193,7 +197,7 @@ export default function DeployApplicationTemplate ({ template, close }) {
                 )
                 : (
                   <div className={classes.variableSection} key={key}>
-                    <FormControl>
+                    <FormControl className={classes.formControl}>
                       <TextField
                         className={classes.input}
                         variant='outlined'

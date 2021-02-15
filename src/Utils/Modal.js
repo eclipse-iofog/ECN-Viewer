@@ -5,24 +5,38 @@ import CloseIcon from '@material-ui/icons/Close'
 import { makeStyles } from '@material-ui/styles'
 const useStyles = makeStyles(theme => ({
   modalTitle: {
-    backgroundColor: theme.colors.carbon,
+    // backgroundColor: theme.colors.carbon,
     borderRadius: '4px 4px 0 0',
-    color: 'white',
-    padding: '5px',
+    // color: 'white',
+    padding: '25px 50px',
     display: 'flex',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    textTransform: 'uppercase'
   },
   modal: {
-    width: '60%',
+    position: 'relative',
+    margin: 'auto',
     top: '15%',
-    left: '20%',
-    position: 'absolute',
-    borderRadius: '4px'
+    borderRadius: '4pxpx',
+    '&:focus': {
+      outline: 'none'
+    }
+  },
+  lg: {
+    width: '60%'
+  },
+  sm: {
+    width: '40%'
+  },
+  xl: {
+    width: '80%'
   },
   modalContent: {
     maxHeight: '600px',
-    overflowY: 'scroll',
-    padding: '15px'
+    overflowY: 'auto',
+    padding: '50px',
+    paddingTop: '0px',
+    paddingBottom: '25px'
   },
   modalActions: {
     display: 'flex',
@@ -37,6 +51,7 @@ const useStyles = makeStyles(theme => ({
 export default function _Modal (props) {
   const classes = useStyles()
   const { title, open, onClose } = props
+  const classNames = [classes.modal, classes[props.size] || classes.sm].join(' ')
   return (
     <Modal
       aria-labelledby={`${title} modal`}
@@ -45,7 +60,7 @@ export default function _Modal (props) {
         onClose
       }}
     >
-      <Paper className={classes.modal}>
+      <Paper className={classNames}>
         <div className={classes.modalTitle}>
           <Typography variant='h5'>{title}</Typography>
           <CloseIcon style={{ cursor: 'pointer' }} onClick={onClose} />
