@@ -25,6 +25,7 @@
     "moment": "^2.29.1",
     "pretty-bytes": "^5.5.0",
     "react": "^16.13.0",
+    "react-ace": "^9.3.0",
     "react-dnd": "^10.0.2",
     "react-dnd-html5-backend": "^10.0.2",
     "react-dom": "^16.13.0",

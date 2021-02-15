@@ -3,6 +3,9 @@ import { useController } from '../../ControllerProvider'
 import { find, groupBy, get } from 'lodash'
 import useRecursiveTimeout from '../../hooks/useInterval'
 
+import AgentManager from './agent-manager'
+import ApplicationManager from './application-manager'
+
 export const DataContext = React.createContext()
 export const useData = () => React.useContext(DataContext)
 
@@ -55,6 +58,14 @@ const updateData = (state, newController) => {
     byUUID: {},
     byName: {}
   })
+  const reducedApplications = newController.applications.reduce((acc, a) => {
+    acc.byId[a.id] = a
+    acc.byName[a.name] = a
+    return acc
+  }, {
+    byId: {},
+    byName: {}
+  })
   const activeFlows = newController.applications.filter(f => f.isActivated === true)
   const activeAgents = newController.agents.filter(a => a.daemonStatus === 'RUNNING')
   const msvcsPerAgent = groupBy(newController.microservices.map(m => ({
@@ -75,7 +86,8 @@ const updateData = (state, newController) => {
     activeAgents,
     activeMsvcs,
     msvcsPerAgent,
-    reducedAgents
+    reducedAgents,
+    reducedApplications
   }
 }
 
@@ -98,18 +110,23 @@ export const DataProvider = ({
   const [error, setError] = React.useState(false)
 
   const update = async () => {
-    const agentsResponse = await request('/api/v3/iofog-list')
-    if (!agentsResponse.ok) {
-      setError({ message: agentsResponse.statusText })
+    // List fogs
+    let agents = []
+    try {
+      agents = await AgentManager.listAgents(request)()
+    } catch (e) {
+      setError(e)
       return
     }
-    const agents = (await agentsResponse.json()).fogs
-    const applicationResponse = await request('/api/v3/application')
-    if (!applicationResponse.ok) {
-      setError({ message: applicationResponse.statusText })
+
+    // List applications
+    let applications = []
+    try {
+      applications = await ApplicationManager.listApplications(request)()
+    } catch (e) {
+      setError(e)
       return
     }
-    const applications = (await applicationResponse.json()).applications
 
     let microservices = []
     for (const application of applications) {
@@ -138,7 +155,12 @@ export const DataProvider = ({
   return (
     <DataContext.Provider
       value={{
-        data: state, error, loading
+        data: state,
+        error,
+        loading,
+        deleteAgent: AgentManager.deleteAgent(request),
+        deleteApplication: ApplicationManager.deleteApplication(request),
+        toggleApplication: ApplicationManager.toggleApplication(request)
       }}
     >
       {children}

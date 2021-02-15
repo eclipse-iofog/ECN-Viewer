@@ -57,8 +57,8 @@ export default function ActiveResources () {
     stopped: 0,
     error: 0
   })
-  const agentCount = applications.reduce((acc, a) => {
-    if (a.status === 'RUNNING') { acc.running += 1 } else { acc.unknown += 1 }
+  const agentCount = agents.reduce((acc, a) => {
+    if (a.daemonStatus === 'RUNNING') { acc.running += 1 } else { acc.unknown += 1 }
     // TODO: HAndle errored app
     return acc
   }, {

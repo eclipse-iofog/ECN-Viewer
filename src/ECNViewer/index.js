@@ -105,7 +105,8 @@ export default function ECNViewer () {
               ...{
                 agent: selectedElement,
                 selectApplication,
-                selectMicroservice
+                selectMicroservice,
+                back
               }
             }
           />

@@ -10,7 +10,8 @@ import SimpleTabs from '../../Utils/Tabs'
 import { useData } from '../../providers/Data'
 
 export default function Default ({ selectAgent, selectController, selectApplication, selectedElement, setView, views }) {
-  const { data, loading } = useData()
+  const { data, loading, deleteAgent } = useData()
+  const [filter, setFilter] = React.useState('')
 
   const { controller, activeAgents, applications, activeMsvcs, msvcsPerAgent } = data
 
@@ -19,9 +20,9 @@ export default function Default ({ selectAgent, selectController, selectApplicat
       <ActiveResources {...{ activeAgents, applications, activeMsvcs, loading }} />
 
       <Paper className='section' style={{ maxHeight: '80vh', padding: 0 }}>
-        <SimpleTabs>
-          <AgentList title='Agents' {...{ msvcsPerAgent, loading, msvcs: controller.microservices, agents: controller.agents, agent: selectedElement, setAgent: selectAgent, controller: controller.info }} />
-          <ApplicationList title='Applications' {...{ applications, loading, agents: controller.agents, selectApplication, application: selectedElement }} />
+        <SimpleTabs onSearch={setFilter} stickyHeader>
+          <AgentList title='Agents' {...{ deleteAgent, msvcsPerAgent, filter, loading, msvcs: controller.microservices, agents: controller.agents, agent: selectedElement, setAgent: selectAgent, controller: controller.info }} />
+          <ApplicationList title='Applications' {...{ applications, filter, loading, agents: controller.agents, selectApplication, application: selectedElement }} />
         </SimpleTabs>
       </Paper>
     </>

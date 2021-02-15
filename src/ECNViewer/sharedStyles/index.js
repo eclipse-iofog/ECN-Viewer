@@ -9,7 +9,9 @@ export default function getStyle (theme) {
       zIndex: 2,
       textTransform: 'uppercase',
       display: 'flex',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      height: '44px'
+
     },
     multiSections: {
       display: 'flex',
@@ -33,7 +35,8 @@ export default function getStyle (theme) {
     },
     text: {
       fontSize: '14px',
-      fontWeight: 'normal'
+      fontWeight: 'normal',
+      whiteSpace: 'pre-line'
     },
     tableTitle: {
       textTransform: 'uppercase'
@@ -41,10 +44,17 @@ export default function getStyle (theme) {
     actions: {
       display: 'flex',
       justifyContent: 'space-between',
-      minWidth: '150px'
+      minWidth: '150px',
+      direction: 'rtl'
     },
     action: {
-      cursor: 'pointer'
+      cursor: 'pointer',
+      '&:hover': {
+        textDecoration: 'underline'
+      }
+    },
+    disabledAction: {
+      opacity: 0.4
     },
     edgeResource: {
       display: 'flex',

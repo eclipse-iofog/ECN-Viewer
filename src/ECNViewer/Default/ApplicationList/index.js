@@ -61,8 +61,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    height: '50px',
-    color: theme.palette.text.primary
+    color: theme.palette.text.primary,
+    padding: '20px'
   },
   link: {
     color: theme.palette.text.primary,
@@ -70,10 +70,18 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       textDecoration: 'underline'
     }
+  },
+  hiddenInput: {
+    width: '0.1px',
+    height: '0.1px',
+    opacity: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    zIndex: '-1'
   }
 }))
 
-export default function ApplicationList ({ applications, loading, application, agents, selectApplication }) {
+export default function ApplicationList ({ applications: unfilteredApplications, filter, loading, application, agents, selectApplication }) {
   const classes = useStyles()
   const { request } = useController()
   const { pushFeedback } = useFeedback()
@@ -82,7 +90,9 @@ export default function ApplicationList ({ applications, loading, application, a
   const [openStartStopModal, setOpenStartStopModal] = React.useState(false)
   const [openDeleteApplicationModal, setOpenDeleteApplicationModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
-  const [applicationMenu, setApplicationMenu] = React.useState(applications[0])
+  const [applicationMenu, setApplicationMenu] = React.useState(unfilteredApplications[0] || {})
+
+  const applications = unfilteredApplications.filter(a => a.name.toLowerCase().includes(filter))
 
   const handleCloseMenu = () => setMenuAnchorEl(null)
   const openMenu = (a, e) => {
@@ -217,16 +227,24 @@ export default function ApplicationList ({ applications, loading, application, a
     }
   }
 
+  const handleFileInput = (e) => {
+    readApplicationFile(e.target)
+  }
+
   return (
     <>
       <div className={classes.listTitle}>
         <FileDrop {...{ onDrop: readApplicationFile, loading: fileParsing }}>
           <div className={classes.flexColumn}>
-            <span>Drag a file here to deploy an application</span>
+            <input onChange={handleFileInput} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+            <span>
+              <label for='file' className={classes.link} style={{ marginRight: '5px' }}>Choose a file</label>
+              or Drag a file here to deploy an application
+            </span>
           </div>
         </FileDrop>
       </div>
-      <Table>
+      <Table stickyHeader classes={{ stickyHeader: { top: '48px' } }}>
         <TableHead>
           <TableRow>
             <TableCell className={classes.tableTitle}>Name</TableCell>

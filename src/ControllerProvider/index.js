@@ -70,13 +70,17 @@ const getControllerStatus = async (api) => {
 }
 
 export default function Context (props) {
-  const [token, setToken] = React.useState(null)
+  // const [token, setToken] = React.useState(null)
+  const tokenRef = React.useRef(null)
   const [controllerUser, setControllerUser] = React.useState(initControllerState.user)
   const [controllerLocation, setControllerLocation] = React.useState(initControllerState.location)
   const [controllerStatus, setControllerStatus] = React.useState(initControllerState.status)
   const [error, setError] = React.useState(null)
-  const [refresh, setRefresh] = React.useState(3000)
+  const [refresh, setRefresh] = React.useState(window.localStorage.getItem('iofogRefresh') || 3000)
 
+  const setToken = (newToken) => {
+    tokenRef.current = newToken
+  }
   React.useEffect(() => {
     // Grab controller location informations
     const effect = async () => {
@@ -127,9 +131,16 @@ export default function Context (props) {
   // Wrapper around window.fetch to add proxy and authorization headers
   const request = React.useMemo(() => async (path, options = {}) => {
     try {
-      let t = token
+      let t = tokenRef.current
       if (!t) {
         t = await authenticate()
+      }
+      if (options.body && typeof options.body === typeof {}) {
+        options.body = JSON.stringify(options.body)
+        options.headers = {
+          ...options.headers,
+          'Content-Type': 'application/json'
+        }
       }
       const response = await window.fetch(getUrl(path), {
         ...options,
@@ -149,10 +160,11 @@ export default function Context (props) {
         statusText: err.message || 'Could not reach controller'
       })
     }
-  }, [token, error])
+  }, [tokenRef.current, error])
 
   const updateController = async ({ user, refresh }) => {
     window.localStorage.setItem('iofogUser', JSON.stringify(user))
+    window.localStorage.setItem('iofogRefresh', refresh)
     setControllerUser(user)
     setRefresh(refresh)
     try {

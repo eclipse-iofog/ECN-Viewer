@@ -1,42 +1,152 @@
 import React from 'react'
 
 import ReactJson from 'react-json-view'
-import { Paper, Typography, makeStyles, Icon, Table, TableHead, TableRow, TableBody, TableCell } from '@material-ui/core'
-
-import PlayIcon from '@material-ui/icons/PlayArrow'
-import StopIcon from '@material-ui/icons/Stop'
-import RestartIcon from '@material-ui/icons/Replay'
-import DetailsIcon from '@material-ui/icons/ArrowForward'
-import DeleteIcon from '@material-ui/icons/HighlightOff'
+import { Paper, Typography, makeStyles, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
 
 import { useData } from '../../providers/Data'
 
 import getSharedStyle from '../sharedStyles'
-import { MiBFactor, dateFormat } from '../utils'
+import { dateFormat, icons } from '../utils'
 
 import moment from 'moment'
-import prettyBytes from 'pretty-bytes'
+import MicroservicesTable from '../MicroservicesTable'
+import yaml from 'js-yaml'
+import AceEditor from 'react-ace'
+import { useFeedback } from '../../Utils/FeedbackContext'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
 }))
-export default function ApplicationDetails ({ application: selectedApplication, selectApplication, selectMicroservice }) {
-  const { data } = useData()
+export default function ApplicationDetails ({ application: selectedApplication, selectApplication, selectMicroservice, back }) {
+  const { data, toggleApplication: _toggleApplication, deleteApplication: _deleteApplication } = useData()
   const classes = useStyles()
+  const { pushFeedback } = useFeedback()
+  const [openDeleteApplicationDialog, setOpenDeleteApplicationDialog] = React.useState(false)
 
-  const { applications } = data
+  const { applications, reducedAgents } = data
   const application = (applications || []).find(a => selectedApplication.name === a.name) || selectedApplication // Get live updates from data
+  const runningMsvcs = application.microservices.filter(m => m.status.status === 'RUNNING')
+
+  const toggleApplication = async (app) => {
+    try {
+      const response = await _toggleApplication(app)
+      if (response.ok) {
+        app.isActivated = !app.isActivated
+        pushFeedback({ type: 'success', message: `Application ${app.isActivated ? 'Started' : 'Stopped'}!` })
+      } else {
+        pushFeedback({ type: 'error', message: response.status })
+      }
+    } catch (e) {
+      pushFeedback({ type: 'error', message: e.message || e.status })
+    }
+  }
+
+  const restartApplication = async (app) => {
+    await toggleApplication(app)
+    await toggleApplication(app)
+  }
+
+  const deleteApplication = async (app) => {
+    try {
+      const response = await _deleteApplication(app)
+      if (response.ok) {
+        pushFeedback({ type: 'success', message: 'Application Deleted!' })
+        setOpenDeleteApplicationDialog(false)
+        back()
+      } else {
+        pushFeedback({ type: 'error', message: response.status })
+      }
+    } catch (e) {
+      pushFeedback({ type: 'error', message: e.message || e.status })
+    }
+  }
+
+  const _getApplicationYAMLFromJSON = (app) => {
+    return {
+      apiVersion: 'iofog.org/v2',
+      kind: 'Application',
+      metadata: {
+        name: app.name
+      },
+      spec: {
+        microservices: app.microservices.map(m => ({
+          name: m.name,
+          agent: {
+            name: (reducedAgents.byUUID[m.iofogUuid] || { name: '__UNKNOWN__' }).name
+          },
+          images: m.images.reduce((acc, image) => {
+            switch (image.fogTypeId) {
+              case 1:
+                acc.x86 = image.containerImage
+                break
+              case 2:
+                acc.arm = image.containerImage
+                break
+            }
+            return acc
+          }, {
+            registry: m.registryId
+          }),
+          container: {
+            ports: m.ports.map(p => {
+              if (p.host) {
+                p.host = (reducedAgents.byUUID[p.host] || { name: p.host }).name
+              }
+              return p
+            }),
+            volumes: m.volumeMappings.map(vm => {
+              delete vm.id
+              return vm
+            }),
+            env: m.env.map(env => {
+              delete env.id
+              return env
+            }),
+            extraHosts: m.extraHosts.map(eH => {
+              delete eH.id
+              return eH
+            }),
+            commands: m.cmd.map(cmd => {
+              delete cmd.id
+              return cmd
+            })
+          },
+          config: JSON.parse(m.config)
+        })),
+        routes: app.routes.map(r => ({
+          name: r.name,
+          from: r.from,
+          to: r.to
+        }))
+      }
+    }
+  }
+
+  const yamlDump = React.useMemo(() => yaml.dump(_getApplicationYAMLFromJSON(application)), [application])
+
+  console.log({ yamlDump })
 
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
-        <div className={classes.section} style={{ flex: '2 1 0px' }}>
-          <Typography variant='subtitle2' className={classes.title}>Description</Typography>
-          <span className={classes.text}>{application.description}</span>
-        </div>
         <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>Info</Typography>
-          <span className={classes.subTitle}>Status: <span className={classes.text}>{application.isActivated ? 'RUNNING' : 'STOPPED'}</span></span>
+          <Typography variant='subtitle2' className={classes.title}>Status</Typography>
+          <span className={classes.subTitle}>{application.isActivated ? 'RUNNING' : 'STOPPED'}</span>
+        </div>
+        <div className={classes.section} style={{ flex: '2 1 0px' }}>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Description</span>
+            <div className={classes.actions} style={{ minWidth: '100px' }}>
+              <icons.DeleteIcon onClick={() => setOpenDeleteApplicationDialog(true)} className={classes.action} title='Delete application' />
+              {application.isActivated
+                ? <icons.RestartIcon className={classes.action} onClick={() => restartApplication(application)} title='Restart application' />
+                : <icons.RestartIcon className={classes.disabledAction} title='Restart application' />}
+              {application.isActivated
+                ? <icons.StopIcon className={classes.action} onClick={() => toggleApplication(application)} title='Stop application' />
+                : <icons.PlayIcon className={classes.action} onClick={() => toggleApplication(application)} title='Start application' />}
+            </div>
+          </Typography>
+          <span className={classes.text}>{application.description}</span>
         </div>
       </Paper>
       <Paper className={`section ${classes.multiSections}`}>
@@ -47,12 +157,8 @@ export default function ApplicationDetails ({ application: selectedApplication, 
             <span className={classes.text}>{moment(application.lastStatusTime).format(dateFormat)}</span>
           </div>
           <div className={classes.subSection}>
-            <span className={classes.subTitle}>IP Address</span>
-            <span className={classes.text}>{application.ipAddressExternal}</span>
-          </div>
-          <div className={classes.subSection}>
-            <span className={classes.subTitle}>Processed Messages</span>
-            <span className={classes.text}>{application.processedMessages}</span>
+            <span className={classes.subTitle}>Microservices</span>
+            <span className={classes.text}>{runningMsvcs.length}/{application.microservices.length}</span>
           </div>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Created at</span>
@@ -60,86 +166,75 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </div>
         </div>
         <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>Resource Utilization</Typography>
-          <div className={classes.subSection}>
-            <span className={classes.subTitle}>CPU Usage</span>
-            <span className={classes.text}>{(application.cpuUsage * 1).toFixed(2) + '%'}</span>
-          </div>
-          <div className={classes.subSection}>
-            <span className={classes.subTitle}>Memory Usage</span>
-            {/* <span className={classes.text}>{`${prettyBytes((application.memoryUsage * MiBFactor))} / ${prettyBytes((application.systemAvailableMemory))} (${(application.memoryUsage * MiBFactor / application.systemAvailableMemory * 100).toFixed(2)}%)`}</span> */}
-          </div>
-          <div className={classes.subSection}>
-            <span className={classes.subTitle}>Disk Usage</span>
-            {/* <span className={classes.text}>{`${prettyBytes((application.diskUsage * MiBFactor))} / ${prettyBytes((application.systemAvailableDisk))} (${(application.diskUsage * MiBFactor / application.systemAvailableDisk * 100).toFixed(2)}%)`}</span> */}
-          </div>
-        </div>
-        <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>Edge Resources</Typography>
-          {/* {application.edgeResources.map(er => (
-            <div key={`${er.name}_${er.version}`} className={classes.edgeResource}>
-              <div className={classes.erIconContainer} style={{ '--color': er.display.color }}>
-                {er.display && er.display.icon && <Icon title={er.display.name || er.name} className={classes.erIcon}>{er.display.icon}</Icon>}
-              </div>
-              <div className={classes.subTitle} style={{ marginLeft: '5px' }}>{(er.display && er.display.name) || er.name} {er.version}</div>
+          <Typography variant='subtitle2' className={classes.title}>Routes</Typography>
+          {application.routes.map((r, idx) =>
+            <div key={r.name || idx} className={classes.subSection}>
+              <span className={classes.subTitle}>{r.name}</span>
+              <span className={classes.text}>{r.from}&nbsp;&#8594;&nbsp;{r.to}</span>
             </div>
-          ))} */}
+          )}
         </div>
       </Paper>
-      {application.microservices.map(microservice => (
-        <Paper key={microservice.uuid} className='section'>
-          <div className={classes.section}>
-            <Typography variant='subtitle2' className={classes.title}>
-              <span>{microservice.name}</span>
-              <div className={classes.actions}>
-                {microservice.status.status === 'RUNNING'
-                  ? <StopIcon className={classes.action} title='Stop application' />
-                  : <PlayIcon className={classes.action} title='Start application' />}
-                <RestartIcon className={classes.action} title='Restart application' />
-                <DeleteIcon className={classes.action} title='Delete application' />
-                <DetailsIcon className={classes.action} onClick={() => selectMicroservice(microservice)} title='Microservice Details' />
-              </div>
-            </Typography>
-            <ReactJson title='Microservice' src={microservice} name={false} collapsed />
-            {/* <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell className={classes.tableTitle}>Microservice Name</TableCell>
-                  <TableCell className={classes.tableTitle} align='right'>Status</TableCell>
-                  <TableCell className={classes.tableTitle} align='right'>Ports</TableCell>
-                  <TableCell className={classes.tableTitle} align='right'>Volumes</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {applicationsByName[applicationName].microservices.map((row) => (
-                  <TableRow key={row.uuid}>
-                    <TableCell component='th' scope='row' onClick={() => selectMicroservice(row)}>
-                      {row.name}
-                    </TableCell>
-                    <TableCell align='right'>{row.status.status}{row.status.status === 'PULLING' && ` (${row.status.percentage}%)`}</TableCell>
-                    <TableCell align='right'>
-                      {row.ports.map(p => (
-                        <div key={p.internal}>{p.internal}:{p.external}/{p.protocol === 'udp' ? 'udp' : 'tcp'}</div>
-                      ))}
-                    </TableCell>
-                    <TableCell align='right'>
-                      {row.volumeMappings.map(p => (
-                        <div key={p.id}>{p.hostDestination}:{p.containerDestination}:{p.accessMode}</div>
-                      ))}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table> */}
+      <Paper className='section'>
+        <div className={classes.section}>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Microservices</span>
+          </Typography>
+          <MicroservicesTable
+            application={application}
+            selectMicroservice={selectMicroservice}
+          />
+          <div style={{
+            width: '100%',
+            textAlign: 'right',
+            fontSize: '12px',
+            paddingTop: '15px'
+          }}
+          >
+            {/* <span className={classes.action} onClick={() => selectMicroservice(microservice)}>{'See microservice details >'}</span> */}
           </div>
-        </Paper>
-      ))}
+        </div>
+      </Paper>
+      <Paper className='section'>
+        <div className={classes.section}>
+          <Typography variant='subtitle2' className={classes.title} style={{ zIndex: 5 }}>Application YAML</Typography>
+          <AceEditor
+            mode='yaml'
+            defaultValue={yamlDump}
+            readOnly
+            style={{
+              width: '100%',
+              height: '240px'
+            }}
+          />
+        </div>
+      </Paper>
       <Paper className='section'>
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>Application JSON</Typography>
           <ReactJson title='Agent' src={application} name={false} collapsed />
         </div>
       </Paper>
+      <Dialog
+        open={openDeleteApplicationDialog}
+        onClose={() => { setOpenDeleteApplicationDialog(false) }}
+      >
+        <DialogTitle id='alert-dialog-title'>Delete {application.name}?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            <span>Deleting an Application will delete all its microservices.</span><br />
+            <span>This is not reversible.</span>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeleteApplicationDialog(false)} color='primary'>
+            Cancel
+          </Button>
+          <Button onClick={() => { deleteApplication(application) }} color='primary' autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

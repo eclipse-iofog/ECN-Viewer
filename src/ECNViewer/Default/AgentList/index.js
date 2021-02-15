@@ -1,7 +1,7 @@
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { Avatar, Menu, Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core'
+import { Avatar, Menu, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Divider, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText, Button } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import MemoryIcon from '@material-ui/icons/Memory'
@@ -14,6 +14,7 @@ import Icon from '@material-ui/core/Icon'
 import { theme } from '../../../Theme/ThemeProvider'
 
 import getSharedStyle from '../../sharedStyles/'
+import { useFeedback } from '../../../Utils/FeedbackContext'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme),
@@ -64,38 +65,51 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       textDecoration: 'underline'
     }
+  },
+  stickyHeader: {
+    top: '48px'
   }
 }))
 
 export default function AgentList (props) {
   const classes = useStyles()
+  const { pushFeedback } = useFeedback()
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
-  const { msvcsPerAgent, agents, setAgent, loading } = props
+  const { msvcsPerAgent, filter, agents: unfilteredAgents, setAgent, loading, deleteAgent: _deleteAgent } = props
+  const [openDeleteAgentDialog, setOpenDeleteAgentDialog] = React.useState(false)
+  const [selectedAgent, setSelectedAgent] = React.useState({})
 
-  const handleCloseMenu = () => setMenuAnchorEl(null)
-  const openMenu = (e) => setMenuAnchorEl(e.currentTarget)
+  const handleCloseMenu = () => { setMenuAnchorEl(null); setSelectedAgent({}) }
+  const openMenu = (a, e) => { setMenuAnchorEl(e.currentTarget); setSelectedAgent(a) }
 
-  // const openAddMicroservice = () => {
-  //   setOpenAddMicroserviceModal(true)
-  //   handleCloseMenu()
-  // }
-  // const openRemoveMicroservice = () => {
-  //   setOpenRemoveMicroserviceModal(true)
-  //   handleCloseMenu()
-  // }
+  const agents = unfilteredAgents.filter(a => a.name.toLowerCase().includes(filter))
+  const deleteAgent = async (agent) => {
+    try {
+      const response = await _deleteAgent(agent)
+      if (response.ok) {
+        pushFeedback({ type: 'success', message: 'Agent deleted!' })
+        setOpenDeleteAgentDialog(false)
+        handleCloseMenu()
+      } else {
+        pushFeedback({ type: 'error', message: response.status })
+      }
+    } catch (e) {
+      pushFeedback({ type: 'error', message: e.message || e.status })
+    }
+  }
 
   return (
     <>
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.tableTitle}>Name</TableCell>
-            <TableCell className={classes.tableTitle} align='right'>Version</TableCell>
-            <TableCell className={classes.tableTitle} align='right'>Apps</TableCell>
-            <TableCell className={classes.tableTitle} align='right'>Msvcs</TableCell>
-            <TableCell className={classes.tableTitle} align='right'>Type</TableCell>
-            <TableCell className={classes.tableTitle} align='right'>Resources</TableCell>
-            <TableCell className={classes.tableTitle} align='right' />
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader }}>Name</TableCell>
+            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Version</TableCell>
+            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Apps</TableCell>
+            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Msvcs</TableCell>
+            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Type</TableCell>
+            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Resources</TableCell>
+            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }} />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -121,13 +135,33 @@ export default function AgentList (props) {
                   })}
                 </TableCell>
                 <TableCell align='right'>
-                  <MoreIcon className={classes.action} onClick={(e) => { e.stopPropagation(); openMenu(e) }} />
+                  <MoreIcon className={classes.action} onClick={(e) => { e.stopPropagation(); openMenu(a, e) }} />
                 </TableCell>
               </TableRow>
             )
           }))}
         </TableBody>
       </Table>
+      <Dialog
+        open={openDeleteAgentDialog}
+        onClose={() => { setOpenDeleteAgentDialog(false); handleCloseMenu() }}
+      >
+        <DialogTitle id='alert-dialog-title'>Delete {selectedAgent.name}?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            <span>Deleting an agent will delete all its microservices.</span><br />
+            <span>This is not reversible.</span>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeleteAgentDialog(false)} color='primary'>
+            Cancel
+          </Button>
+          <Button onClick={() => deleteAgent(selectedAgent)} color='primary' autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Menu
         id='agent-menu'
         anchorEl={menuAnchorEl}
@@ -135,9 +169,9 @@ export default function AgentList (props) {
         open={Boolean(menuAnchorEl)}
         onClose={handleCloseMenu}
       >
-        {/* <Divider />
-        <MenuItem onClick={openAddMicroservice}>Add microservice</MenuItem>
-        <MenuItem onClick={openRemoveMicroservice}>Remove microservice</MenuItem> */}
+        <MenuItem onClick={() => setAgent(selectedAgent)}>Details</MenuItem>
+        <Divider />
+        <MenuItem onClick={() => setOpenDeleteAgentDialog(true)}>Delete Agent</MenuItem>
       </Menu>
     </>
   )
