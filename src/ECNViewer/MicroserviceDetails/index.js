@@ -1,13 +1,55 @@
 import React from 'react'
 
 import ReactJson from 'react-json-view'
-import { Paper, Typography, makeStyles, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Table, TableHead, TableRow, TableBody, TableCell } from '@material-ui/core'
+import {
+  Paper,
+  Typography,
+  makeStyles,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Button,
+  Table,
+  TableHead,
+  TableRow,
+  TableBody,
+  TableCell,
+  Input,
+  InputAdornment
+} from '@material-ui/core'
+import SearchIcon from '@material-ui/icons/Search'
 
 import { useData } from '../../providers/Data'
 import getSharedStyle from '../sharedStyles'
 
 import { icons, dateFormat, MiBFactor, prettyBytes } from '../utils'
 import moment from 'moment'
+import lget from 'lodash/get'
+
+function SearchBar (props) {
+  const [value, setValue] = React.useState('')
+
+  const handleChange = (e) => {
+    const newValue = e.target.value.toLowerCase()
+    props.onSearch(newValue)
+    setValue(newValue)
+  }
+  return (
+    <Input
+      style={{ marginRight: '15px' }}
+      id='searchBar'
+      value={value}
+      onChange={handleChange}
+      endAdornment={
+        <InputAdornment position='end'>
+          <SearchIcon />
+        </InputAdornment>
+      }
+    />
+  )
+}
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
@@ -16,6 +58,9 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
   const { data } = useData()
   const classes = useStyles()
   const [openDeleteMicroserviceDialog, setOpenDeleteMicroserviceDialog] = React.useState(false)
+  const [envFilter, setEnvFilter] = React.useState('')
+  const [volumeFilter, setVolumeFilter] = React.useState('')
+  const [hostFilter, sethostFilter] = React.useState('')
 
   const { microservices, reducedAgents, reducedApplications } = data
   const microservice = (microservices || []).find(a => selectedMicroservice.uuid === a.uuid) || selectedMicroservice // Get live updates from data
@@ -83,7 +128,9 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
       </Paper>
       <Paper className='section'>
         <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>Ports</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Ports</span>
+          </Typography>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -116,7 +163,10 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
       </Paper>
       <Paper className='section'>
         <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>Volumes</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Volumes</span>
+            <SearchBar onSearch={setVolumeFilter} />
+          </Typography>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -127,29 +177,38 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
               </TableRow>
             </TableHead>
             <TableBody>
-              {microservice.volumeMappings.map((p) => (
-                <TableRow key={p.containerDestination}>
-                  <TableCell component='th' scope='row'>
-                    {p.hostDestination}
-                  </TableCell>
-                  <TableCell align='right'>
-                    {p.containerDestination}
-                  </TableCell>
-                  <TableCell align='right'>
-                    {p.accessMode}
-                  </TableCell>
-                  <TableCell align='right'>
-                    {p.fogTypeId}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {microservice.volumeMappings
+                .filter(vm =>
+                  lget(vm, 'hostDestination', '').toLowerCase().includes(volumeFilter) ||
+                  lget(vm, 'containerDestination', '').toLowerCase().includes(volumeFilter) ||
+                  lget(vm, 'accessMode', '').toLowerCase().includes(volumeFilter) ||
+                  lget(vm, 'type', '').toLowerCase().includes(volumeFilter))
+                .map((p) => (
+                  <TableRow key={p.containerDestination}>
+                    <TableCell component='th' scope='row'>
+                      {p.hostDestination}
+                    </TableCell>
+                    <TableCell align='right'>
+                      {p.containerDestination}
+                    </TableCell>
+                    <TableCell align='right'>
+                      {p.accessMode}
+                    </TableCell>
+                    <TableCell align='right'>
+                      {p.fogTypeId}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </div>
       </Paper>
       <Paper className='section'>
         <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>Environment variables</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Environment variables</span>
+            <SearchBar onSearch={setEnvFilter} />
+          </Typography>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -158,23 +217,30 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
               </TableRow>
             </TableHead>
             <TableBody>
-              {microservice.env.map((p) => (
-                <TableRow key={p.key}>
-                  <TableCell component='th' scope='row' style={{ maxWidth: '200px' }}>
-                    {p.key}
-                  </TableCell>
-                  <TableCell align='right' style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
-                    {p.value}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {microservice.env
+                .filter(e =>
+                  lget(e, 'key', '').toLowerCase().includes(envFilter) ||
+                  lget(e, 'value', '').toString().toLowerCase().includes(envFilter))
+                .map((p) => (
+                  <TableRow key={p.key}>
+                    <TableCell component='th' scope='row' style={{ maxWidth: '200px' }}>
+                      {p.key}
+                    </TableCell>
+                    <TableCell align='right' style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
+                      {p.value}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </div>
       </Paper>
       <Paper className='section'>
         <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>Extra Hosts</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Extra hosts</span>
+            <SearchBar onSearch={sethostFilter} />
+          </Typography>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -184,19 +250,24 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
               </TableRow>
             </TableHead>
             <TableBody>
-              {microservice.extraHosts.map((p) => (
-                <TableRow key={p.name}>
-                  <TableCell component='th' scope='row'>
-                    {p.name}
-                  </TableCell>
-                  <TableCell align='right'>
-                    {p.address}
-                  </TableCell>
-                  <TableCell align='right'>
-                    {p.value}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {microservice.extraHosts
+                .filter(e =>
+                  lget(e, 'name', '').toLowerCase().includes(hostFilter) ||
+                  lget(e, 'value', '').toLowerCase().includes(hostFilter) ||
+                  lget(e, 'address', '').toLowerCase().includes(hostFilter))
+                .map((p) => (
+                  <TableRow key={p.name}>
+                    <TableCell component='th' scope='row'>
+                      {p.name}
+                    </TableCell>
+                    <TableCell align='right'>
+                      {p.address}
+                    </TableCell>
+                    <TableCell align='right'>
+                      {p.value}
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </div>

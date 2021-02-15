@@ -4,7 +4,7 @@ import { createMuiTheme } from '@material-ui/core/styles'
 
 import customTheme from './theme.json'
 
-const colors = {
+export const colors = {
   phosphorus: '#FF585D',
   cobalt: '#5064EC',
   gold: '#F5A623',

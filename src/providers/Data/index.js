@@ -158,6 +158,7 @@ export const DataProvider = ({
         data: state,
         error,
         loading,
+        refreshData: update,
         deleteAgent: AgentManager.deleteAgent(request),
         deleteApplication: ApplicationManager.deleteApplication(request),
         toggleApplication: ApplicationManager.toggleApplication(request)

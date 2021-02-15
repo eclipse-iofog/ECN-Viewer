@@ -10,6 +10,7 @@ import Modal from '../../Utils/Modal'
 import CatalogTable from './CatalogTable'
 import Confirm from '../../Utils/Confirm'
 import FileDrop from '../../Utils/FileDrop'
+import DeployApplicationTemplate from './DeployApplicationTemplate'
 
 import lget from 'lodash/get'
 import { parseMicroservice } from '../../Utils/ApplicationParser'
@@ -64,6 +65,7 @@ const parseApplicationTemplate = async (doc) => {
 export default function Catalog () {
   const classes = useStyles()
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
+  const [openDeployModal, setOpenDeployModal] = React.useState(false)
   const [openRemoveConfirm, setOpenRemoveConfirm] = React.useState(false)
   const [fetching, setFetching] = React.useState(true)
   const [loading, setLoading] = React.useState(false)
@@ -80,6 +82,10 @@ export default function Catalog () {
   }
   const openDetails = () => {
     setOpenDetailsModal(true)
+    handleCloseMenu()
+  }
+  const openDeploy = () => {
+    setOpenDeployModal(true)
     handleCloseMenu()
   }
   const openRemove = () => {
@@ -216,6 +222,15 @@ export default function Catalog () {
       >
         <ReactJson title='Application template' src={getDetails(selectedItem)} name={false} />
       </Modal>
+      <Modal
+        {...{
+          open: openDeployModal,
+          title: `Deploy ${selectedItem.name}`,
+          onClose: () => setOpenDeployModal(false)
+        }}
+      >
+        <DeployApplicationTemplate template={selectedItem} close={() => setOpenDeployModal(false)} />
+      </Modal>
       <Confirm
         open={openRemoveConfirm}
         title={`Delete Application template ${selectedItem.name} ?`}
@@ -234,6 +249,7 @@ export default function Catalog () {
         open={Boolean(menuAnchorEl)}
         onClose={handleCloseMenu}
       >
+        <MenuItem onClick={openDeploy}>Deploy</MenuItem>
         <MenuItem onClick={openDetails}>Details</MenuItem>
         <Divider />
         <MenuItem onClick={openRemove}>Remove item</MenuItem>
