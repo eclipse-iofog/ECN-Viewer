@@ -72,6 +72,7 @@ export default function Context (props) {
 
   return (
     <FeedbackContext.Provider value={{
+      // feedbacks: [...state.feedbacks, { message: 'test', type: 'warning' }],
       feedbacks: state.feedbacks,
       setFeedbacks,
       pushFeedback

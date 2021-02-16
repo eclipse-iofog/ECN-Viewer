@@ -10,11 +10,11 @@ export const colors = {
   argon: '#7A3BFF',
   carbon: '#00293E',
   lead: '#57687D',
-  aluminium: '#ACB5C6',
+  aluminium: '#D3D1D0',
   silver: '#FAFCFF',
   white: '#FFFFFF',
   primary: '#26D6F1',
-  secondary: '#FF58D',
+  secondary: '#FF585D',
   purple: '#5064EC',
   neutral: '#506279'
 }
@@ -23,7 +23,7 @@ export const theme = createMuiTheme({
   ...customTheme,
   colors: {
     ...colors,
-    success: colors.primaryBlue,
+    success: colors.primary,
     error: colors.secondary,
     danger: colors.gold
   }

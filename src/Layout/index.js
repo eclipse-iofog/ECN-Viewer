@@ -1,5 +1,5 @@
 import React from 'react'
-import { HashRouter, Route, Switch, NavLink, Redirect } from 'react-router-dom'
+import { HashRouter, Route, Switch, NavLink, Redirect, useLocation } from 'react-router-dom'
 import Avatar from '@material-ui/core/Avatar'
 import HomeIcon from '@material-ui/icons/HomeOutlined'
 import CatalogIcon from '@material-ui/icons/GraphicEqOutlined'
@@ -18,6 +18,7 @@ import './layout.scss'
 
 import { makeStyles } from '@material-ui/styles'
 import { MapProvider } from '../providers/Map'
+import { useData } from '../providers/Data'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     backgroundColor: theme.colors.carbon,
     '.active &': {
-      backgroundColor: theme.colors.aluminium
+      backgroundColor: '#0E445C'
     }
   },
   topIcons: {
@@ -78,6 +79,21 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+function RouteWatcher ({ children }) {
+  const { refreshData } = useData()
+  const location = useLocation()
+
+  React.useEffect(() => {
+    console.log({ location })
+    if (location.pathname === '/overview') {
+      console.log('Refreshing data')
+      refreshData()
+    }
+  }, [location])
+
+  return null
+}
+
 export default function Layout () {
   const classes = useStyles()
   const { user, status } = React.useContext(ControllerContext)
@@ -88,6 +104,7 @@ export default function Layout () {
   return (
     <>
       <HashRouter>
+        <RouteWatcher />
         <div className={classes.wrapper + ' wrapper'}>
           <div className={classes.logo + ' logo'}>
             <NavLink to='/overview'>

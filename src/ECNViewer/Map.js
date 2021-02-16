@@ -2,7 +2,7 @@ import React from 'react'
 
 import GoogleMapReact from 'google-map-react'
 
-import { Badge, Avatar } from '@material-ui/core'
+import { Avatar } from '@material-ui/core'
 
 import MemoryIcon from '@material-ui/icons/Memory'
 import CtrlIcon from '@material-ui/icons/DeveloperBoard'
@@ -10,7 +10,7 @@ import Icon from '@material-ui/core/Icon'
 
 import { makeStyles, useTheme } from '@material-ui/styles'
 
-import { statusColor, msvcStatusColor, tagColor } from './utils'
+import { statusColor, tagColor } from './utils'
 import { useMap } from '../providers/Map'
 
 const useStyles = makeStyles(theme => ({
@@ -45,7 +45,7 @@ const useStyles = makeStyles(theme => ({
 export default function Map (props) {
   const classes = useStyles()
   const theme = useTheme()
-  const { controller, agent, setAgent, msvcsPerAgent, loading } = props
+  const { controller, setAgent, loading } = props
   const { map, mapRef, hasValidCoordinates } = useMap()
 
   return (
@@ -63,27 +63,25 @@ export default function Map (props) {
             className={classes.mapMarkerTransform}
             onClick={() => setAgent(a)}
           >
-            <Badge color='primary' style={{ '--color': msvcStatusColor[a.daemonStatus] }} badgeContent={(msvcsPerAgent[a.uuid] || []).filter(m => m.flowActive && m.status.status === 'RUNNING').length} invisible={!agent || a.uuid !== agent.uuid} className={`${classes.msvcBadge}`}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Avatar
-                  style={{ '--markerColor': statusColor[a.daemonStatus] }}
-                  className={classes.mapMarker}
-                >
-                  <MemoryIcon />
-                </Avatar>
-                <div style={{ display: 'flex', position: 'absolute', bottom: -15 }}>
-                  {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div style={{ backgroundColor: t.display.color || tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon title={t.display.name || t.name} key={t.display.name || t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.display.icon}</Icon></div> : null) : null)}
-                </div>
-
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Avatar
+                style={{ '--markerColor': statusColor[a.daemonStatus] }}
+                className={classes.mapMarker}
+              >
+                <MemoryIcon />
+              </Avatar>
+              <div style={{ display: 'flex', position: 'absolute', bottom: -15 }}>
+                {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div style={{ backgroundColor: tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon title={t.display.name || t.name} key={t.display.name || t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.display.icon}</Icon></div> : null) : null)}
               </div>
-            </Badge>
+
+            </div>
           </div>
         )}
         {!loading && controller.info && hasValidCoordinates([controller.info.location.lat, controller.info.location.lon]) &&
           <Avatar
             lat={controller.info.location.lat}
             lng={controller.info.location.lon}
-            style={{ '--markerColor': theme.colors.argon }}
+            style={{ '--markerColor': theme.colors.purple }}
             className={classes.mapMarker}
           >
             <CtrlIcon />

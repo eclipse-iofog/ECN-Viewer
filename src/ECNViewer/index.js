@@ -23,16 +23,12 @@ const views = {
 }
 
 export default function ECNViewer () {
-  const { data, loading, refreshData } = useData()
+  const { data, loading } = useData()
   const { location } = React.useContext(ControllerContext)
   const { setMap, map, restoreMapToState } = useMap()
   const [selectedElement, selectElement] = React.useState(null)
   const [history, setHistory] = React.useState([])
   const [view, setView] = React.useState(views.DEFAULT)
-
-  React.useEffect(() => {
-    refreshData()
-  }, [])
 
   const saveHistory = () => {
     setHistory(h => [...h, { view, selectedElement, map }])
