@@ -2,18 +2,40 @@ import React from 'react'
 
 import { colors } from '../Theme/ThemeProvider'
 
-const statusColor = {
-  RUNNING: colors.chromium
+export const statusColor = {
+  RUNNING: colors.primary,
+  UNKNOWN: colors.aluminium,
+  OFFLINE: colors.secondary
 }
 
-export default function Status ({ status, style }) {
+export const msvcStatusColor = {
+  RUNNING: colors.primary,
+  UNKNOWN: colors.aluminium,
+  OFFLINE: colors.aluminium
+}
+
+const defaultSize = 15
+
+export default function Status ({ status, style, size = defaultSize }) {
   return (
     <div style={{
       ...style,
-      width: '20px',
-      height: '20px',
-      borderRadius: '10px',
-      backgroundColor: statusColor[status] || 'grey'
+      width: size + 'px',
+      height: size + 'px',
+      borderRadius: size + 'px',
+      backgroundColor: statusColor[status] || statusColor.UNKNOWN
+    }}
+    />)
+}
+
+export function MsvcStatus ({ status, style, size = defaultSize }) {
+  return (
+    <div style={{
+      ...style,
+      width: size + 'px',
+      height: size + 'px',
+      borderRadius: size + 'px',
+      backgroundColor: msvcStatusColor[status] || msvcStatusColor.UNKNOWN
     }}
     />)
 }

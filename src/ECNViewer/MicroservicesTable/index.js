@@ -4,6 +4,8 @@ import { Table, TableHead, TableRow, TableBody, TableCell, makeStyles } from '@m
 
 import getSharedStyle from '../sharedStyles'
 
+import { MsvcStatus as Status } from '../../Utils/Status'
+
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
 }))
@@ -25,7 +27,7 @@ export default function MicroservicesTable ({ application, selectMicroservice })
         {application.microservices.map((row) => (
           <TableRow key={row.uuid}>
             <TableCell component='th' scope='row' className={classes.action} onClick={() => selectMicroservice(row)}>
-              {row.name}
+              <span style={{ display: 'flex', alignItems: 'center' }}><Status status={row.status.status} size={10} style={{ marginRight: '5px' }} />{row.name}</span>
             </TableCell>
             <TableCell align='right'>
               <span>{row.status.status}{row.status.status === 'PULLING' && ` (${row.status.percentage}%)`}</span>

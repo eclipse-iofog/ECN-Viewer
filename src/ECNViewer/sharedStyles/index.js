@@ -63,10 +63,6 @@ export default function getStyle (theme) {
     },
     erIconContainer: {
       backgroundColor: `var(--color, ${theme.colors.carbon})`,
-      margin: '2px',
-      padding: '4px',
-      borderRadius: '4px',
-      width: '38px',
       height: '38px',
       display: 'flex',
       alignItems: 'center',
@@ -74,7 +70,7 @@ export default function getStyle (theme) {
     },
     erIcon: {
       fontSize: 22,
-      color: 'white'
+      color: theme.colors.carbon
     }
   }
 }

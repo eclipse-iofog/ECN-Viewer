@@ -1,20 +1,21 @@
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { Avatar, Menu, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Divider, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText, Button } from '@material-ui/core'
+import { Menu, Table, TableBody, TableCell, TableHead, TableRow, MenuItem, Divider, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText, Button } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
-import MemoryIcon from '@material-ui/icons/Memory'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor, fogTypes } from '../../utils'
+import { fogTypes } from '../../utils'
 import Icon from '@material-ui/core/Icon'
 
 import { theme } from '../../../Theme/ThemeProvider'
 
 import getSharedStyle from '../../sharedStyles/'
 import { useFeedback } from '../../../Utils/FeedbackContext'
+
+import Status from '../../../Utils/Status'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme),
@@ -119,11 +120,11 @@ export default function AgentList (props) {
             const edgeResources = a.edgeResources || []
             return (
               <TableRow button key={a.uuid}>
-                <TableCell onClick={() => setAgent(a)} style={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar style={{ '--statusColor': statusColor[a.daemonStatus] }} className={classes.avatarList}>
-                    <MemoryIcon />
-                  </Avatar>
-                  <span className={classes.link} style={{ marginLeft: '5px' }}>{a.name}</span>
+                <TableCell onClick={() => setAgent(a)}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Status status={a.daemonStatus} />
+                    <span className={classes.link} style={{ marginLeft: '15px' }}>{a.name}</span>
+                  </div>
                 </TableCell>
                 <TableCell align='right'>{a.version}</TableCell>
                 <TableCell align='right'>{applications.length}</TableCell>
@@ -154,10 +155,10 @@ export default function AgentList (props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDeleteAgentDialog(false)} color='primary'>
+          <Button onClick={() => setOpenDeleteAgentDialog(false)}>
             Cancel
           </Button>
-          <Button onClick={() => deleteAgent(selectedAgent)} color='primary' autoFocus>
+          <Button onClick={() => deleteAgent(selectedAgent)} color='secondary' autoFocus>
             Delete
           </Button>
         </DialogActions>

@@ -13,6 +13,7 @@ import MicroservicesTable from '../MicroservicesTable'
 import yaml from 'js-yaml'
 import AceEditor from 'react-ace'
 import { useFeedback } from '../../Utils/FeedbackContext'
+import { MsvcStatus as Status } from '../../Utils/Status'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
@@ -125,13 +126,14 @@ export default function ApplicationDetails ({ application: selectedApplication, 
   const yamlDump = React.useMemo(() => yaml.dump(_getApplicationYAMLFromJSON(application)), [application])
 
   console.log({ yamlDump })
+  const status = application.isActivated ? 'RUNNING' : 'STOPPED'
 
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
-          <span className={classes.subTitle}>{application.isActivated ? 'RUNNING' : 'STOPPED'}</span>
+          <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={status} style={{ marginRight: '5px' }} />{status}</span>
         </div>
         <div className={classes.section} style={{ flex: '2 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
@@ -227,10 +229,10 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDeleteApplicationDialog(false)} color='primary'>
+          <Button onClick={() => setOpenDeleteApplicationDialog(false)}>
             Cancel
           </Button>
-          <Button onClick={() => { deleteApplication(application) }} color='primary' autoFocus>
+          <Button onClick={() => { deleteApplication(application) }} color='secondary' autoFocus>
             Delete
           </Button>
         </DialogActions>

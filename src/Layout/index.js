@@ -28,15 +28,11 @@ const useStyles = makeStyles(theme => ({
     margin: '15px 0'
   },
   logo: {
-    backgroundColor: theme.colors.phosphorus,
+    backgroundColor: theme.colors.purple,
     color: theme.colors.white
   },
   latNav: {
     backgroundColor: theme.colors.carbon
-  },
-  avatarContainer: {
-    backgroundColor: theme.colors.phosphorus,
-    marginRight: '45px'
   },
   latIcons: {
     margin: 'auto',

@@ -71,7 +71,12 @@ export default function Context (props) {
   console.log('======> Updating feedback context')
 
   return (
-    <FeedbackContext.Provider value={{ feedbacks: state.feedbacks, setFeedbacks, pushFeedback }}>
+    <FeedbackContext.Provider value={{
+      feedbacks: state.feedbacks,
+      setFeedbacks,
+      pushFeedback
+    }}
+    >
       {props.children}
       <FeedbackContext.Consumer>
         {({ feedbacks, setFeedbacks }) =>

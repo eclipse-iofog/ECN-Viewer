@@ -13,9 +13,6 @@ const useStyles = makeStyles(theme => ({
   pointer: {
     cursor: 'pointer'
   },
-  avatarContainer: {
-    backgroundColor: theme.colors.chromium
-  },
   tableActions: {
     marginBottom: '10px',
     display: 'flex',

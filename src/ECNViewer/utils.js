@@ -7,18 +7,10 @@ import DetailsIcon from '@material-ui/icons/ArrowForward'
 import DeleteIcon from '@material-ui/icons/HighlightOff'
 
 import _prettyBytes from 'pretty-bytes'
+import { statusColor as _statusColor, msvcStatusColor as _msvcStatusColor } from '../Utils/Status'
 
-export const statusColor = {
-  RUNNING: theme.colors.chromium,
-  UNKNOWN: theme.colors.aluminium,
-  OFFLINE: theme.colors.phosphorus
-}
-
-export const msvcStatusColor = {
-  RUNNING: theme.colors.chromium,
-  UNKNOWN: theme.colors.aluminium,
-  OFFLINE: theme.colors.aluminium
-}
+export const statusColor = _statusColor
+export const msvcStatusColor = _msvcStatusColor
 
 export const tagColor = theme.colors.cobalt
 

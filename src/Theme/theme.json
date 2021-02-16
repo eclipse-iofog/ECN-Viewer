@@ -9,15 +9,11 @@
       "default": "rgba(250, 252, 255, 1)"
     },
     "primary": {
-      "light": "rgba(65, 119, 153, 1)",
-      "main": "rgba(0, 46, 67, 1)",
-      "dark": "rgba(0, 33, 48, 1)",
+      "main": "#26D6F1",
       "contrastText": "#fff"
     },
     "secondary": {
-      "light": "rgba(248, 159, 163, 1)",
       "main": "rgba(255, 88, 93, 1)",
-      "dark": "rgba(247, 61, 68, 1)",
       "contrastText": "#fff"
     },
     "error": {

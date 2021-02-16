@@ -12,6 +12,8 @@ import moment from 'moment'
 import { useFeedback } from '../../Utils/FeedbackContext'
 
 import MicroservicesTable from '../MicroservicesTable'
+import Status from '../../Utils/Status'
+import Modal from '../../Utils/Modal'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
@@ -23,6 +25,8 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
   const [openDeleteAgentDialog, setOpenDeleteAgentDialog] = React.useState(false)
   const [openDeleteApplicationDialog, setOpenDeleteApplicationDialog] = React.useState(false)
   const [selectedApplication, setSelectedApplication] = React.useState({})
+  const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
+  const [selectedER, setSelectedER] = React.useState({})
   const classes = useStyles()
 
   const { msvcsPerAgent, controller, applications } = data
@@ -100,12 +104,9 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
     <>
       <Paper className={`section first ${classes.multiSections}`}>
         <div className={classes.section}>
-          <Typography variant='subtitle2' className={classes.title}>
-            <span>Info</span>
-          </Typography>
-          <span className={classes.subTitle}>Status: <span className={classes.text}>{agent.daemonStatus}</span></span>
-          <span className={classes.subTitle}>Type: <span className={classes.text}>{fogTypes[agent.fogTypeId]}</span></span>
-          <span className={classes.subTitle}>Version: <span className={classes.text}>{agent.version}</span></span>
+          <Typography variant='subtitle2' className={classes.title}>Status</Typography>
+          <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} style={{ marginRight: '5px' }} />{agent.daemonStatus}</span>
+          <span className={classes.subTitle} style={{ marginTop: '15px' }}>Last Active: <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span></span>
         </div>
         <div className={classes.section} style={{ flex: '2 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
@@ -121,8 +122,12 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>Agent Details</Typography>
           <div className={classes.subSection}>
-            <span className={classes.subTitle}>Last Active</span>
-            <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span>
+            <span className={classes.subTitle}>Version</span>
+            <span className={classes.text}>{agent.version}</span>
+          </div>
+          <div className={classes.subSection}>
+            <span className={classes.subTitle}>Type</span>
+            <span className={classes.text}>{fogTypes[agent.fogTypeId]}</span>
           </div>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>IP Address</span>
@@ -133,7 +138,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
             <span className={classes.text}>{agent.processedMessages}</span>
           </div>
           <div className={classes.subSection}>
-            <span className={classes.subTitle}>Created at</span>
+            <span className={classes.subTitle}>Created</span>
             <span className={classes.text}>{moment(agent.createdAt).format(dateFormat)}</span>
           </div>
         </div>
@@ -156,10 +161,10 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
           <Typography variant='subtitle2' className={classes.title}>Edge Resources</Typography>
           {agent.edgeResources.map(er => (
             <div key={`${er.name}_${er.version}`} className={classes.edgeResource}>
-              <div className={classes.erIconContainer} style={{ '--color': colors.carbon }}>
+              <div className={classes.erIconContainer} style={{ '--color': 'white' }}>
                 {er.display && er.display.icon && <Icon title={er.display.name || er.name} className={classes.erIcon}>{er.display.icon}</Icon>}
               </div>
-              <div className={classes.subTitle} style={{ marginLeft: '5px' }}>{(er.display && er.display.name) || er.name} {er.version}</div>
+              <div className={`${classes.subTitle} ${classes.action}`} onClick={() => { setSelectedER(er); setOpenDetailsModal(true) }} style={{ marginLeft: '5px' }}>{(er.display && er.display.name) || er.name} {er.version}</div>
             </div>
           ))}
         </div>
@@ -213,10 +218,10 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDeleteAgentDialog(false)} color='primary'>
+          <Button onClick={() => setOpenDeleteAgentDialog(false)}>
             Cancel
           </Button>
-          <Button onClick={() => deleteAgent()} color='primary' autoFocus>
+          <Button onClick={() => deleteAgent()} color='secondary' autoFocus>
             Delete
           </Button>
         </DialogActions>
@@ -233,14 +238,24 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDeleteApplicationDialog(false)} color='primary'>
+          <Button onClick={() => setOpenDeleteApplicationDialog(false)}>
             Cancel
           </Button>
-          <Button onClick={() => deleteApplication(selectApplication)} color='primary' autoFocus>
+          <Button onClick={() => deleteApplication(selectApplication)} color='secondary' autoFocus>
             Delete
           </Button>
         </DialogActions>
       </Dialog>
+      <Modal
+        {...{
+          open: openDetailsModal,
+          title: `${selectedER.name} details`,
+          onClose: () => setOpenDetailsModal(false),
+          size: 'lg'
+        }}
+      >
+        <ReactJson title='Edge Resource' src={selectedER} name={false} />
+      </Modal>
     </>
   )
 }

@@ -3,14 +3,12 @@ import ReactJson from 'react-json-view'
 import Skeleton from 'react-loading-skeleton'
 import yaml from 'js-yaml'
 
-import { Table, TableHead, TableBody, TableRow, TableCell, Divider, Avatar, Menu, MenuItem, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText, Button } from '@material-ui/core'
+import { Table, TableHead, TableBody, TableRow, TableCell, Divider, Menu, MenuItem, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText, Button } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
-import AppsIcon from '@material-ui/icons/ViewQuilt'
 
 import { makeStyles } from '@material-ui/styles'
 
-import { statusColor } from '../../utils'
 import Modal from '../../../Utils/Modal'
 import FileDrop from '../../../Utils/FileDrop'
 import { API_VERSIONS } from '../../../Utils/constants'
@@ -20,6 +18,8 @@ import { useFeedback } from '../../../Utils/FeedbackContext'
 import { get as lget } from 'lodash'
 
 import { parseMicroservice } from '../../../Utils/ApplicationParser'
+
+import Status from '../../../Utils/Status'
 
 const useStyles = makeStyles(theme => ({
   avatarList: {
@@ -256,11 +256,11 @@ export default function ApplicationList ({ applications: unfilteredApplications,
           {(loading ? [1, 2, 3].map((idx) => <TableRow key={idx}><TableCell colSpan={4}><Skeleton height={72} /></TableCell></TableRow>) : applications.map(a => {
             return (
               <TableRow button key={a.uuid}>
-                <TableCell onClick={() => selectApplication(a)} style={{ display: 'flex', alignItems: 'center' }}>
-                  <Avatar style={{ '--statusColor': statusColor[a.isActivated ? 'RUNNING' : 'OFFLINE'] }} className={classes.avatarList}>
-                    <AppsIcon />
-                  </Avatar>
-                  <span className={classes.link} style={{ marginLeft: '5px' }}>{a.name}</span>
+                <TableCell onClick={() => selectApplication(a)}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Status status={a.isActivated ? 'RUNNING' : 'OFFLINE'} />
+                    <span className={classes.link} style={{ marginLeft: '15px' }}>{a.name}</span>
+                  </div>
                 </TableCell>
                 <TableCell align='right'>{a.microservices.length}</TableCell>
                 <TableCell align='right'>
@@ -311,10 +311,10 @@ export default function ApplicationList ({ applications: unfilteredApplications,
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDeleteApplicationModal(false)} color='primary'>
+          <Button onClick={() => setOpenDeleteApplicationModal(false)}>
             Cancel
           </Button>
-          <Button onClick={() => deleteApplication(applicationMenu)} color='primary' autoFocus>
+          <Button onClick={() => deleteApplication(applicationMenu)} color='secondary' autoFocus>
             Delete
           </Button>
         </DialogActions>

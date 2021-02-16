@@ -27,6 +27,7 @@ import getSharedStyle from '../sharedStyles'
 import { icons, dateFormat, MiBFactor, prettyBytes } from '../utils'
 import moment from 'moment'
 import lget from 'lodash/get'
+import { MsvcStatus as Status } from '../../Utils/Status'
 
 function SearchBar (props) {
   const [value, setValue] = React.useState('')
@@ -81,7 +82,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
       <Paper className={`section first ${classes.multiSections}`}>
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
-          <span className={classes.subTitle}>{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage}%)`}</span>
+          <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={microservice.status.status} style={{ marginRight: '5px' }} />{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage}%)`}</span>
           {microservice.status.errorMessage && <span className={classes.subTitle}>Error: <span className={classes.text}>{microservice.status.errorMessage}</span></span>}
         </div>
         <div className={classes.section} style={{ flex: '1 1 0px' }}>
@@ -289,10 +290,10 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDeleteMicroserviceDialog(false)} color='primary'>
+          <Button onClick={() => setOpenDeleteMicroserviceDialog(false)}>
             Cancel
           </Button>
-          <Button onClick={() => setOpenDeleteMicroserviceDialog(false)} color='primary' autoFocus>
+          <Button onClick={() => setOpenDeleteMicroserviceDialog(false)} color='secondary' autoFocus>
             Delete
           </Button>
         </DialogActions>

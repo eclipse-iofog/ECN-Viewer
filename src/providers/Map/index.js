@@ -27,6 +27,9 @@ export const MapProvider = ({
 
   const setMap = (agents, controllerInfo, includeController) => {
     const newMap = {}
+    if (!window.google) {
+      return map
+    }
     const bounds = new window.google.maps.LatLngBounds() // need handler incase `google` not yet available
 
     const validAgents = agents.filter(a => hasValidCoordinates([a.latitude, a.longitude]))
