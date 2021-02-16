@@ -4,7 +4,7 @@ import ReactJson from 'react-json-view'
 import { Paper, Typography, makeStyles, Icon, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
 
 import { useData } from '../../providers/Data'
-import { dateFormat, MiBFactor, fogTypes, icons, colors, prettyBytes } from '../utils'
+import { dateFormat, MiBFactor, fogTypes, icons, prettyBytes } from '../utils'
 
 import getSharedStyle from '../sharedStyles'
 

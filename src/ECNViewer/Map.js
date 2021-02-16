@@ -49,7 +49,7 @@ export default function Map (props) {
   const { map, mapRef, hasValidCoordinates } = useMap()
 
   return (
-    <div className={classes.mapWrapper} ref={mapRef}>
+    <div className={[classes.mapWrapper, 'mui-fixed'].join(' ')} ref={mapRef}>
       <GoogleMapReact
         {...map}
         bootstrapURLKeys={{

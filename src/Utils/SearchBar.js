@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { TextField, InputAdornment, makeStyles } from '@material-ui/core'
-import { Search as SearchIcon, Clear as ClearIcon } from '@material-ui/icons'
+import { Search as SearchIcon } from '@material-ui/icons'
 
 const useStyle = makeStyles(() => ({
   input: {
