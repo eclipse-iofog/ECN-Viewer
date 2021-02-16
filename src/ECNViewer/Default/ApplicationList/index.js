@@ -1,5 +1,4 @@
 import React from 'react'
-import ReactJson from 'react-json-view'
 import Skeleton from 'react-loading-skeleton'
 import yaml from 'js-yaml'
 
@@ -9,7 +8,6 @@ import MoreIcon from '@material-ui/icons/MoreVert'
 
 import { makeStyles } from '@material-ui/styles'
 
-import Modal from '../../../Utils/Modal'
 import FileDrop from '../../../Utils/FileDrop'
 import { API_VERSIONS } from '../../../Utils/constants'
 
@@ -86,7 +84,6 @@ export default function ApplicationList ({ applications: unfilteredApplications,
   const { request } = useController()
   const { pushFeedback } = useFeedback()
   const [fileParsing, setFileParsing] = React.useState(false)
-  const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [openStartStopModal, setOpenStartStopModal] = React.useState(false)
   const [openDeleteApplicationModal, setOpenDeleteApplicationModal] = React.useState(false)
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null)
@@ -98,10 +95,6 @@ export default function ApplicationList ({ applications: unfilteredApplications,
   const openMenu = (a, e) => {
     setApplicationMenu(a)
     setMenuAnchorEl(e.currentTarget)
-  }
-  const openDetails = () => {
-    setOpenDetailsModal(true)
-    handleCloseMenu()
   }
   const openStartStop = () => {
     setOpenStartStopModal(true)
@@ -122,6 +115,7 @@ export default function ApplicationList ({ applications: unfilteredApplications,
         body: JSON.stringify({ isActivated: !application.isActivated })
       })
       if (res.ok) {
+        application.isActivated = !application.isActivated
         pushFeedback({ message: application.isActivated ? 'Application stopped!' : 'Application started!', type: 'success' })
         setOpenStartStopModal(false)
       } else {
@@ -271,15 +265,6 @@ export default function ApplicationList ({ applications: unfilteredApplications,
           }))}
         </TableBody>
       </Table>
-      <Modal
-        {...{
-          open: openDetailsModal,
-          title: `${applicationMenu.name} details`,
-          onClose: () => setOpenDetailsModal(false)
-        }}
-      >
-        <ReactJson title='Application' src={applicationMenu} name={false} />
-      </Modal>
       <Dialog
         open={openStartStopModal}
         onClose={() => setOpenStartStopModal(false)}
@@ -291,10 +276,10 @@ export default function ApplicationList ({ applications: unfilteredApplications,
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenStartStopModal(false)} color='primary'>
+          <Button onClick={() => setOpenStartStopModal(false)}>
             Cancel
           </Button>
-          <Button onClick={() => toggleApplication(applicationMenu)} color='primary' autoFocus>
+          <Button onClick={() => toggleApplication(applicationMenu)} color={applicationMenu.isActivated ? 'secondary' : 'primary'} autoFocus>
             {applicationMenu.isActivated ? 'Stop' : 'Start'}
           </Button>
         </DialogActions>
@@ -326,7 +311,7 @@ export default function ApplicationList ({ applications: unfilteredApplications,
         open={Boolean(menuAnchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={openDetails}>Details</MenuItem>
+        <MenuItem onClick={() => selectApplication(applicationMenu)}>Details</MenuItem>
         <Divider />
         <MenuItem onClick={openStartStop}>{`${applicationMenu.isActivated ? 'Stop' : 'Start'}`}</MenuItem>
         <MenuItem onClick={openDeleteApplication}>Delete</MenuItem>

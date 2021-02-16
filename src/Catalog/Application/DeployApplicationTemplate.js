@@ -92,6 +92,10 @@ export default function DeployApplicationTemplate ({ template, close }) {
   const classes = useStyles()
 
   const handleChange = (key, value) => {
+    // Convert variables if needed (All values are received as string)
+    if (variables[key].type === 'number') {
+      value = +value
+    }
     console.log({ value, key })
     setVariables(v => ({
       ...v,

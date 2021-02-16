@@ -13,6 +13,9 @@ const useStyle = makeStyles(() => ({
   },
   adornedEnd: {
     paddingRight: '5px'
+  },
+  searchBar: {
+    // boxShadow: 'inset 0 0 8px 0px rgba(0, 0, 0, 0.19)'
   }
 }))
 
@@ -46,6 +49,7 @@ export default function SearchBar ({ style, onSearch, classes: _classes }) {
       value={value}
       onChange={handleChange}
       variant='outlined'
+      className={classes.searchBar}
       InputProps={{
         classes: { ...classes, ..._classes },
         ...ornaments

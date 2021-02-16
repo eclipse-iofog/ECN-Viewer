@@ -71,6 +71,9 @@ export default function getStyle (theme) {
     erIcon: {
       fontSize: 22,
       color: theme.colors.carbon
+    },
+    link: {
+      color: theme.colors.carbon
     }
   }
 }

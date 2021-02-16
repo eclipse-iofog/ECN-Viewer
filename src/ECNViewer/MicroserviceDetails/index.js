@@ -138,7 +138,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
                     {p.protocol === 'udp' ? p.protocol : 'tcp'}
                   </TableCell>
                   <TableCell align='right'>
-                    {p.publicLink}
+                    <a className={classes.link} href={p.publicLink} target='_blank' rel='noopener noreferrer'>{p.publicLink}</a>
                   </TableCell>
                 </TableRow>
               ))}
