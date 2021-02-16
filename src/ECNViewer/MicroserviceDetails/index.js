@@ -15,11 +15,8 @@ import {
   TableHead,
   TableRow,
   TableBody,
-  TableCell,
-  Input,
-  InputAdornment
+  TableCell
 } from '@material-ui/core'
-import SearchIcon from '@material-ui/icons/Search'
 
 import { useData } from '../../providers/Data'
 import getSharedStyle from '../sharedStyles'
@@ -29,31 +26,18 @@ import moment from 'moment'
 import lget from 'lodash/get'
 import { MsvcStatus as Status } from '../../Utils/Status'
 
-function SearchBar (props) {
-  const [value, setValue] = React.useState('')
-
-  const handleChange = (e) => {
-    const newValue = e.target.value.toLowerCase()
-    props.onSearch(newValue)
-    setValue(newValue)
-  }
-  return (
-    <Input
-      style={{ marginRight: '15px' }}
-      id='searchBar'
-      value={value}
-      onChange={handleChange}
-      endAdornment={
-        <InputAdornment position='end'>
-          <SearchIcon />
-        </InputAdornment>
-      }
-    />
-  )
-}
+import SearchBar from '../../Utils/SearchBar'
 
 const useStyles = makeStyles(theme => ({
-  ...getSharedStyle(theme)
+  ...getSharedStyle(theme),
+  narrowSearchBar: {
+    height: '24px',
+    fontSize: '12px',
+    '& svg': {
+      height: '18px',
+      width: '18px'
+    }
+  }
 }))
 export default function MicroserviceDetails ({ microservice: selectedMicroservice, selectApplication, selectAgent }) {
   const { data } = useData()
@@ -166,7 +150,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Volumes</span>
-            <SearchBar onSearch={setVolumeFilter} />
+            <SearchBar onSearch={setVolumeFilter} classes={{ root: classes.narrowSearchBar }} />
           </Typography>
           <Table stickyHeader>
             <TableHead>
@@ -208,7 +192,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Environment variables</span>
-            <SearchBar onSearch={setEnvFilter} />
+            <SearchBar onSearch={setEnvFilter} classes={{ root: classes.narrowSearchBar }} />
           </Typography>
           <Table stickyHeader>
             <TableHead>
@@ -240,7 +224,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Extra hosts</span>
-            <SearchBar onSearch={sethostFilter} />
+            <SearchBar onSearch={sethostFilter} classes={{ root: classes.narrowSearchBar }} />
           </Typography>
           <Table stickyHeader>
             <TableHead>

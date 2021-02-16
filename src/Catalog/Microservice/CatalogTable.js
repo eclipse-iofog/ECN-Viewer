@@ -2,12 +2,11 @@ import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 
 import Skeleton from 'react-loading-skeleton'
-import { TextField, InputAdornment, Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
+import { Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
-import SearchIcon from '@material-ui/icons/Search'
-import ClearIcon from '@material-ui/icons/Clear'
 import lget from 'lodash/get'
+import SearchBar from '../../Utils/SearchBar'
 
 const useStyles = makeStyles(theme => ({
   pointer: {
@@ -58,23 +57,9 @@ export default function CatalogTable (props) {
   return (
     <>
       <div className={`${classes.tableActions} ${classes.pointer}`}>
-        <TextField
-          className={classes.margin}
-          id='input-with-icon-textfield'
-          label='Filter'
-          value={filter}
-          onChange={(e) => setFilter(e.target.value.toLowerCase())}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment className={classes.pointer} position='start'>
-                <ClearIcon onClick={() => setFilter('')} />
-              </InputAdornment>
-            )
+        <SearchBar
+          {...{
+            onSearch: setFilter
           }}
         />
       </div>

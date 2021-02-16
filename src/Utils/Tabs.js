@@ -4,8 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 import Typography from '@material-ui/core/Typography'
-import { Input, InputAdornment } from '@material-ui/core'
-import SearchIcon from '@material-ui/icons/Search'
+import SearchBar from './SearchBar'
 
 function TabContainer (props) {
   return (
@@ -36,29 +35,6 @@ const useStyles = makeStyles(theme => ({
     zIndex: 2
   }
 }))
-
-function SearchBar (props) {
-  const [value, setValue] = React.useState('')
-
-  const handleChange = (e) => {
-    const newValue = e.target.value.toLowerCase()
-    props.onSearch(newValue)
-    setValue(newValue)
-  }
-  return (
-    <Input
-      style={{ marginRight: '15px' }}
-      id='searchBar'
-      value={value}
-      onChange={handleChange}
-      endAdornment={
-        <InputAdornment position='end'>
-          <SearchIcon />
-        </InputAdornment>
-      }
-    />
-  )
-}
 
 export default function SimpleTabs (props) {
   const classes = useStyles()
@@ -94,7 +70,7 @@ export default function SimpleTabs (props) {
                     )
                   })}
                 </Tabs>
-                {props.onSearch && <SearchBar onSearch={props.onSearch} />}
+                {props.onSearch && <SearchBar onSearch={props.onSearch} style={{ marginRight: '5px' }} />}
               </div>
               <TabContainer>{props.children[value]}</TabContainer>
             </>)
