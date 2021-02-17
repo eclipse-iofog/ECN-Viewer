@@ -46,7 +46,7 @@ const filterFields = [
 
 export default function CatalogTable (props) {
   const classes = useStyles()
-  const { loading, openMenu, catalog, readCatalogItemFile } = props
+  const { loading, uploading, openMenu, catalog, readCatalogItemFile } = props
   const [filter, setFilter] = React.useState('')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -78,7 +78,13 @@ export default function CatalogTable (props) {
         }}
         />
         <div>
-          <FileDrop {...{ onDrop: readCatalogItemFile, onHover: <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>, style: { paddingLeft: '5px', width: '400px' } }}>
+          <FileDrop {...{
+            onDrop: readCatalogItemFile,
+            onHover: <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
+            style: { paddingLeft: '5px', width: '400px' },
+            loading: uploading
+          }}
+          >
             <div className={classes.flexColumn}>
               <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
               <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>

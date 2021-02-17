@@ -200,7 +200,7 @@ export default function Catalog () {
   return (
     <>
       <div className={classes.container}>
-        <CatalogTable {...{ loading: fetching, openMenu, catalog, readCatalogItemFile }} />
+        <CatalogTable {...{ loading: fetching, uploading: loading, openMenu, catalog, readCatalogItemFile }} />
       </div>
       <Modal
         {...{
