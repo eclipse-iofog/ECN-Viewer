@@ -61,6 +61,33 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
       }
     }
   }
+
+  const env = microservice.env
+    .filter(e =>
+      lget(e, 'key', '').toLowerCase().includes(envFilter) ||
+      lget(e, 'value', '').toString().toLowerCase().includes(envFilter))
+  if (!env.lenght) {
+    env.push({})
+  }
+  const volumes = microservice.volumeMappings
+    .filter(vm =>
+      lget(vm, 'hostDestination', '').toLowerCase().includes(volumeFilter) ||
+      lget(vm, 'containerDestination', '').toLowerCase().includes(volumeFilter) ||
+      lget(vm, 'accessMode', '').toLowerCase().includes(volumeFilter) ||
+      lget(vm, 'type', '').toLowerCase().includes(volumeFilter))
+  if (!volumes.lenght) {
+    volumes.push({})
+  }
+  const ports = microservice.ports.length ? microservice.ports : [{}]
+  const extraHosts = microservice.extraHosts
+    .filter(e =>
+      lget(e, 'name', '').toLowerCase().includes(hostFilter) ||
+      lget(e, 'value', '').toLowerCase().includes(hostFilter) ||
+      lget(e, 'address', '').toLowerCase().includes(hostFilter))
+  if (!extraHosts.lenght) {
+    extraHosts.push({})
+  }
+
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
@@ -119,14 +146,14 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }}>Internal</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>External</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Protocol</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>PublicLink</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Internal</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>External</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Protocol</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>PublicLink</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {microservice.ports.map((p) => (
+              {ports.map((p) => (
                 <TableRow key={p.external}>
                   <TableCell component='th' scope='row'>
                     {p.internal}
@@ -135,7 +162,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
                     {p.external}
                   </TableCell>
                   <TableCell align='right'>
-                    {p.protocol === 'udp' ? p.protocol : 'tcp'}
+                    {p.protocol ? (p.protocol === 'udp' ? p.protocol : 'tcp') : ''}
                   </TableCell>
                   <TableCell align='right'>
                     <a className={classes.link} href={p.publicLink} target='_blank' rel='noopener noreferrer'>{p.publicLink}</a>
@@ -155,19 +182,14 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }}>Host</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Container</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Acces Mode</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Type</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Host</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Container</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Acces Mode</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Type</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {microservice.volumeMappings
-                .filter(vm =>
-                  lget(vm, 'hostDestination', '').toLowerCase().includes(volumeFilter) ||
-                  lget(vm, 'containerDestination', '').toLowerCase().includes(volumeFilter) ||
-                  lget(vm, 'accessMode', '').toLowerCase().includes(volumeFilter) ||
-                  lget(vm, 'type', '').toLowerCase().includes(volumeFilter))
+              {volumes
                 .map((p) => (
                   <TableRow key={p.containerDestination}>
                     <TableCell component='th' scope='row'>
@@ -197,15 +219,12 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.tableTitle} style={{ top: '44px', maxWidth: '200px' }}>Key</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px', maxWidth: '200px' }} align='right'>Value</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px', maxWidth: '200px' }}>Key</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px', maxWidth: '200px' }} align='right'>Value</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {microservice.env
-                .filter(e =>
-                  lget(e, 'key', '').toLowerCase().includes(envFilter) ||
-                  lget(e, 'value', '').toString().toLowerCase().includes(envFilter))
+              {env
                 .map((p) => (
                   <TableRow key={p.key}>
                     <TableCell component='th' scope='row' style={{ maxWidth: '200px' }}>
@@ -229,17 +248,13 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }}>Name</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Address</TableCell>
-                <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Value</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Name</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Address</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Value</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {microservice.extraHosts
-                .filter(e =>
-                  lget(e, 'name', '').toLowerCase().includes(hostFilter) ||
-                  lget(e, 'value', '').toLowerCase().includes(hostFilter) ||
-                  lget(e, 'address', '').toLowerCase().includes(hostFilter))
+              {extraHosts
                 .map((p) => (
                   <TableRow key={p.name}>
                     <TableCell component='th' scope='row'>

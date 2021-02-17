@@ -8,20 +8,21 @@ const { FILE } = NativeTypes
 
 const useStyles = makeStyles(theme => ({
   dropZone: {
-    width: '100%',
+    // width: '100%',
     border: '1px dashed',
-    minHeight: '50px',
+    minHeight: '39px',
     // padding: '1rem',
     textAlign: 'center',
     verticalAlign: 'center',
     borderRadius: '4px',
-    background: 'aliceblue',
+    // background: 'aliceblue',
     color: theme.colors.carbon,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: '10px'
+    paddingLeft: '15px',
+    paddingRight: '15px'
   },
   active: {
     backgroundColor: '#d8dfe5'
@@ -50,10 +51,10 @@ export default function FileDrop (props) {
 
   return props.loading
     ? (
-      <div className={className}><CircularProgress size={24} /></div>
+      <div className={className} style={props.style}><CircularProgress size={24} /></div>
     )
     : (
-      <div className={className} ref={drop}>
+      <div className={className} ref={drop} style={props.style}>
         {active ? 'Release to drop' : props.children}
       </div>
     )

@@ -17,10 +17,10 @@ export default function MicroservicesTable ({ application, selectMicroservice })
     <Table stickyHeader>
       <TableHead>
         <TableRow>
-          <TableCell className={classes.tableTitle} style={{ top: '44px' }}>Name</TableCell>
-          <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Status</TableCell>
-          <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Ports</TableCell>
-          <TableCell className={classes.tableTitle} style={{ top: '44px' }} align='right'>Volumes</TableCell>
+          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Name</TableCell>
+          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Status</TableCell>
+          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Ports</TableCell>
+          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Volumes</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>

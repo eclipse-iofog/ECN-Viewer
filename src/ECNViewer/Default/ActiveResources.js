@@ -40,6 +40,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: '0.8rem',
     color: `var(--color, ${theme.colors.carbon})`,
     textTransform: 'uppercase'
+  },
+  errorText: {
+    color: theme.colors.error
   }
 }))
 
@@ -90,7 +93,7 @@ export default function ActiveResources () {
           <div className={classes.detailsContainer}>
             <div className={classes.unitType}>Agents</div>
             <div className={classes.detailsText}>{agentCount.running} running &bull; {agentCount.unknown} unknown</div>
-            <div className={classes.detailsText}>{agentCount.alert} alerts</div>
+            <div className={[classes.detailsText, classes.errorText].join(' ')}>{agentCount.alert} alerts</div>
           </div>
         </Paper>
         <Paper className={classes.container}>
@@ -100,7 +103,7 @@ export default function ActiveResources () {
           <div className={classes.detailsContainer}>
             <div className={classes.unitType}>Applications</div>
             <div className={classes.detailsText}>{applicationCount.running} running &bull; {applicationCount.stopped} stopped</div>
-            <div className={classes.detailsText}>{applicationCount.error} errors</div>
+            <div className={[classes.detailsText, classes.errorText].join(' ')}>{applicationCount.error} errors</div>
           </div>
         </Paper>
         <Paper className={classes.container}>
@@ -110,7 +113,7 @@ export default function ActiveResources () {
           <div className={classes.detailsContainer}>
             <div className={classes.unitType}>Microservices</div>
             <div className={classes.detailsText}>{microserviceCount.running} running &bull; {microserviceCount.stopped} stopped</div>
-            <div className={classes.detailsText}>{microserviceCount.error} errors</div>
+            <div className={[classes.detailsText, classes.errorText].join(' ')}>{microserviceCount.error} errors</div>
           </div>
         </Paper>
       </div>

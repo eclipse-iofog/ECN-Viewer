@@ -23,7 +23,7 @@ import { useData } from '../providers/Data'
 const useStyles = makeStyles(theme => ({
   wrapper: {
     color: theme.colors.carbon,
-    backgroundColor: theme.colors.silver
+    backgroundColor: 'white'
   },
   divider: {
     margin: '15px 0'

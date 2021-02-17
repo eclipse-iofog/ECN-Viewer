@@ -1,8 +1,8 @@
 export default function getStyle (theme) {
   return {
     title: {
-      paddingBottom: '10px',
-      paddingTop: '10px',
+      paddingBottom: '15px',
+      paddingTop: '15px',
       position: 'sticky',
       top: 0,
       backgroundColor: 'white',
@@ -10,8 +10,8 @@ export default function getStyle (theme) {
       textTransform: 'uppercase',
       display: 'flex',
       justifyContent: 'space-between',
-      height: '44px'
-
+      height: '54px',
+      alignItems: 'center'
     },
     multiSections: {
       display: 'flex',
@@ -74,6 +74,14 @@ export default function getStyle (theme) {
     },
     link: {
       color: theme.colors.carbon
+    },
+    stickyHeaderCell: {
+      backgroundColor: 'white',
+      paddingTop: '5px',
+      paddingBottom: '5px',
+      borderTop: `1px solid ${theme.colors.carbon}`,
+      borderBottom: `1px solid ${theme.colors.carbon}`,
+      textTransform: 'uppercase'
     }
   }
 }

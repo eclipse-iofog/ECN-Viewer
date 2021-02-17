@@ -68,6 +68,7 @@ const useStyles = makeStyles(theme => ({
     }
   },
   stickyHeader: {
+    ...(getSharedStyle(theme).stickyHeaderCell),
     top: '48px'
   }
 }))
@@ -114,7 +115,7 @@ export default function AgentList (props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {(loading ? [1, 2, 3].map((idx) => <TableRow key={idx}><TableCell colSpan={7}><Skeleton height={72} /></TableCell></TableRow>) : agents.map(a => {
+          {(loading ? (new Array(5)).fill(0).map((idx) => <TableRow key={idx}><TableCell colSpan={7}><Skeleton height={29} /></TableCell></TableRow>) : agents.map(a => {
             const msvcs = msvcsPerAgent[a.uuid] || []
             const applications = Object.keys(msvcs.reduce((acc, m) => ({ ...acc, [m.application]: true }), {}))
             const edgeResources = a.edgeResources || []

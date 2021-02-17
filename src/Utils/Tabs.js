@@ -21,18 +21,23 @@ TabContainer.propTypes = {
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
+    height: '100%'
   },
   tabHeader: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: '15px 15px 15px 0px'
   },
   sticky: {
     position: 'sticky',
     top: 0,
     backgroundColor: 'white',
     zIndex: 2
+  },
+  wrapper: {
+    fontSize: '17px'
   }
 }))
 
@@ -66,10 +71,11 @@ export default function SimpleTabs (props) {
                 >
                   {children.map((child, idx) => {
                     return (
-                      child && <Tab key={child.id || idx} id={child.id || idx} label={child.props.title} />
+                      child && <Tab key={child.id || idx} classes={{ wrapper: classes.wrapper }} id={child.id || idx} label={child.props.title} />
                     )
                   })}
                 </Tabs>
+                {props.headers && props.headers(value)}
                 {props.onSearch && <SearchBar onSearch={props.onSearch} style={{ marginRight: '5px' }} />}
               </div>
               <TabContainer>{props.children[value]}</TabContainer>

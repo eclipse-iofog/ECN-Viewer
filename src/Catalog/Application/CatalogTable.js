@@ -1,5 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
+import PublishIcon from '@material-ui/icons/Publish'
 
 import Skeleton from 'react-loading-skeleton'
 import { Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
@@ -7,15 +8,33 @@ import { Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody
 import MoreIcon from '@material-ui/icons/MoreVert'
 import lget from 'lodash/get'
 import SearchBar from '../../Utils/SearchBar'
+import getSharedStyles from '../../ECNViewer/sharedStyles'
+import FileDrop from '../../Utils/FileDrop'
 
 const useStyles = makeStyles(theme => ({
+  ...getSharedStyles(theme),
   pointer: {
     cursor: 'pointer'
   },
   tableActions: {
-    marginBottom: '10px',
+    padding: '15px',
     display: 'flex',
     justifyContent: 'space-between'
+  },
+  link: {
+    color: theme.palette.text.primary,
+    cursor: 'pointer',
+    '&:hover': {
+      textDecoration: 'underline'
+    }
+  },
+  hiddenInput: {
+    width: '0.1px',
+    height: '0.1px',
+    opacity: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    zIndex: '-1'
   }
 }))
 
@@ -26,7 +45,7 @@ const filterFields = [
 
 export default function CatalogTable (props) {
   const classes = useStyles()
-  const { loading, openMenu, catalog } = props
+  const { loading, openMenu, catalog, readCatalogItemFile } = props
   const [filter, setFilter] = React.useState('')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
@@ -51,22 +70,34 @@ export default function CatalogTable (props) {
 
   const emptyRows = loading ? 0 : rowsPerPage - Math.min(rowsPerPage, filteredCatalog.length - page * rowsPerPage)
   return (
-    <>
+    <Paper>
       <div className={`${classes.tableActions} ${classes.pointer}`}>
         <SearchBar {...{
           onSearch: setFilter
         }}
         />
+        <div>
+          <FileDrop {...{ onDrop: readCatalogItemFile, style: { paddingLeft: '5px' } }}>
+            <div className={classes.flexColumn}>
+              <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+              <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                <PublishIcon style={{ marginRight: '5px' }} />
+                <span>To add a template, drag a YAML file here or&nbsp;</span>
+                <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
+              </div>
+            </div>
+          </FileDrop>
+        </div>
       </div>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table className={classes.table} stickyHeader aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align='right'>Description</TableCell>
-              <TableCell align='right'>Microservices</TableCell>
-              <TableCell align='right'>Variables</TableCell>
-              <TableCell align='right' />
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }}>Name</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }} align='right'>Description</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }} align='right'>Microservices</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }} align='right'>Variables</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }} align='right' />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -102,6 +133,6 @@ export default function CatalogTable (props) {
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </>
+    </Paper>
   )
 }

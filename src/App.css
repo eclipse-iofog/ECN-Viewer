@@ -21,3 +21,11 @@
 		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 	}
 }
+
+.MuiTableCell-body {
+	border: none !important;
+}
+
+.MuiPaper-elevation1 {
+	box-shadow: 0 0 20px #aaaaaa!important;
+}
