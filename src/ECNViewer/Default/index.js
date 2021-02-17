@@ -19,6 +19,7 @@ import { useController } from '../../ControllerProvider'
 import { useFeedback } from '../../Utils/FeedbackContext'
 import SearchBar from '../../Utils/SearchBar'
 import PublishIcon from '@material-ui/icons/Publish'
+import GetAppIcon from '@material-ui/icons/GetApp'
 import { Search as SearchIcon } from '@material-ui/icons'
 
 const useStyles = makeStyles(theme => ({
@@ -157,7 +158,7 @@ export default function Default ({ selectAgent, selectController, selectApplicat
               <SearchBar onSearch={setFilter} style={{ marginRight: '5px' }} />
             ) : (
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <FileDrop {...{ onDrop: readApplicationFile, loading: fileParsing, style: showSearchbar ? { padding: 0, height: '39px', width: '39px' } : { paddingLeft: '5px' } }}>
+                <FileDrop {...{ onHover: showSearchbar ? <GetAppIcon /> : <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>, onDrop: readApplicationFile, loading: fileParsing, style: showSearchbar ? { padding: 0, height: '39px', width: '39px' } : { paddingLeft: '5px', width: '400px' } }}>
                   {showSearchbar ? (
                     <div className={classes.iconContainer} onClick={() => setShowSearchbar(false)} style={{ cursor: 'pointer' }}><PublishIcon /></div>
                   ) : (

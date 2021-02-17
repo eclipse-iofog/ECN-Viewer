@@ -10,6 +10,7 @@ import lget from 'lodash/get'
 import SearchBar from '../../Utils/SearchBar'
 import getSharedStyles from '../../ECNViewer/sharedStyles'
 import FileDrop from '../../Utils/FileDrop'
+import GetAppIcon from '@material-ui/icons/GetApp'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyles(theme),
@@ -77,7 +78,7 @@ export default function CatalogTable (props) {
         }}
         />
         <div>
-          <FileDrop {...{ onDrop: readCatalogItemFile, style: { paddingLeft: '5px' } }}>
+          <FileDrop {...{ onDrop: readCatalogItemFile, onHover: <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>, style: { paddingLeft: '5px', width: '400px' } }}>
             <div className={classes.flexColumn}>
               <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
               <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>

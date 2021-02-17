@@ -12,7 +12,6 @@ const useStyles = makeStyles(theme => ({
     border: '1px dashed',
     minHeight: '39px',
     // padding: '1rem',
-    textAlign: 'center',
     verticalAlign: 'center',
     borderRadius: '4px',
     // background: 'aliceblue',
@@ -20,7 +19,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
     paddingLeft: '15px',
     paddingRight: '15px'
   },
@@ -55,7 +53,7 @@ export default function FileDrop (props) {
     )
     : (
       <div className={className} ref={drop} style={props.style}>
-        {active ? 'Release to drop' : props.children}
+        {active ? (props.onHover || 'Release to drop') : props.children}
       </div>
     )
 }
