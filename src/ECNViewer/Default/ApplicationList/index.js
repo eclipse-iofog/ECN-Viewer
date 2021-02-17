@@ -153,7 +153,7 @@ export default function ApplicationList ({ applications: unfilteredApplications,
                 <TableCell onClick={() => selectApplication(a)}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Status status={a.isActivated ? 'RUNNING' : 'OFFLINE'} />
-                    <span className={classes.link} style={{ marginLeft: '15px' }}>{a.name}</span>
+                    <span className={classes.action} style={{ marginLeft: '15px' }}>{a.name}</span>
                   </div>
                 </TableCell>
                 <TableCell align='right'>{a.microservices.length}</TableCell>

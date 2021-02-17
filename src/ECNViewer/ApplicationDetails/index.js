@@ -1,7 +1,7 @@
 import React from 'react'
 
 import ReactJson from 'react-json-view'
-import { Paper, Typography, makeStyles, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
+import { Paper, Typography, makeStyles, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Table, TableBody, TableHead, TableRow, TableCell } from '@material-ui/core'
 
 import { useData } from '../../providers/Data'
 
@@ -18,6 +18,9 @@ import { MsvcStatus as Status } from '../../Utils/Status'
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
 }))
+
+const notFoundMsvc = { name: 'UNKNOWN', status: {}, notFound: true }
+
 export default function ApplicationDetails ({ application: selectedApplication, selectApplication, selectMicroservice, back }) {
   const { data, toggleApplication: _toggleApplication, deleteApplication: _deleteApplication } = useData()
   const classes = useStyles()
@@ -127,6 +130,8 @@ export default function ApplicationDetails ({ application: selectedApplication, 
 
   console.log({ yamlDump })
   const status = application.isActivated ? 'RUNNING' : 'STOPPED'
+  const routes = application.routes || []
+  if (!routes.length) { routes.push({}) }
 
   return (
     <>
@@ -135,7 +140,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
           <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={status} style={{ marginRight: '5px' }} />{status}</span>
         </div>
-        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '2 1 0px' }}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
             <div className={classes.actions} style={{ minWidth: '100px' }}>
@@ -168,16 +173,16 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </div>
         </div>
         <div className={[classes.section, 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Routes</Typography>
-          {application.routes.map((r, idx) =>
+          <Typography variant='subtitle2' className={classes.title} />
+          {/* {application.routes.map((r, idx) =>
             <div key={r.name || idx} className={classes.subSection}>
               <span className={classes.subTitle}>{r.name}</span>
               <span className={classes.text}>{r.from}&nbsp;&#8594;&nbsp;{r.to}</span>
             </div>
-          )}
+          )} */}
         </div>
       </Paper>
-      <Paper className='section' style={{ paddingBottom: '15px' }}>
+      <Paper className='section'>
         <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Microservices</span>
@@ -187,6 +192,51 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           application={application}
           selectMicroservice={selectMicroservice}
         />
+      </Paper>
+      <Paper className='section'>
+        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Routes</span>
+          </Typography>
+        </div>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Name</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>From</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>To</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {routes
+              .map((p) => {
+                if (!p.name) {
+                  return <TableRow><TableCell colSpan={3} /></TableRow>
+                }
+                const from = application.microservices.find(m => m.name === p.from) || notFoundMsvc
+                const to = application.microservices.find(m => m.name === p.to) || notFoundMsvc
+                return (
+                  <TableRow key={p.name}>
+                    <TableCell component='th' scope='row'>
+                      {p.name}
+                    </TableCell>
+                    <TableCell align='right'>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                        <Status status={from.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
+                        <span className={from.notFound ? '' : classes.action} onClick={() => from.notFound ? null : selectMicroservice(from)}>{from.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell align='right'>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                        <Status status={to.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
+                        <span className={to.notFound ? '' : classes.action} onClick={() => to.notFound ? null : selectMicroservice(to)}>{to.name}</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+          </TableBody>
+        </Table>
       </Paper>
       <Paper className='section'>
         <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
