@@ -44,7 +44,9 @@ export default function SearchBar ({ style, onSearch, classes: _classes }) {
 
   return (
     <TextField
-      style={style}
+      style={{
+        ...style
+      }}
       id='searchBar'
       value={value}
       onChange={handleChange}

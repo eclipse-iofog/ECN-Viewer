@@ -161,7 +161,7 @@ export default function Default ({ selectAgent, selectController, selectApplicat
                 <FileDrop {...{
                   onHover:
                     showSearchbar
-                      ? <GetAppIcon />
+                      ? <GetAppIcon style={{ margin: 'auto' }} />
                       : <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
                   onDrop: readApplicationFile,
                   loading: fileParsing,
@@ -172,7 +172,7 @@ export default function Default ({ selectAgent, selectController, selectApplicat
                 }}
                 >
                   {showSearchbar ? (
-                    <div className={classes.iconContainer} onClick={() => setShowSearchbar(false)} style={{ cursor: 'pointer' }}><PublishIcon /></div>
+                    <div className={classes.iconContainer} onClick={() => setShowSearchbar(false)} style={{ cursor: 'pointer' }}><PublishIcon style={{ marginLeft: '-2px' }} /></div>
                   ) : (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                       <input onChange={handleFileInput} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
@@ -184,7 +184,7 @@ export default function Default ({ selectAgent, selectController, selectApplicat
                     </div>
                   )}
                 </FileDrop>
-                {showSearchbar ? <SearchBar onSearch={setFilter} style={{ marginRight: '5px', marginLeft: '15px' }} /> : <div className={[classes.iconContainer, classes.searchIconContainer].join(' ')} onClick={() => setShowSearchbar(true)} style={{ marginLeft: '15px', cursor: 'pointer' }}><SearchIcon /></div>}
+                {showSearchbar ? <SearchBar onSearch={setFilter} style={{ marginRight: '5px', marginLeft: '15px', width: '400px' }} /> : <div className={[classes.iconContainer, classes.searchIconContainer].join(' ')} onClick={() => setShowSearchbar(true)} style={{ marginLeft: '15px', cursor: 'pointer' }}><SearchIcon /></div>}
               </div>)
           }}
         >
