@@ -43,7 +43,7 @@ export default function Status ({ status, style, size = defaultSize }) {
 }
 
 export function MsvcStatus ({ status, style, size = defaultSize }) {
-  const pulse = ['PULLING', 'STOPPING', 'STARTING', 'RUNNING'].includes(status)
+  const pulse = ['PULLING', 'STOPPING', 'STARTING'].includes(status)
   return (
     <div
       style={{
