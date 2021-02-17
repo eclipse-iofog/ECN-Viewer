@@ -21,8 +21,7 @@ export default function getStyle (theme) {
     section: {
       flex: '1 1 0px',
       display: 'flex',
-      flexDirection: 'column',
-      paddingBottom: '15px'
+      flexDirection: 'column'
     },
     subTitle: {
       fontSize: '14px',

@@ -131,11 +131,11 @@ export default function ApplicationDetails ({ application: selectedApplication, 
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-left'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
           <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={status} style={{ marginRight: '5px' }} />{status}</span>
         </div>
-        <div className={classes.section} style={{ flex: '2 1 0px' }}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '2 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
             <div className={classes.actions} style={{ minWidth: '100px' }}>
@@ -152,7 +152,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
         </div>
       </Paper>
       <Paper className={`section ${classes.multiSections}`}>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-left'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Application Details</Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Last Active</span>
@@ -167,7 +167,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
             <span className={classes.text}>{moment(application.createdAt).format(dateFormat)}</span>
           </div>
         </div>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Routes</Typography>
           {application.routes.map((r, idx) =>
             <div key={r.name || idx} className={classes.subSection}>
@@ -177,28 +177,19 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           )}
         </div>
       </Paper>
-      <Paper className='section'>
-        <div className={classes.section}>
+      <Paper className='section' style={{ paddingBottom: '15px' }}>
+        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Microservices</span>
           </Typography>
-          <MicroservicesTable
-            application={application}
-            selectMicroservice={selectMicroservice}
-          />
-          <div style={{
-            width: '100%',
-            textAlign: 'right',
-            fontSize: '12px',
-            paddingTop: '15px'
-          }}
-          >
-            {/* <span className={classes.action} onClick={() => selectMicroservice(microservice)}>{'See microservice details >'}</span> */}
-          </div>
         </div>
+        <MicroservicesTable
+          application={application}
+          selectMicroservice={selectMicroservice}
+        />
       </Paper>
       <Paper className='section'>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title} style={{ zIndex: 5 }}>Application YAML</Typography>
           <AceEditor
             mode='yaml'
@@ -206,13 +197,13 @@ export default function ApplicationDetails ({ application: selectedApplication, 
             readOnly
             style={{
               width: '100%',
-              height: '240px'
+              height: '230px'
             }}
           />
         </div>
       </Paper>
       <Paper className='section'>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Application JSON</Typography>
           <ReactJson title='Agent' src={application} name={false} collapsed />
         </div>

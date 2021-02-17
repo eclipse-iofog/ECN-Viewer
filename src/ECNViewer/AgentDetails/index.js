@@ -104,12 +104,12 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-left'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
           <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} style={{ marginRight: '5px' }} />{agent.daemonStatus}</span>
           <span className={classes.subTitle} style={{ marginTop: '15px' }}>Last Active: <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span></span>
         </div>
-        <div className={classes.section} style={{ flex: '2 1 0px' }}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '2 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
             <div className={classes.actions}>
@@ -120,7 +120,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
         </div>
       </Paper>
       <Paper className={`section ${classes.multiSections}`}>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-left'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Agent Details</Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Version</span>
@@ -158,7 +158,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
             <span className={classes.text}>{`${prettyBytes((agent.diskUsage * MiBFactor))} / ${prettyBytes((agent.systemAvailableDisk))} (${((agent.diskUsage * MiBFactor / agent.systemAvailableDisk * 100) || 0).toFixed(2)}%)`}</span>
           </div>
         </div>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Edge Resources</Typography>
           {agent.edgeResources.map(er => (
             <div key={`${er.name}_${er.version}`} className={classes.edgeResource}>
@@ -172,7 +172,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
       </Paper>
       {Object.keys(applicationsByName).map(applicationName => (
         <Paper key={applicationName} className='section'>
-          <div className={classes.section}>
+          <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
             <Typography variant='subtitle2' className={classes.title}>
               <span>{applicationName}</span>
               <div className={classes.actions} style={{ minWidth: '100px' }}>
@@ -185,24 +185,26 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
                   : <icons.PlayIcon className={classes.action} onClick={() => toggleApplication(applicationsByName[applicationName].application)} title='Start application' />}
               </div>
             </Typography>
-            <MicroservicesTable
-              application={applicationsByName[applicationName]}
-              selectMicroservice={selectMicroservice}
-            />
-            <div style={{
+          </div>
+          <MicroservicesTable
+            application={applicationsByName[applicationName]}
+            selectMicroservice={selectMicroservice}
+          />
+          <div
+            style={{
               width: '100%',
               textAlign: 'right',
               fontSize: '12px',
               paddingTop: '15px'
             }}
-            >
-              <span className={classes.action} onClick={() => selectApplication(applicationsByName[applicationName].application)}>{_getSeeDetailsMessage(applicationsByName[applicationName])}</span>
-            </div>
+            className='paper-container-right'
+          >
+            <span className={classes.action} onClick={() => selectApplication(applicationsByName[applicationName].application)}>{_getSeeDetailsMessage(applicationsByName[applicationName])}</span>
           </div>
         </Paper>
       ))}
       <Paper className='section'>
-        <div className={classes.section}>
+        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Agent JSON</Typography>
           <ReactJson title='Agent' src={agent} name={false} collapsed />
         </div>
