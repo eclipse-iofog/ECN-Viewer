@@ -40,7 +40,6 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     width: '100%',
     justifyContent: 'center',
-    textTransform: 'capitalize',
     fontSize: 20
   },
   alert: {

@@ -14,6 +14,7 @@ import { useFeedback } from '../../Utils/FeedbackContext'
 import MicroservicesTable from '../MicroservicesTable'
 import Status from '../../Utils/Status'
 import Modal from '../../Utils/Modal'
+import EdgeResourceDetails from './EdgeResourceDetails'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
@@ -254,7 +255,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
           size: 'lg'
         }}
       >
-        <ReactJson title='Edge Resource' src={selectedER} name={false} />
+        <EdgeResourceDetails edgeResource={selectedER} />
       </Modal>
     </>
   )
