@@ -2,6 +2,15 @@ import React from 'react'
 
 import { colors } from '../Theme/ThemeProvider'
 
+const convertHexToRGB = hex => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result ? [
+    parseInt(result[1], 16),
+    parseInt(result[2], 16),
+    parseInt(result[3], 16)
+  ].join(', ') : null
+}
+
 export const statusColor = {
   RUNNING: colors.primary,
   UNKNOWN: colors.aluminium,
@@ -34,7 +43,7 @@ export default function Status ({ status, style, size = defaultSize }) {
 }
 
 export function MsvcStatus ({ status, style, size = defaultSize }) {
-  const pulse = ['PULLING', 'STOPPING', 'STARTING'].includes(status)
+  const pulse = ['PULLING', 'STOPPING', 'STARTING', 'RUNNING'].includes(status)
   return (
     <div
       style={{
@@ -42,6 +51,8 @@ export function MsvcStatus ({ status, style, size = defaultSize }) {
         width: size + 'px',
         height: size + 'px',
         borderRadius: size + 'px',
+        zIndex: 2,
+        '--color': convertHexToRGB(msvcStatusColor[status] || msvcStatusColor.UNKNOWN),
         backgroundColor: msvcStatusColor[status] || msvcStatusColor.UNKNOWN
       }}
       className={pulse ? 'pulse' : ''}
