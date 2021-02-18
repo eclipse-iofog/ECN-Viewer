@@ -14,7 +14,7 @@ import yaml from 'js-yaml'
 
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/theme-monokai'
-import 'ace-builds/src-noconflict/mode-css'
+import 'ace-builds/src-noconflict/mode-yaml'
 
 import { useFeedback } from '../../Utils/FeedbackContext'
 import { MsvcStatus as Status } from '../../Utils/Status'
@@ -254,13 +254,15 @@ export default function ApplicationDetails ({ application: selectedApplication, 
         <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title} style={{ zIndex: 5 }}>Application YAML</Typography>
           <AceEditor
-            mode='css'
+            mode='yaml'
             theme='monokai'
             defaultValue={yamlDump}
             readOnly
+            onLoad={function (editor) { editor.renderer.setPadding(10); editor.renderer.setScrollMargin(10) }}
             style={{
               width: '100%',
-              height: '700px'
+              height: '700px',
+              borderRadius: '4px'
             }}
           />
         </div>
