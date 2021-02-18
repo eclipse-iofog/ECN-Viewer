@@ -73,9 +73,9 @@ export default function Map (props) {
                 className={classes.mapMarker}
               >
                 {/* <MemoryIcon style={{ fontSize: 32 }} /> */}
-                <div style={{ transform: 'rotate(45deg)' }}>{[...a.name.split('-').map(e => e[0]), 'a', 'b', 'c'].join('').toUpperCase()}</div>
+                <div style={{ transform: 'rotate(45deg)' }}>{[...a.name.split('-').map(e => e[0])].join('').toUpperCase()}</div>
               </Avatar>
-              <div style={{ display: 'flex', position: 'absolute', bottom: -15 }}>
+              <div style={{ display: 'flex', position: 'absolute', bottom: -8 }}>
                 {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div style={{ backgroundColor: tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon title={t.display.name || t.name} key={t.display.name || t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.display.icon}</Icon></div> : null) : null)}
               </div>
 
