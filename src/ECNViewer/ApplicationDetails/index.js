@@ -11,7 +11,11 @@ import { dateFormat, icons } from '../utils'
 import moment from 'moment'
 import MicroservicesTable from '../MicroservicesTable'
 import yaml from 'js-yaml'
+
 import AceEditor from 'react-ace'
+import 'ace-builds/src-noconflict/theme-monokai'
+import 'ace-builds/src-noconflict/mode-css'
+
 import { useFeedback } from '../../Utils/FeedbackContext'
 import { MsvcStatus as Status } from '../../Utils/Status'
 import Modal from '../../Utils/Modal'
@@ -217,9 +221,9 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </TableHead>
           <TableBody>
             {routes
-              .map((p) => {
+              .map((p, idx) => {
                 if (!p.name) {
-                  return <TableRow><TableCell colSpan={3} /></TableRow>
+                  return <TableRow key={idx}><TableCell colSpan={3} /></TableRow>
                 }
                 const from = application.microservices.find(m => m.name === p.from) || notFoundMsvc
                 const to = application.microservices.find(m => m.name === p.to) || notFoundMsvc
@@ -250,7 +254,8 @@ export default function ApplicationDetails ({ application: selectedApplication, 
         <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title} style={{ zIndex: 5 }}>Application YAML</Typography>
           <AceEditor
-            mode='yaml'
+            mode='css'
+            theme='monokai'
             defaultValue={yamlDump}
             readOnly
             style={{
