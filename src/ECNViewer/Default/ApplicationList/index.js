@@ -141,23 +141,23 @@ export default function ApplicationList ({ applications: unfilteredApplications,
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader }}>Name</TableCell>
-            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader }} align='right'>Msvcs</TableCell>
-            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader }} align='right' />
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Name</TableCell>
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }} >Msvcs</TableCell>
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}  />
           </TableRow>
         </TableHead>
         <TableBody>
           {(loading ? (new Array(5)).fill(0).map((idx) => <TableRow key={idx}><TableCell colSpan={4}><Skeleton height={29} /></TableCell></TableRow>) : applications.map(a => {
             return (
-              <TableRow button key={a.uuid}>
-                <TableCell onClick={() => selectApplication(a)}>
+              <TableRow button key={a.uuid} classes={{ hover: classes.tableRowHover }} hover>
+                <TableCell onClick={() => selectApplication(a)} classes={{ root: classes.tableCell }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Status status={a.isActivated ? 'RUNNING' : 'OFFLINE'} />
                     <span className={classes.action} style={{ marginLeft: '15px' }}>{a.name}</span>
                   </div>
                 </TableCell>
-                <TableCell align='right'>{a.microservices.length}</TableCell>
-                <TableCell align='right'>
+                <TableCell  classes={{ root: classes.tableCell }}>{a.microservices.length}</TableCell>
+                <TableCell  classes={{ root: classes.tableCell }}>
                   <MoreIcon className={classes.action} onClick={(e) => { e.stopPropagation(); openMenu(a, e) }} />
                 </TableCell>
               </TableRow>

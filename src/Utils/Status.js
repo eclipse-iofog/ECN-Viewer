@@ -20,6 +20,7 @@ export const statusColor = {
 
 export const msvcStatusColor = {
   RUNNING: colors.primary,
+  STARTED: colors.primary,
   PULLING: colors.primary,
   UNKNOWN: colors.aluminium,
   QUEUED: colors.aluminium,

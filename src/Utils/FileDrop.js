@@ -9,18 +9,22 @@ const { FILE } = NativeTypes
 const useStyles = makeStyles(theme => ({
   dropZone: {
     // width: '100%',
-    border: '1px dashed',
+    border: `1px dashed ${theme.colors.neutral_2}`,
     minHeight: '39px',
     // padding: '1rem',
     verticalAlign: 'center',
     borderRadius: '4px',
     // background: 'aliceblue',
-    color: theme.colors.carbon,
+    color: theme.colors.neutral_3,
+    fontStyle: 'italic',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     paddingLeft: '15px',
-    paddingRight: '15px'
+    paddingRight: '15px',
+    '& label': {
+      color: theme.colors.neutral_3
+    }
   },
   active: {
     backgroundColor: '#d8dfe5'

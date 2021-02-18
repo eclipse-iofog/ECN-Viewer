@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
-import ReactJson from 'react-json-view'
+import ReactJson from '../../Utils/ReactJson'
 import yaml from 'js-yaml'
 import { Menu, MenuItem, Divider } from '@material-ui/core'
 
@@ -225,6 +225,7 @@ export default function Catalog () {
         open={openRemoveConfirm}
         title={`Delete Application template ${selectedItem.name} ?`}
         onClose={() => setOpenRemoveConfirm(false)}
+        confirmColor='secondary'
         onConfirm={() => {
           removeCatalogItem(selectedItem)
           setOpenRemoveConfirm(false)

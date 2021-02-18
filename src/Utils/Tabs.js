@@ -37,7 +37,9 @@ const useStyles = makeStyles(theme => ({
     zIndex: 2
   },
   wrapper: {
-    fontSize: '17px'
+    fontSize: '17px',
+    fontWeight: '700',
+    color: theme.colors.neutral
   }
 }))
 

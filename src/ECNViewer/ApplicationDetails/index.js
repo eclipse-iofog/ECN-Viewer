@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ReactJson from 'react-json-view'
+import ReactJson from '../../Utils/ReactJson'
 import { Paper, Typography, makeStyles, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Table, TableBody, TableHead, TableRow, TableCell } from '@material-ui/core'
 
 import { useData } from '../../providers/Data'
@@ -14,6 +14,7 @@ import yaml from 'js-yaml'
 import AceEditor from 'react-ace'
 import { useFeedback } from '../../Utils/FeedbackContext'
 import { MsvcStatus as Status } from '../../Utils/Status'
+import Modal from '../../Utils/Modal'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
@@ -21,11 +22,12 @@ const useStyles = makeStyles(theme => ({
 
 const notFoundMsvc = { name: 'UNKNOWN', status: {}, notFound: true }
 
-export default function ApplicationDetails ({ application: selectedApplication, selectApplication, selectMicroservice, back }) {
+export default function ApplicationDetails ({ application: selectedApplication, selectApplication, selectMicroservice, selectAgent, back }) {
   const { data, toggleApplication: _toggleApplication, deleteApplication: _deleteApplication } = useData()
   const classes = useStyles()
   const { pushFeedback } = useFeedback()
   const [openDeleteApplicationDialog, setOpenDeleteApplicationDialog] = React.useState(false)
+  const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
 
   const { applications, reducedAgents } = data
   const application = (applications || []).find(a => selectedApplication.name === a.name) || selectedApplication // Get live updates from data
@@ -128,8 +130,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
 
   const yamlDump = React.useMemo(() => yaml.dump(_getApplicationYAMLFromJSON(application)), [application])
 
-  console.log({ yamlDump })
-  const status = application.isActivated ? 'RUNNING' : 'STOPPED'
+  const status = application.isActivated ? 'STARTED' : 'STOPPED'
   const routes = application.routes || []
   if (!routes.length) { routes.push({}) }
 
@@ -158,7 +159,9 @@ export default function ApplicationDetails ({ application: selectedApplication, 
       </Paper>
       <Paper className={`section ${classes.multiSections}`}>
         <div className={[classes.section, 'paper-container-left'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Application Details</Typography>
+          <Typography variant='subtitle2' className={classes.title} style={{ minWidth: '100%' }}>
+            <span>Application Details</span>
+          </Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Last Active</span>
             <span className={classes.text}>{moment(application.lastStatusTime).format(dateFormat)}</span>
@@ -173,7 +176,11 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </div>
         </div>
         <div className={[classes.section, 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title} />
+          <Typography variant='subtitle2' className={classes.title} style={{ justifyContent: 'flex-end' }}>
+            <div className={classes.actions} style={{ minWidth: 0 }}>
+              <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
+            </div>
+          </Typography>
           {/* {application.routes.map((r, idx) =>
             <div key={r.name || idx} className={classes.subSection}>
               <span className={classes.subTitle}>{r.name}</span>
@@ -183,12 +190,13 @@ export default function ApplicationDetails ({ application: selectedApplication, 
         </div>
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
+        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Microservices</span>
           </Typography>
         </div>
         <MicroservicesTable
+          selectAgent={selectAgent}
           application={application}
           selectMicroservice={selectMicroservice}
         />
@@ -203,8 +211,8 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           <TableHead>
             <TableRow>
               <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Name</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>From</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>To</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>From</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>To</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -220,13 +228,13 @@ export default function ApplicationDetails ({ application: selectedApplication, 
                     <TableCell component='th' scope='row'>
                       {p.name}
                     </TableCell>
-                    <TableCell align='right'>
+                    <TableCell>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                         <Status status={from.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
                         <span className={from.notFound ? '' : classes.action} onClick={() => from.notFound ? null : selectMicroservice(from)}>{from.name}</span>
                       </div>
                     </TableCell>
-                    <TableCell align='right'>
+                    <TableCell>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                         <Status status={to.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
                         <span className={to.notFound ? '' : classes.action} onClick={() => to.notFound ? null : selectMicroservice(to)}>{to.name}</span>
@@ -252,12 +260,6 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           />
         </div>
       </Paper>
-      <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Application JSON</Typography>
-          <ReactJson title='Agent' src={application} name={false} collapsed />
-        </div>
-      </Paper>
       <Dialog
         open={openDeleteApplicationDialog}
         onClose={() => { setOpenDeleteApplicationDialog(false) }}
@@ -278,6 +280,16 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </Button>
         </DialogActions>
       </Dialog>
+      <Modal
+        {...{
+          open: openDetailsModal,
+          title: `${application.name} details`,
+          onClose: () => setOpenDetailsModal(false),
+          size: 'lg'
+        }}
+      >
+        <ReactJson title='Application' src={application} name={false} />
+      </Modal>
     </>
   )
 }

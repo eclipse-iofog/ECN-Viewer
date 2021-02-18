@@ -1,8 +1,8 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
-import ReactJson from 'react-json-view'
+import ReactJson from '../../Utils/ReactJson'
 import yaml from 'js-yaml'
-import { Avatar, Menu, MenuItem, Divider } from '@material-ui/core'
+import { Menu, MenuItem, Divider } from '@material-ui/core'
 
 import { ControllerContext } from '../../ControllerProvider'
 import { FeedbackContext } from '../../Utils/FeedbackContext'

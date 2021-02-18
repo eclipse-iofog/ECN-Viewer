@@ -6,19 +6,24 @@ import { Search as SearchIcon } from '@material-ui/icons'
 const useStyle = makeStyles((theme) => ({
   input: {
     paddingTop: '10px',
+    color: theme.colors.neutral_3,
     paddingBottom: '10px'
   },
   adornedStart: {
+    color: theme.colors.neutral_3,
     paddingLeft: '5px'
   },
   adornedEnd: {
     paddingRight: '5px'
   },
   searchBar: {
-    boxShadow: '0 0 6px #aaaaaa inset',
+    boxShadow: 'inset 0px 1px 3px rgba(0,0,0,.2), inset 0px 1px 8px rgba(0,0,0,.1)',
+    border: 'none!important',
+    borderColor: theme.colors.neutral_2,
+    color: theme.colors.neutral_2,
     borderRadius: '4px',
     '&:focus': {
-      borderColor: theme.colors.cobalt
+      borderColor: theme.colors.neutral_2
     }
     // boxShadow: 'inset 0 0 8px 0px rgba(0, 0, 0, 0.19)'
   }

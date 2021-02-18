@@ -48,8 +48,8 @@ const useStyles = makeStyles(theme => ({
   },
   searchIconContainer: {
     borderRadius: '4px',
-    border: 'solid 1px rgba(0, 0, 0, 0.23)',
-    boxShadow: '0 0 6px #aaaaaa inset',
+    boxShadow: 'inset 0px 1px 3px rgba(0,0,0,.2), inset 0px 1px 8px rgba(0,0,0,.1)',
+    color: theme.colors.neutral_3,
     '&:hover': {
       borderColor: theme.colors.carbon
     }

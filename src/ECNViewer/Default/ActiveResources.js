@@ -14,7 +14,8 @@ const useStyles = makeStyles(theme => ({
   },
   container: {
     display: 'flex',
-    height: '100px'
+    height: '100px',
+    alignItems: 'center'
   },
   mainNumber: {
     display: 'flex',
@@ -22,23 +23,27 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     flex: '2 1 0px',
     fontWeight: '400',
-    fontSize: '4rem'
+    fontSize: '60px',
+    paddingLeft: '15px',
+    paddingRight: '5px',
+    color: theme.colors.neutral_3
   },
   detailsContainer: {
     display: 'flex',
     flexDirection: 'column',
-    paddingTop: '20px',
     flex: '4 1 0px',
-    textAlign: 'left'
+    textAlign: 'left',
+    color: theme.colors.neutral_3
   },
   unitType: {
-    fontSize: '1rem',
-    fontWeight: 'bold',
+    fontSize: '14px',
+    fontWeight: '500',
     textTransform: 'uppercase'
   },
   detailsText: {
-    fontSize: '0.8rem',
-    color: `var(--color, ${theme.colors.carbon})`,
+    fontSize: '11px',
+    fontWeight: '500',
+    color: `var(--color, ${theme.colors.neutral_3})`,
     textTransform: 'uppercase'
   },
   errorText: {
@@ -93,7 +98,7 @@ export default function ActiveResources () {
           <div className={classes.detailsContainer}>
             <div className={classes.unitType}>Agents</div>
             <div className={classes.detailsText}>{agentCount.running} running &bull; {agentCount.unknown} unknown</div>
-            <div className={[classes.detailsText, classes.errorText].join(' ')}>{agentCount.alert} alerts</div>
+            {/* <div className={[classes.detailsText, classes.errorText].join(' ')}>{agentCount.alert} alerts</div> */}
           </div>
         </Paper>
         <Paper className={classes.container}>
@@ -103,7 +108,7 @@ export default function ActiveResources () {
           <div className={classes.detailsContainer}>
             <div className={classes.unitType}>Applications</div>
             <div className={classes.detailsText}>{applicationCount.running} running &bull; {applicationCount.stopped} stopped</div>
-            <div className={[classes.detailsText, classes.errorText].join(' ')}>{applicationCount.error} errors</div>
+            {/* <div className={[classes.detailsText, classes.errorText].join(' ')}>{applicationCount.error} errors</div> */}
           </div>
         </Paper>
         <Paper className={classes.container}>

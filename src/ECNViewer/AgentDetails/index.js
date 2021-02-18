@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ReactJson from 'react-json-view'
+import ReactJson from '../../Utils/ReactJson'
 import { Paper, Typography, makeStyles, Icon, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
 
 import { useData } from '../../providers/Data'
@@ -27,6 +27,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
   const [openDeleteApplicationDialog, setOpenDeleteApplicationDialog] = React.useState(false)
   const [selectedApplication, setSelectedApplication] = React.useState({})
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
+  const [openERDetailsModal, setOpenERDetailsModal] = React.useState(false)
   const [selectedER, setSelectedER] = React.useState({})
   const classes = useStyles()
 
@@ -107,9 +108,15 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
         <div className={[classes.section, 'paper-container-left'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
           <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} style={{ marginRight: '5px' }} />{agent.daemonStatus}</span>
-          <span className={classes.subTitle} style={{ marginTop: '15px' }}>Last Active: <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span></span>
+          {/* <span className={classes.subTitle} style={{ marginTop: '15px' }}>Last Active: <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span></span> */}
         </div>
-        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '2 1 0px' }}>
+        <div className={[classes.section].join(' ')} style={{ flex: '1 1 0px' }}>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Last Active</span>
+          </Typography>
+          <span className={classes.text} style={{ fontSize: '14px' }}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span>
+        </div>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
             <div className={classes.actions}>
@@ -134,11 +141,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
             <span className={classes.subTitle}>IP Address</span>
             <span className={classes.text}>{agent.ipAddressExternal}</span>
           </div>
-          <div className={classes.subSection}>
-            <span className={classes.subTitle}>Processed Messages</span>
-            <span className={classes.text}>{agent.processedMessages}</span>
-          </div>
-          <div className={classes.subSection}>
+          <div className={classes.subSection} style={{ paddingBottom: 0 }}>
             <span className={classes.subTitle}>Created</span>
             <span className={classes.text}>{moment(agent.createdAt).format(dateFormat)}</span>
           </div>
@@ -159,20 +162,25 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
           </div>
         </div>
         <div className={[classes.section, 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Edge Resources</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Edge Resources</span>
+            <div className={classes.actions} style={{ minWidth: 0 }}>
+              <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
+            </div>
+          </Typography>
           {agent.edgeResources.map(er => (
             <div key={`${er.name}_${er.version}`} className={classes.edgeResource}>
               <div className={classes.erIconContainer} style={{ '--color': 'white' }}>
                 {er.display && er.display.icon && <Icon title={er.display.name || er.name} className={classes.erIcon}>{er.display.icon}</Icon>}
               </div>
-              <div className={`${classes.subTitle} ${classes.action}`} onClick={() => { setSelectedER(er); setOpenDetailsModal(true) }} style={{ marginLeft: '5px' }}>{(er.display && er.display.name) || er.name} {er.version}</div>
+              <div className={`${classes.subTitle} ${classes.action}`} onClick={() => { setSelectedER(er); setOpenERDetailsModal(true) }} style={{ marginLeft: '5px' }}>{(er.display && er.display.name) || er.name} {er.version}</div>
             </div>
           ))}
         </div>
       </Paper>
       {Object.keys(applicationsByName).map(applicationName => (
         <Paper key={applicationName} className='section'>
-          <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
+          <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
             <Typography variant='subtitle2' className={classes.title}>
               <span>{applicationName}</span>
               <div className={classes.actions} style={{ minWidth: '100px' }}>
@@ -187,15 +195,19 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
             </Typography>
           </div>
           <MicroservicesTable
+            nameTitle='Msvc Name'
             application={applicationsByName[applicationName]}
             selectMicroservice={selectMicroservice}
+            showVolumes
           />
           <div
             style={{
               width: '100%',
               textAlign: 'right',
-              fontSize: '12px',
-              paddingTop: '15px'
+              fontSize: '16px',
+              fontWeight: '300',
+              paddingTop: '30px',
+              fontStyle: 'italic'
             }}
             className='paper-container-right'
           >
@@ -203,12 +215,6 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
           </div>
         </Paper>
       ))}
-      <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Agent JSON</Typography>
-          <ReactJson title='Agent' src={agent} name={false} collapsed />
-        </div>
-      </Paper>
       <Dialog
         open={openDeleteAgentDialog}
         onClose={() => { setOpenDeleteAgentDialog(false) }}
@@ -251,13 +257,23 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
       </Dialog>
       <Modal
         {...{
-          open: openDetailsModal,
+          open: openERDetailsModal,
           title: `${selectedER.name} details`,
-          onClose: () => setOpenDetailsModal(false),
+          onClose: () => setOpenERDetailsModal(false),
           size: 'lg'
         }}
       >
         <EdgeResourceDetails edgeResource={selectedER} />
+      </Modal>
+      <Modal
+        {...{
+          open: openDetailsModal,
+          title: `${agent.name} details`,
+          onClose: () => setOpenDetailsModal(false),
+          size: 'lg'
+        }}
+      >
+        <ReactJson title='Agent' src={agent} name={false} />
       </Modal>
     </>
   )

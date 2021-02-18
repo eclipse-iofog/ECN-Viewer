@@ -4,6 +4,7 @@ export default function getStyle (theme) {
       paddingBottom: '15px',
       paddingTop: '15px',
       position: 'sticky',
+      fontSize: '17px',
       top: 0,
       backgroundColor: 'white',
       zIndex: 2,
@@ -25,15 +26,16 @@ export default function getStyle (theme) {
     },
     subTitle: {
       fontSize: '14px',
-      fontWeight: 'bold'
+      fontWeight: '500',
+      textTransform: 'uppercase'
     },
     subSection: {
       display: 'flex',
       flexDirection: 'column',
-      paddingBottom: '5px'
+      paddingBottom: '15px'
     },
     text: {
-      fontSize: '14px',
+      fontSize: '13px',
       fontWeight: 'normal',
       whiteSpace: 'pre-line'
     },
@@ -44,7 +46,11 @@ export default function getStyle (theme) {
       display: 'flex',
       justifyContent: 'space-between',
       minWidth: '150px',
-      direction: 'rtl'
+      direction: 'rtl',
+      color: theme.colors.neutral_2,
+      '& .MuiSvgIcon-root:hover': {
+        color: theme.colors.carbon
+      }
     },
     action: {
       cursor: 'pointer',
@@ -78,9 +84,33 @@ export default function getStyle (theme) {
       backgroundColor: 'white',
       paddingTop: '5px',
       paddingBottom: '5px',
-      borderTop: `1px solid ${theme.colors.carbon}`,
-      borderBottom: `1px solid ${theme.colors.carbon}`,
+      fontSize: '14px',
+      fontWeight: '500',
+      color: theme.colors.neutral_3,
+      borderTop: `1px solid ${theme.colors.neutral_2}`,
+      borderBottom: `1px solid ${theme.colors.neutral_2}`,
+      zIndex: 6,
       textTransform: 'uppercase'
+    },
+    tableCell: {
+      fontSize: '16px',
+      color: theme.colors.neutral
+    },
+    headerCell: {
+      fontSize: '14px',
+      fontWeight: '500',
+      color: theme.colors.neutral_3
+    },
+    tableRowHover: {
+      '&:hover': {
+        backgroundColor: '#f4f5f6!important'
+      }
+    },
+    cardTitle: {
+      position: 'sticky',
+      top: 0,
+      backgroundColor: 'white',
+      zIndex: 6
     }
   }
 }

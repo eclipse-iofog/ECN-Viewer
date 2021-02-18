@@ -105,13 +105,13 @@ export default function AgentList (props) {
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader }}>Name</TableCell>
-            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Version</TableCell>
-            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Apps</TableCell>
-            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Msvcs</TableCell>
-            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Type</TableCell>
-            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }}>Resources</TableCell>
-            <TableCell className={classes.tableTitle} align='right' classes={{ stickyHeader: classes.stickyHeader }} />
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Name</TableCell>
+            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Version</TableCell>
+            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Apps</TableCell>
+            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Msvcs</TableCell>
+            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Type</TableCell>
+            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Resources</TableCell>
+            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }} />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -120,23 +120,23 @@ export default function AgentList (props) {
             const applications = Object.keys(msvcs.reduce((acc, m) => ({ ...acc, [m.application]: true }), {}))
             const edgeResources = a.edgeResources || []
             return (
-              <TableRow button key={a.uuid}>
-                <TableCell onClick={() => setAgent(a)}>
+              <TableRow key={a.uuid} classes={{ hover: classes.tableRowHover }} hover>
+                <TableCell onClick={() => setAgent(a)} classes={{ root: classes.tableCell }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Status status={a.daemonStatus} />
                     <span className={classes.link} style={{ marginLeft: '15px' }}>{a.name}</span>
                   </div>
                 </TableCell>
-                <TableCell align='right'>{a.version}</TableCell>
-                <TableCell align='right'>{applications.length}</TableCell>
-                <TableCell align='right'>{msvcs.length}</TableCell>
-                <TableCell align='right'>{fogTypes[a.fogTypeId]}</TableCell>
-                <TableCell align='right'>
+                <TableCell  classes={{ root: classes.tableCell }}>{a.version}</TableCell>
+                <TableCell  classes={{ root: classes.tableCell }}>{applications.length}</TableCell>
+                <TableCell  classes={{ root: classes.tableCell }}>{msvcs.length}</TableCell>
+                <TableCell  classes={{ root: classes.tableCell }}>{fogTypes[a.fogTypeId]}</TableCell>
+                <TableCell  classes={{ root: classes.tableCell }}>
                   {edgeResources.map((er) => {
                     return er.display && er.display.icon ? <Icon title={er.display.name || er.name} style={{ color: theme.colors.carbon }} className={classes.erIcon}>{er.display.icon}</Icon> : null
                   })}
                 </TableCell>
-                <TableCell align='right'>
+                <TableCell  classes={{ root: classes.tableCell }}>
                   <MoreIcon className={classes.action} onClick={(e) => { e.stopPropagation(); openMenu(a, e) }} />
                 </TableCell>
               </TableRow>

@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactJson from 'react-json-view'
+import ReactJson from '../../Utils/ReactJson'
 import { useController } from '../../ControllerProvider'
 import { useFeedback } from '../../Utils/FeedbackContext'
 

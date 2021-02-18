@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactJson from 'react-json-view'
+import ReactJson from '../../../Utils/ReactJson'
 import get from 'lodash/get'
 
 import { Grid, Paper, Typography, TextField, Divider, Select, Input, Button, InputLabel, FormControl, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core'

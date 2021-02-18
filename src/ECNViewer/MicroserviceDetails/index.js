@@ -1,6 +1,6 @@
 import React from 'react'
 
-import ReactJson from 'react-json-view'
+import ReactJson from '../../Utils/ReactJson'
 import {
   Paper,
   Typography,
@@ -24,9 +24,10 @@ import getSharedStyle from '../sharedStyles'
 import { icons, dateFormat, MiBFactor, prettyBytes } from '../utils'
 import moment from 'moment'
 import lget from 'lodash/get'
-import { MsvcStatus as Status } from '../../Utils/Status'
+import Status, { MsvcStatus } from '../../Utils/Status'
 
 import SearchBar from '../../Utils/SearchBar'
+import Modal from '../../Utils/Modal'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme),
@@ -43,6 +44,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
   const { data } = useData()
   const classes = useStyles()
   const [openDeleteMicroserviceDialog, setOpenDeleteMicroserviceDialog] = React.useState(false)
+  const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [envFilter, setEnvFilter] = React.useState('')
   const [volumeFilter, setVolumeFilter] = React.useState('')
   const [hostFilter, sethostFilter] = React.useState('')
@@ -88,12 +90,14 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
     extraHosts.push({})
   }
 
+  const application = reducedApplications.byName[microservice.application]
+
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
         <div className={[classes.section, 'paper-container-left'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
-          <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={microservice.status.status} style={{ marginRight: '5px' }} />{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage}%)`}</span>
+          <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><MsvcStatus status={microservice.status.status} style={{ marginRight: '5px' }} />{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage}%)`}</span>
           {microservice.status.errorMessage && <span className={classes.subTitle}>Error: <span className={classes.text}>{microservice.status.errorMessage}</span></span>}
         </div>
         <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
@@ -115,11 +119,11 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           </div>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Application</span>
-            <span className={`${classes.text} ${classes.action}`} onClick={() => selectApplication(reducedApplications.byName[microservice.application])}>{microservice.application}</span>
+            <span className={`${classes.text} ${classes.action}`} onClick={() => selectApplication(application)}><span style={{ display: 'flex', alignItems: 'center' }}><Status status={application.isActivated ? 'RUNNING' : 'UNKNOWN'} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} /><span />{application.name}</span></span>
           </div>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Agent</span>
-            {agent ? <span className={`${classes.text} ${classes.action}`} onClick={() => selectAgent(agent)}>{agent.name}</span> : ''}
+            {agent ? <span className={`${classes.text} ${classes.action}`} onClick={() => selectAgent(agent)}><span style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} /><span />{agent.name}</span></span> : ''}
           </div>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Created at</span>
@@ -127,7 +131,12 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           </div>
         </div>
         <div className={[classes.section, 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Resource Utilization</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Resources Utilization</span>
+            <div className={classes.actions} style={{ minWidth: 0 }}>
+              <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
+            </div>
+          </Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>CPU Usage</span>
             <span className={classes.text}>{(microservice.status.cpuUsage * 1).toFixed(2) + '%'}</span>
@@ -139,7 +148,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         </div>
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
+        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Ports</span>
           </Typography>
@@ -147,25 +156,25 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Internal</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>External</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Protocol</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>PublicLink</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Internal</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>External</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Protocol</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>PublicLink</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {ports.map((p) => (
-              <TableRow key={p.external}>
+              <TableRow key={p.external} hover classes={{ hover: classes.tableRowHover }}>
                 <TableCell component='th' scope='row'>
                   {p.internal}
                 </TableCell>
-                <TableCell align='right'>
+                <TableCell>
                   {p.external}
                 </TableCell>
-                <TableCell align='right'>
+                <TableCell>
                   {p.protocol ? (p.protocol === 'udp' ? p.protocol : 'tcp') : ''}
                 </TableCell>
-                <TableCell align='right'>
+                <TableCell>
                   <a className={classes.link} href={p.publicLink} target='_blank' rel='noopener noreferrer'>{p.publicLink}</a>
                 </TableCell>
               </TableRow>
@@ -174,7 +183,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         </Table>
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
+        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Volumes</span>
             <SearchBar onSearch={setVolumeFilter} classes={{ root: classes.narrowSearchBar }} />
@@ -183,26 +192,26 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Host</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Container</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Acces Mode</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Type</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Host</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Container</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Acces Mode</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Type</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {volumes
               .map((p) => (
-                <TableRow key={p.containerDestination}>
+                <TableRow key={p.containerDestination} hover classes={{ hover: classes.tableRowHover }}>
                   <TableCell component='th' scope='row'>
                     {p.hostDestination}
                   </TableCell>
-                  <TableCell align='right'>
+                  <TableCell>
                     {p.containerDestination}
                   </TableCell>
-                  <TableCell align='right'>
+                  <TableCell>
                     {p.accessMode}
                   </TableCell>
-                  <TableCell align='right'>
+                  <TableCell>
                     {p.fogTypeId}
                   </TableCell>
                 </TableRow>
@@ -211,7 +220,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         </Table>
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
+        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Environment variables</span>
             <SearchBar onSearch={setEnvFilter} classes={{ root: classes.narrowSearchBar }} />
@@ -220,18 +229,18 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px', maxWidth: '200px' }}>Key</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px', maxWidth: '200px' }} align='right'>Value</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px', maxWidth: '200px' }}>Key</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px', maxWidth: '200px' }}>Value</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {env
               .map((p) => (
-                <TableRow key={p.key}>
+                <TableRow key={p.key} hover classes={{ hover: classes.tableRowHover }}>
                   <TableCell component='th' scope='row' style={{ maxWidth: '200px' }}>
                     {p.key}
                   </TableCell>
-                  <TableCell align='right' style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
+                  <TableCell style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
                     {p.value}
                   </TableCell>
                 </TableRow>
@@ -240,7 +249,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         </Table>
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
+        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Extra hosts</span>
             <SearchBar onSearch={sethostFilter} classes={{ root: classes.narrowSearchBar }} />
@@ -249,34 +258,28 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Name</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Address</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Value</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Name</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Address</TableCell>
+              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Value</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {extraHosts
               .map((p) => (
-                <TableRow key={p.name}>
+                <TableRow key={p.name} hover classes={{ hover: classes.tableRowHover }}>
                   <TableCell component='th' scope='row'>
                     {p.name}
                   </TableCell>
-                  <TableCell align='right'>
+                  <TableCell>
                     {p.address}
                   </TableCell>
-                  <TableCell align='right'>
+                  <TableCell>
                     {p.value}
                   </TableCell>
                 </TableRow>
               ))}
           </TableBody>
         </Table>
-      </Paper>
-      <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Microservice JSON</Typography>
-          <ReactJson title='Microservice' src={microservice} name={false} collapsed />
-        </div>
       </Paper>
       <Dialog
         open={openDeleteMicroserviceDialog}
@@ -297,6 +300,16 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           </Button>
         </DialogActions>
       </Dialog>
+      <Modal
+        {...{
+          open: openDetailsModal,
+          title: `${microservice.name} details`,
+          onClose: () => setOpenDetailsModal(false),
+          size: 'lg'
+        }}
+      >
+        <ReactJson title='Microservice' src={microservice} name={false} />
+      </Modal>
     </>
   )
 }

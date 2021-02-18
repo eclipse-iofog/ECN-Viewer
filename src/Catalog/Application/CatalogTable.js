@@ -74,7 +74,10 @@ export default function CatalogTable (props) {
     <Paper>
       <div className={`${classes.tableActions} ${classes.pointer}`}>
         <SearchBar {...{
-          onSearch: setFilter
+          onSearch: setFilter,
+          style: {
+            width: '400px'
+          }
         }}
         />
         <div>
@@ -100,25 +103,25 @@ export default function CatalogTable (props) {
         <Table className={classes.table} stickyHeader aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }}>Name</TableCell>
-              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }} align='right'>Description</TableCell>
-              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }} align='right'>Microservices</TableCell>
-              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }} align='right'>Variables</TableCell>
-              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell }} align='right' />
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }}>Name</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }}>Description</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }}>Microservices</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }}>Variables</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }} />
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? <TableRow><TableCell colSpan={7}><Skeleton height={50} count={5} /></TableCell></TableRow> : filteredCatalog
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(row => (
-                <TableRow key={row.name}>
-                  <TableCell component='th' scope='row'>
+                <TableRow key={row.name} hover classes={{ hover: classes.tableRowHover }} style={{ verticalAlign: 'baseline' }}>
+                  <TableCell component='th' scope='row' style={{ width: '800px' }}>
                     {row.name}
                   </TableCell>
-                  <TableCell align='right'>{row.description}</TableCell>
-                  <TableCell align='right'>{row.display.microservices.join(', ')}</TableCell>
-                  <TableCell align='right'>{row.display.variables.join(', ')}</TableCell>
-                  <TableCell align='right' className={classes.pointer}>
+                  <TableCell style={{ width: '800px' }}>{row.description}</TableCell>
+                  <TableCell style={{ width: '800px', whiteSpace: 'pre' }}>{row.display.microservices.join('\n')}</TableCell>
+                  <TableCell style={{ width: '800px', whiteSpace: 'pre' }}>{row.display.variables.join('\n')}</TableCell>
+                  <TableCell className={classes.pointer} style={{ verticalAlign: 'middle' }}>
                     <MoreIcon onClick={(e) => openMenu(row, e)} />
                   </TableCell>
                 </TableRow>

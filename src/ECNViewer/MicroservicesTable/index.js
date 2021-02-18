@@ -4,14 +4,18 @@ import { Table, TableHead, TableRow, TableBody, TableCell, makeStyles } from '@m
 
 import getSharedStyle from '../sharedStyles'
 
-import { MsvcStatus as Status } from '../../Utils/Status'
+import Status, { MsvcStatus } from '../../Utils/Status'
+import { useData } from '../../providers/Data'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
 }))
 
-export default function MicroservicesTable ({ application, selectMicroservice }) {
+export default function MicroservicesTable ({ application, selectMicroservice, selectAgent, nameTitle, showVolumes }) {
   const classes = useStyles()
+  const { data } = useData()
+
+  const { reducedAgents } = data
 
   const microservices = application.microservices
   if (!microservices.length) {
@@ -22,36 +26,43 @@ export default function MicroservicesTable ({ application, selectMicroservice })
     <Table stickyHeader>
       <TableHead>
         <TableRow>
-          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Name</TableCell>
-          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Status</TableCell>
-          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Ports</TableCell>
-          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }} align='right'>Volumes</TableCell>
+          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>{nameTitle || 'Name'}</TableCell>
+          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Status</TableCell>
+          {selectAgent && <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Agent</TableCell>}
+          <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Ports</TableCell>
+          {showVolumes && <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Volumes</TableCell>}
         </TableRow>
       </TableHead>
       <TableBody>
         {microservices.map((row) => {
           if (!row.name) {
-            return <TableRow key={row.uuid}><TableCell colSpan={4} /></TableRow>
+            return <TableRow key={row.uuid}><TableCell colSpan={5} /></TableRow>
           }
+          const agent = reducedAgents.byUUID[row.iofogUuid]
           return (
-            <TableRow key={row.uuid}>
+            <TableRow key={row.uuid} style={{ verticalAlign: 'baseline' }} hover classes={{ hover: classes.tableRowHover }}>
               <TableCell component='th' scope='row' className={classes.action} onClick={() => selectMicroservice(row)}>
-                <span style={{ display: 'flex', alignItems: 'center' }}><Status status={row.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />{row.name}</span>
+                <span style={{ display: 'flex', alignItems: 'center' }}><MsvcStatus status={row.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />{row.name}</span>
               </TableCell>
-              <TableCell align='right'>
+              <TableCell>
                 <span>{row.status.status}{row.status.status === 'PULLING' && ` (${row.status.percentage}%)`}</span>
                 {row.status.errorMessage && <><br /><span>{row.status.errorMessage}</span></>}
               </TableCell>
-              <TableCell align='right'>
+              {selectAgent &&
+                <TableCell className={classes.action} onClick={() => agent ? selectAgent(agent) : null}>
+                  {agent && <span style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} /><span />{agent.name}</span>}
+                </TableCell>}
+              <TableCell>
                 {row.ports.map(p => (
                   <div key={p.internal}>{p.internal}:{p.external}/{p.protocol === 'udp' ? 'udp' : 'tcp'}</div>
                 ))}
               </TableCell>
-              <TableCell align='right'>
-                {row.volumeMappings.map(p => (
-                  <div key={p.id}>{p.hostDestination}:{p.containerDestination}:{p.accessMode}</div>
-                ))}
-              </TableCell>
+              {showVolumes &&
+                <TableCell>
+                  {row.volumeMappings.map(p => (
+                    <div key={p.id}>{p.hostDestination}:{p.containerDestination}:{p.accessMode}</div>
+                  ))}
+                </TableCell>}
             </TableRow>
           )
         })}
