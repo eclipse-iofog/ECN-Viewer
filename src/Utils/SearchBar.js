@@ -3,7 +3,7 @@ import React from 'react'
 import { TextField, InputAdornment, makeStyles } from '@material-ui/core'
 import { Search as SearchIcon } from '@material-ui/icons'
 
-const useStyle = makeStyles(() => ({
+const useStyle = makeStyles((theme) => ({
   input: {
     paddingTop: '10px',
     paddingBottom: '10px'
@@ -15,6 +15,11 @@ const useStyle = makeStyles(() => ({
     paddingRight: '5px'
   },
   searchBar: {
+    boxShadow: '0 0 6px #aaaaaa inset',
+    borderRadius: '4px',
+    '&:focus': {
+      borderColor: theme.colors.cobalt
+    }
     // boxShadow: 'inset 0 0 8px 0px rgba(0, 0, 0, 0.19)'
   }
 }))

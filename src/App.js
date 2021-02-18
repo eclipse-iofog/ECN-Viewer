@@ -6,7 +6,7 @@ import { DndProvider } from 'react-dnd'
 
 import Layout from './Layout'
 
-import './App.css'
+import './App.scss'
 import FeedbackContext from './Utils/FeedbackContext'
 import ThemeContext from './Theme/ThemeProvider'
 import ControllerContext from './ControllerProvider'
