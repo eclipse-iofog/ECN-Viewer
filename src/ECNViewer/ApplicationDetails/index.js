@@ -189,7 +189,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           )} */}
         </div>
       </Paper>
-      <Paper className='section'>
+      <Paper className='section' v>
         <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Microservices</span>
@@ -246,7 +246,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </TableBody>
         </Table>
       </Paper>
-      <Paper className='section'>
+      <Paper className='section' style={{ maxHeight: '800px' }}>
         <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title} style={{ zIndex: 5 }}>Application YAML</Typography>
           <AceEditor
@@ -255,7 +255,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
             readOnly
             style={{
               width: '100%',
-              height: '230px'
+              height: '700px'
             }}
           />
         </div>

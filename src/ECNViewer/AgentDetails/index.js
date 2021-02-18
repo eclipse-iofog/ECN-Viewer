@@ -179,7 +179,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
         </div>
       </Paper>
       {Object.keys(applicationsByName).map(applicationName => (
-        <Paper key={applicationName} className='section'>
+        <Paper key={applicationName} className='section' style={{ paddingBottom: 0, maxHeight: '800px' }}>
           <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
             <Typography variant='subtitle2' className={classes.title}>
               <span>{applicationName}</span>
@@ -207,7 +207,12 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
               fontSize: '16px',
               fontWeight: '300',
               paddingTop: '30px',
-              fontStyle: 'italic'
+              paddingBottom: '15px',
+              fontStyle: 'italic',
+              position: 'sticky',
+              bottom: '0',
+              zIndex: 6,
+              backgroundColor: 'white'
             }}
             className='paper-container-right'
           >
