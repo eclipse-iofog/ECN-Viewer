@@ -14,14 +14,15 @@
       margin-top: 15px;
     }
 
-    max-height: 300px;
+    // max-height: 300px;
     overflow-y: auto;
-    padding-bottom: 15px;
+    // padding-bottom: 15px;
     .paper-container-left {
-      padding-left: 15px;
+      // border-left: none;
     }
     .paper-container-right {
       padding-right: 15px;
+      // border-right: none;
     }
   }
 }

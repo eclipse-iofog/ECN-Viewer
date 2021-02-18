@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   avatarList: {
     color: 'white',
     backgroundColor: 'var(--statusColor, white)',
-    boxShadow: `0px 2px 2px ${theme.colors.carbon}`
+    boxShadow: `0px 2px 2px ${theme.colors.neutral}`
   },
   msvcChipList: {
     display: 'flex',
@@ -59,13 +59,6 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'baseline',
     color: theme.palette.text.primary
-  },
-  link: {
-    color: theme.palette.text.primary,
-    cursor: 'pointer',
-    '&:hover': {
-      textDecoration: 'underline'
-    }
   },
   stickyHeader: {
     ...(getSharedStyle(theme).stickyHeaderCell),
@@ -106,12 +99,12 @@ export default function AgentList (props) {
         <TableHead>
           <TableRow>
             <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Name</TableCell>
-            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Version</TableCell>
-            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Apps</TableCell>
-            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Msvcs</TableCell>
-            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Type</TableCell>
-            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Resources</TableCell>
-            <TableCell className={classes.tableTitle}  classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }} />
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Version</TableCell>
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Apps</TableCell>
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Msvcs</TableCell>
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Type</TableCell>
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Resources</TableCell>
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }} />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -127,16 +120,16 @@ export default function AgentList (props) {
                     <span className={classes.link} style={{ marginLeft: '15px' }}>{a.name}</span>
                   </div>
                 </TableCell>
-                <TableCell  classes={{ root: classes.tableCell }}>{a.version}</TableCell>
-                <TableCell  classes={{ root: classes.tableCell }}>{applications.length}</TableCell>
-                <TableCell  classes={{ root: classes.tableCell }}>{msvcs.length}</TableCell>
-                <TableCell  classes={{ root: classes.tableCell }}>{fogTypes[a.fogTypeId]}</TableCell>
-                <TableCell  classes={{ root: classes.tableCell }}>
+                <TableCell classes={{ root: classes.tableCell }}>{a.version}</TableCell>
+                <TableCell classes={{ root: classes.tableCell }}>{applications.length}</TableCell>
+                <TableCell classes={{ root: classes.tableCell }}>{msvcs.length}</TableCell>
+                <TableCell classes={{ root: classes.tableCell }}>{fogTypes[a.fogTypeId]}</TableCell>
+                <TableCell classes={{ root: classes.tableCell }}>
                   {edgeResources.map((er) => {
-                    return er.display && er.display.icon ? <Icon title={er.display.name || er.name} style={{ color: theme.colors.carbon }} className={classes.erIcon}>{er.display.icon}</Icon> : null
+                    return er.display && er.display.icon ? <Icon title={er.display.name || er.name} style={{ color: theme.colors.neutral_3 }} className={classes.erIcon}>{er.display.icon}</Icon> : null
                   })}
                 </TableCell>
-                <TableCell  classes={{ root: classes.tableCell }}>
+                <TableCell classes={{ root: classes.tableCell }}>
                   <MoreIcon className={classes.action} onClick={(e) => { e.stopPropagation(); openMenu(a, e) }} />
                 </TableCell>
               </TableRow>

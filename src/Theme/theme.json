@@ -23,7 +23,7 @@
       "contrastText": "#fff"
     },
     "text": {
-      "primary": "rgba(0, 46, 67, 1)",
+      "primary": "#506279",
       "secondary": "rgba(87, 104, 125, 1)",
       "disabled": "rgba(172, 181, 198, 1)",
       "hint": "rgba(87, 104, 125, 1)"

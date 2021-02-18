@@ -95,11 +95,12 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
-        <div className={[classes.section, 'paper-container-left'].join(' ')}>
+        <div className={[classes.section, 'paper-container-left', classes.bottomPad].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
-          <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><MsvcStatus status={microservice.status.status} style={{ marginRight: '5px' }} />{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage}%)`}</span>
+          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><MsvcStatus status={microservice.status.status} style={{ marginRight: '5px' }} />{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage}%)`}</span>
           {microservice.status.errorMessage && <span className={classes.subTitle}>Error: <span className={classes.text}>{microservice.status.errorMessage}</span></span>}
         </div>
+        <div className={classes.sectionDivider} />
         <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
@@ -130,6 +131,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
             <span className={classes.text}>{moment(microservice.createdAt).format(dateFormat)}</span>
           </div>
         </div>
+        <div className={classes.sectionDivider} />
         <div className={[classes.section, 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Resources Utilization</span>

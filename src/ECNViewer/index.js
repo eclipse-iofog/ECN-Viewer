@@ -163,7 +163,7 @@ export default function ECNViewer () {
         {_getView(view)}
       </div>
       <div className='map-grid-container'>
-        <Map {...{ controller: { ...controller, info: { location } }, agent: selectedElement, setAgent: selectElement, msvcsPerAgent, loading }} />
+        <Map {...{ controller: { ...controller, info: { location } }, agent: selectedElement, setAgent: selectAgent, msvcsPerAgent, loading }} />
         <div className='map-overlay' />
       </div>
     </div>

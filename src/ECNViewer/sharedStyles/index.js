@@ -5,6 +5,7 @@ export default function getStyle (theme) {
       paddingTop: '15px',
       position: 'sticky',
       fontSize: '17px',
+      fontWeight: '700',
       top: 0,
       backgroundColor: 'white',
       zIndex: 2,
@@ -12,21 +13,31 @@ export default function getStyle (theme) {
       display: 'flex',
       justifyContent: 'space-between',
       height: '54px',
+      color: theme.colors.neutral,
       alignItems: 'center'
     },
     multiSections: {
       display: 'flex',
-      alignItems: 'flex-start',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
+      alignItems: 'stretch'
     },
     section: {
       flex: '1 1 0px',
+      color: theme.colors.neutral,
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      paddingLeft: '15px',
+      // paddingBottom: '15px',
+      height: '100%'
+    },
+    sectionDivider: {
+      width: '1px',
+      backgroundColor: theme.colors.neutral_2
     },
     subTitle: {
-      fontSize: '14px',
-      fontWeight: '500',
+      fontSize: '15px',
+      fontWeight: '700',
+      color: theme.colors.neutral,
       textTransform: 'uppercase'
     },
     subSection: {
@@ -35,12 +46,14 @@ export default function getStyle (theme) {
       paddingBottom: '15px'
     },
     text: {
-      fontSize: '13px',
+      fontSize: '15px',
       fontWeight: 'normal',
+      color: theme.colors.neutral,
       whiteSpace: 'pre-line'
     },
     tableTitle: {
-      textTransform: 'uppercase'
+      textTransform: 'uppercase',
+      color: theme.colors.neutral
     },
     actions: {
       display: 'flex',
@@ -49,7 +62,7 @@ export default function getStyle (theme) {
       direction: 'rtl',
       color: theme.colors.neutral_2,
       '& .MuiSvgIcon-root:hover': {
-        color: theme.colors.carbon
+        color: theme.colors.neutral
       }
     },
     action: {
@@ -67,7 +80,7 @@ export default function getStyle (theme) {
       paddingBottom: '5px'
     },
     erIconContainer: {
-      backgroundColor: `var(--color, ${theme.colors.carbon})`,
+      backgroundColor: `var(--color, ${theme.colors.neutral})`,
       height: '38px',
       display: 'flex',
       alignItems: 'center',
@@ -75,10 +88,14 @@ export default function getStyle (theme) {
     },
     erIcon: {
       fontSize: 22,
-      color: theme.colors.carbon
+      color: theme.colors.neutral
     },
     link: {
-      color: theme.colors.carbon
+      color: theme.colors.neutral,
+      cursor: 'pointer',
+      '&:hover': {
+        textDecoration: 'underline'
+      }
     },
     stickyHeaderCell: {
       backgroundColor: 'white',
@@ -111,6 +128,9 @@ export default function getStyle (theme) {
       top: 0,
       backgroundColor: 'white',
       zIndex: 6
+    },
+    bottomPad: {
+      paddingBottom: '15px'
     }
   }
 }

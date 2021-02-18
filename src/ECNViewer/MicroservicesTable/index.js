@@ -11,13 +11,17 @@ const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
 }))
 
-export default function MicroservicesTable ({ application, selectMicroservice, selectAgent, nameTitle, showVolumes }) {
+export default function MicroservicesTable ({ application, selectMicroservice, selectAgent, nameTitle, showVolumes, filter = '' }) {
   const classes = useStyles()
   const { data } = useData()
 
   const { reducedAgents } = data
 
-  const microservices = application.microservices
+  const microservices = application.microservices.filter(m => (
+    m.name.toLowerCase().includes(filter) ||
+    m.status.status.toLowerCase().includes(filter) ||
+    (selectAgent && (reducedAgents.byUUID[m.iofogUuid] || { name: '' }).name.toLowerCase().includes(filter))
+  ))
   if (!microservices.length) {
     microservices.push({ uuid: 'filler' })
   }
@@ -41,26 +45,26 @@ export default function MicroservicesTable ({ application, selectMicroservice, s
           const agent = reducedAgents.byUUID[row.iofogUuid]
           return (
             <TableRow key={row.uuid} style={{ verticalAlign: 'baseline' }} hover classes={{ hover: classes.tableRowHover }}>
-              <TableCell component='th' scope='row' className={classes.action} onClick={() => selectMicroservice(row)}>
+              <TableCell component='th' scope='row' className={classes.action} onClick={() => selectMicroservice(row)} style={{ width: '200px' }}>
                 <span style={{ display: 'flex', alignItems: 'center' }}><MsvcStatus status={row.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />{row.name}</span>
               </TableCell>
-              <TableCell>
+              <TableCell style={{ width: '200px' }}>
                 <span>{row.status.status}{row.status.status === 'PULLING' && ` (${row.status.percentage}%)`}</span>
                 {row.status.errorMessage && <><br /><span>{row.status.errorMessage}</span></>}
               </TableCell>
               {selectAgent &&
-                <TableCell className={classes.action} onClick={() => agent ? selectAgent(agent) : null}>
+                <TableCell className={classes.action} onClick={() => agent ? selectAgent(agent) : null} style={{ width: '200px' }}>
                   {agent && <span style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} /><span />{agent.name}</span>}
                 </TableCell>}
-              <TableCell>
+              <TableCell style={{ width: '200px' }}>
                 {row.ports.map(p => (
-                  <div key={p.internal}>{p.internal}:{p.external}/{p.protocol === 'udp' ? 'udp' : 'tcp'}</div>
+                  <div key={p.internal} style={{ paddingBottom: '5px' }}>{p.internal}:{p.external}/{p.protocol === 'udp' ? 'udp' : 'tcp'}</div>
                 ))}
               </TableCell>
               {showVolumes &&
-                <TableCell>
+                <TableCell style={{ width: '200px' }}>
                   {row.volumeMappings.map(p => (
-                    <div key={p.id}>{p.hostDestination}:{p.containerDestination}:{p.accessMode}</div>
+                    <div key={p.id} style={{ paddingBottom: '5px' }}>{p.hostDestination}:{p.containerDestination}:{p.accessMode}</div>
                   ))}
                 </TableCell>}
             </TableRow>

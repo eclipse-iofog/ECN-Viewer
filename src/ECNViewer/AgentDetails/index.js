@@ -105,17 +105,19 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
-        <div className={[classes.section, 'paper-container-left'].join(' ')}>
+        <div className={[classes.section, 'paper-container-left', classes.bottomPad].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
-          <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} style={{ marginRight: '5px' }} />{agent.daemonStatus}</span>
+          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} style={{ marginRight: '5px' }} />{agent.daemonStatus}</span>
           {/* <span className={classes.subTitle} style={{ marginTop: '15px' }}>Last Active: <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span></span> */}
         </div>
+        <div className={classes.sectionDivider} />
         <div className={[classes.section].join(' ')} style={{ flex: '1 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Last Active</span>
           </Typography>
           <span className={classes.text} style={{ fontSize: '14px' }}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span>
         </div>
+        <div className={classes.sectionDivider} />
         <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
@@ -127,7 +129,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
         </div>
       </Paper>
       <Paper className={`section ${classes.multiSections}`}>
-        <div className={[classes.section, 'paper-container-left'].join(' ')}>
+        <div className={[classes.section, 'paper-container-left', classes.bottomPad].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Agent Details</Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Version</span>
@@ -146,6 +148,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
             <span className={classes.text}>{moment(agent.createdAt).format(dateFormat)}</span>
           </div>
         </div>
+        <div className={classes.sectionDivider} />
         <div className={classes.section}>
           <Typography variant='subtitle2' className={classes.title}>Resource Utilization</Typography>
           <div className={classes.subSection}>
@@ -161,6 +164,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
             <span className={classes.text}>{`${prettyBytes((agent.diskUsage * MiBFactor))} / ${prettyBytes((agent.systemAvailableDisk))} (${((agent.diskUsage * MiBFactor / agent.systemAvailableDisk * 100) || 0).toFixed(2)}%)`}</span>
           </div>
         </div>
+        <div className={classes.sectionDivider} />
         <div className={[classes.section, 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Edge Resources</span>
@@ -173,7 +177,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
               <div className={classes.erIconContainer} style={{ '--color': 'white' }}>
                 {er.display && er.display.icon && <Icon title={er.display.name || er.name} className={classes.erIcon}>{er.display.icon}</Icon>}
               </div>
-              <div className={`${classes.subTitle} ${classes.action}`} onClick={() => { setSelectedER(er); setOpenERDetailsModal(true) }} style={{ marginLeft: '5px' }}>{(er.display && er.display.name) || er.name} {er.version}</div>
+              <div className={`${classes.text} ${classes.action}`} onClick={() => { setSelectedER(er); setOpenERDetailsModal(true) }} style={{ marginLeft: '5px' }}>{(er.display && er.display.name) || er.name} {er.version}</div>
             </div>
           ))}
         </div>

@@ -19,11 +19,9 @@ const useStyles = makeStyles(theme => ({
     }
   },
   controllerName: {
-    fontSize: '1.5rem',
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    fontWeight: 400,
-    lineHeight: 1.33,
-    letterSpacing: '0em',
+    fontSize: '24px',
+    fontWeight: '700',
     width: '100%',
     '&::before': {
       borderBottom: 'none !important'
@@ -53,6 +51,8 @@ const useStyles = makeStyles(theme => ({
   navBar: {
     display: 'flex',
     alignItems: 'center',
+    fontSize: '24px',
+    fontWeight: '700',
     width: '100%',
     '& span': {
       marginLeft: '5px',
@@ -108,7 +108,7 @@ export default function Navigation ({ view, selectedElement, views, back }) {
       case views.DEFAULT:
       default:
         return (
-          <Typography style={{ width: '100%' }} variant='h5'>
+          <Typography className={classes.navBar} style={{ width: '100%' }} variant='h5'>
             <Input className={classes.controllerName} value={controllerName} onChange={updateControllerName} onKeyDown={loseFocus} />
           </Typography>)
     }

@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
   avatarList: {
     color: 'white',
     backgroundColor: 'var(--statusColor, white)',
-    boxShadow: `0px 2px 2px ${theme.colors.carbon}`
+    boxShadow: `0px 2px 2px ${theme.colors.neutral}`
   },
   msvcChipList: {
     display: 'flex',
@@ -142,8 +142,8 @@ export default function ApplicationList ({ applications: unfilteredApplications,
         <TableHead>
           <TableRow>
             <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Name</TableCell>
-            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }} >Msvcs</TableCell>
-            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}  />
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }}>Msvcs</TableCell>
+            <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeader, root: classes.headerCell }} />
           </TableRow>
         </TableHead>
         <TableBody>
@@ -156,8 +156,8 @@ export default function ApplicationList ({ applications: unfilteredApplications,
                     <span className={classes.action} style={{ marginLeft: '15px' }}>{a.name}</span>
                   </div>
                 </TableCell>
-                <TableCell  classes={{ root: classes.tableCell }}>{a.microservices.length}</TableCell>
-                <TableCell  classes={{ root: classes.tableCell }}>
+                <TableCell classes={{ root: classes.tableCell }}>{a.microservices.length}</TableCell>
+                <TableCell classes={{ root: classes.tableCell }}>
                   <MoreIcon className={classes.action} onClick={(e) => { e.stopPropagation(); openMenu(a, e) }} />
                 </TableCell>
               </TableRow>

@@ -4,7 +4,6 @@ import GoogleMapReact from 'google-map-react'
 
 import { Avatar } from '@material-ui/core'
 
-import MemoryIcon from '@material-ui/icons/Memory'
 import CtrlIcon from '@material-ui/icons/DeveloperBoard'
 import Icon from '@material-ui/core/Icon'
 
@@ -30,7 +29,11 @@ const useStyles = makeStyles(theme => ({
     transform: 'rotate(-45deg)',
     '& .MuiSvgIcon-root': {
       transform: 'rotate(-45deg)'
-    }
+    },
+    width: '65px',
+    height: '65px'
+    // justifyContent: 'flex-start',
+    // alignItems: 'center'
   },
   mapWrapper: {
     // boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12)',
@@ -58,6 +61,7 @@ export default function Map (props) {
       >
         {(loading ? [] : controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
           <div
+            id={a.name}
             key={a.uuid}
             lat={a.latitude} lng={a.longitude}
             className={classes.mapMarkerTransform}
@@ -68,7 +72,8 @@ export default function Map (props) {
                 style={{ '--markerColor': statusColor[a.daemonStatus] }}
                 className={classes.mapMarker}
               >
-                <MemoryIcon />
+                {/* <MemoryIcon style={{ fontSize: 32 }} /> */}
+                <div style={{ transform: 'rotate(45deg)' }}>{[...a.name.split('-').map(e => e[0]), 'a', 'b', 'c'].join('').toUpperCase()}</div>
               </Avatar>
               <div style={{ display: 'flex', position: 'absolute', bottom: -15 }}>
                 {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div style={{ backgroundColor: tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon title={t.display.name || t.name} key={t.display.name || t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.display.icon}</Icon></div> : null) : null)}

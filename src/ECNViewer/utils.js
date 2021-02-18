@@ -13,7 +13,7 @@ import { statusColor as _statusColor, msvcStatusColor as _msvcStatusColor } from
 export const statusColor = _statusColor
 export const msvcStatusColor = _msvcStatusColor
 
-export const tagColor = theme.colors.carbon
+export const tagColor = theme.colors.neutral_3
 
 export const dateFormat = 'YYYY/MM/DD hh:mm:ss a'
 export const MiBFactor = 1048576

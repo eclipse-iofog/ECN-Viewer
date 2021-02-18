@@ -22,7 +22,7 @@ import { useData } from '../providers/Data'
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    color: theme.colors.carbon,
+    color: theme.colors.neutral,
     backgroundColor: 'white'
   },
   divider: {
@@ -67,13 +67,13 @@ const useStyles = makeStyles(theme => ({
     padding: '20px 10px 20px 0px'
   },
   footer: {
-    color: theme.colors.carbon,
+    color: theme.colors.neutral,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     fontSize: '9pt',
     '& a': {
-      color: theme.colors.carbon,
+      color: theme.colors.neutral,
       textDecoration: 'none!important'
     }
   }

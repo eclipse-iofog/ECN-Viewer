@@ -19,6 +19,7 @@ import 'ace-builds/src-noconflict/mode-yaml'
 import { useFeedback } from '../../Utils/FeedbackContext'
 import { MsvcStatus as Status } from '../../Utils/Status'
 import Modal from '../../Utils/Modal'
+import SearchBar from '../../Utils/SearchBar'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme)
@@ -32,6 +33,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
   const { pushFeedback } = useFeedback()
   const [openDeleteApplicationDialog, setOpenDeleteApplicationDialog] = React.useState(false)
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
+  const [msvcFilter, setMsvcFilter] = React.useState('')
 
   const { applications, reducedAgents } = data
   const application = (applications || []).find(a => selectedApplication.name === a.name) || selectedApplication // Get live updates from data
@@ -141,10 +143,11 @@ export default function ApplicationDetails ({ application: selectedApplication, 
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
-        <div className={[classes.section, 'paper-container-left'].join(' ')}>
+        <div className={[classes.section, 'paper-container-left', classes.bottomPad].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>Status</Typography>
-          <span className={classes.subTitle} style={{ display: 'flex', alignItems: 'center' }}><Status status={status} style={{ marginRight: '5px' }} />{status}</span>
+          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><Status status={status} style={{ marginRight: '5px' }} />{status}</span>
         </div>
+        <div className={classes.sectionDivider} />
         <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
@@ -197,12 +200,14 @@ export default function ApplicationDetails ({ application: selectedApplication, 
         <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Microservices</span>
+            <SearchBar onSearch={setMsvcFilter} classes={{ root: classes.narrowSearchBar }} />
           </Typography>
         </div>
         <MicroservicesTable
           selectAgent={selectAgent}
           application={application}
           selectMicroservice={selectMicroservice}
+          filter={msvcFilter}
         />
       </Paper>
       <Paper className='section'>
@@ -250,7 +255,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </TableBody>
         </Table>
       </Paper>
-      <Paper className='section' style={{ maxHeight: '800px' }}>
+      <Paper className='section' style={{ maxHeight: '800px', paddingBottom: '15px' }}>
         <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title} style={{ zIndex: 5 }}>Application YAML</Typography>
           <AceEditor
