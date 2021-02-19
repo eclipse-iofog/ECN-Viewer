@@ -4,18 +4,6 @@ import { TextField, InputAdornment, makeStyles } from '@material-ui/core'
 import { Search as SearchIcon } from '@material-ui/icons'
 
 const useStyle = makeStyles((theme) => ({
-  input: {
-    paddingTop: '10px',
-    color: theme.colors.neutral_3,
-    paddingBottom: '10px'
-  },
-  adornedStart: {
-    color: theme.colors.neutral_3,
-    paddingLeft: '5px'
-  },
-  adornedEnd: {
-    paddingRight: '5px'
-  },
   searchBar: {
     boxShadow: 'inset 0px 1px 3px rgba(0,0,0,.2), inset 0px 1px 8px rgba(0,0,0,.1)',
     border: 'none!important',
@@ -28,10 +16,25 @@ const useStyle = makeStyles((theme) => ({
     // boxShadow: 'inset 0 0 8px 0px rgba(0, 0, 0, 0.19)'
   }
 }))
+const useSearchBarStyle = makeStyles((theme) => ({
+  input: {
+    paddingTop: '10px',
+    color: theme.colors.neutral_3,
+    paddingBottom: '10px'
+  },
+  adornedStart: {
+    color: theme.colors.neutral_3,
+    paddingLeft: '5px'
+  },
+  adornedEnd: {
+    paddingRight: '5px'
+  }
+}))
 
 export default function SearchBar ({ style, onSearch, classes: _classes }) {
   const [value, setValue] = React.useState('')
-  const classes = useStyle()
+  const classes = useSearchBarStyle()
+  const customClasses = useStyle()
 
   const handleChange = (e) => {
     const newValue = e.target.value.toLowerCase()
@@ -61,7 +64,7 @@ export default function SearchBar ({ style, onSearch, classes: _classes }) {
       value={value}
       onChange={handleChange}
       variant='outlined'
-      className={classes.searchBar}
+      className={customClasses.searchBar}
       InputProps={{
         classes: { ...classes, ..._classes },
         ...ornaments

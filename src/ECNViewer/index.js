@@ -70,7 +70,7 @@ export default function ECNViewer ({ returnHomeCBRef }) {
   React.useEffect(() => {
     returnHomeCBRef.current = seeAllECN
     return () => { returnHomeCBRef.current = null }
-  }, [])
+  }, [seeAllECN])
 
   const back = () => {
     if (history.length) {

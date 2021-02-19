@@ -147,7 +147,7 @@ export default function ApplicationList ({ applications: unfilteredApplications,
           </TableRow>
         </TableHead>
         <TableBody>
-          {(loading ? (new Array(5)).fill(0).map((idx) => <TableRow key={idx}><TableCell colSpan={4}><Skeleton height={29} /></TableCell></TableRow>) : applications.map(a => {
+          {(loading ? (new Array(5)).fill(0).map((v, idx) => <TableRow key={idx}><TableCell colSpan={4}><Skeleton height={29} /></TableCell></TableRow>) : applications.map(a => {
             return (
               <TableRow button key={a.uuid} classes={{ hover: classes.tableRowHover }} hover>
                 <TableCell onClick={() => selectApplication(a)} classes={{ root: classes.tableCell }}>
