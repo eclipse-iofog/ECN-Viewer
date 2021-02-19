@@ -96,10 +96,18 @@ function RouteWatcher ({ children }) {
 
 export default function Layout () {
   const classes = useStyles()
+  const returnHomeCbRef = React.useRef(null)
   const { user, status } = React.useContext(ControllerContext)
   const [settingsOpen, setSettingsOpen] = React.useState(!(user.email && user.password))
 
   console.log(' ====> Rendering layout')
+
+  const returnHome = () => {
+    console.log({ returnHomeCbRef })
+    if (returnHomeCbRef.current) {
+      returnHomeCbRef.current()
+    }
+  }
 
   return (
     <>
@@ -107,12 +115,12 @@ export default function Layout () {
         <RouteWatcher />
         <div className={classes.wrapper + ' wrapper'}>
           <div className={classes.logo + ' logo'}>
-            <NavLink to='/overview'>
+            <NavLink to='/overview' onClick={() => returnHome()}>
               <img src={logomark} alt='Edgeworx logomark' />
             </NavLink>
           </div>
           <div className={classes.latNav + ' latnav'}>
-            <NavLink to='/overview'>
+            <NavLink to='/overview' onClick={() => returnHome()}>
               <Avatar className={classes.latIcons}>
                 <HomeIcon />
               </Avatar>
@@ -129,7 +137,7 @@ export default function Layout () {
           <div className='content'>
             <Switch>
               <Route path='/catalog' component={Catalog} />
-              <Route path='/overview' component={() => <MapProvider><ECNViewer /></MapProvider>} />
+              <Route path='/overview' component={() => <MapProvider><ECNViewer returnHomeCBRef={returnHomeCbRef} /></MapProvider>} />
               <Route component={() => <Redirect to='/overview' />} />
             </Switch>
           </div>

@@ -22,7 +22,7 @@ const views = {
   MICROSERVICE_DETAILS: 4
 }
 
-export default function ECNViewer () {
+export default function ECNViewer ({ returnHomeCBRef }) {
   const { data, loading } = useData()
   const { location } = React.useContext(ControllerContext)
   const { setMap, map, restoreMapToState } = useMap()
@@ -67,6 +67,11 @@ export default function ECNViewer () {
     setHistory([])
   }
 
+  React.useEffect(() => {
+    returnHomeCBRef.current = seeAllECN
+    return () => { returnHomeCBRef.current = null }
+  }, [])
+
   const back = () => {
     if (history.length) {
       const previousState = history[history.length - 1]
@@ -89,7 +94,7 @@ export default function ECNViewer () {
   }, [loading])
 
   const selectController = () => {
-    setMap([], { location }, true)
+    setMap(data.activeAgents, { location }, true)
   }
 
   const setAutozoom = () => {
