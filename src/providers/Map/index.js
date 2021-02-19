@@ -70,7 +70,7 @@ export const MapProvider = ({
       height: get(mapRef, 'current.offsetHeight', 800)
     }
 
-    const { center, zoom } = fitBounds(newBounds, size)
+    const { center } = fitBounds(newBounds, size)
     newMap.center = center
     newMap.zoom = 1
     _setMap({ ...map, ...newMap })

@@ -109,7 +109,6 @@ export default function Catalog () {
         return
       }
       const catalogItems = (await catalogItemsResponse.json()).applicationTemplates
-      console.log({ catalogItems })
       setCatalog(catalogItems.map(item => mapApplicationTemplate(item)))
       setFetching(false)
     } catch (e) {
@@ -169,7 +168,6 @@ export default function Catalog () {
       const reader = new window.FileReader()
 
       reader.onload = async function (evt) {
-        console.log({ evt })
         try {
           const doc = yaml.safeLoad(evt.target.result)
           const [catalogItem, err] = await parseApplicationTemplate(doc)

@@ -96,7 +96,6 @@ export default function DeployApplicationTemplate ({ template, close }) {
     if (variables[key].type === 'number') {
       value = +value
     }
-    console.log({ value, key })
     setVariables(v => ({
       ...v,
       [key]: {
@@ -152,8 +151,6 @@ export default function DeployApplicationTemplate ({ template, close }) {
       pushFeedback({ message: e.message, type: 'error' })
     }
   }
-
-  console.log({ variables })
 
   return (
     <div className={classes.container}>

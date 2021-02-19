@@ -112,7 +112,6 @@ export default function Default ({ selectAgent, selectController, selectApplicat
       reader.onload = async function (evt) {
         try {
           const doc = yaml.safeLoad(evt.target.result)
-          console.log({ doc })
           const [applicationData, err] = await parseApplicationFile(doc)
           if (err) {
             setFileParsing(false)

@@ -84,7 +84,6 @@ function RouteWatcher ({ children }) {
   const location = useLocation()
 
   React.useEffect(() => {
-    console.log({ location })
     if (location.pathname === '/overview') {
       console.log('Refreshing data')
       refreshData()
@@ -103,7 +102,6 @@ export default function Layout () {
   console.log(' ====> Rendering layout')
 
   const returnHome = () => {
-    console.log({ returnHomeCbRef })
     if (returnHomeCbRef.current) {
       returnHomeCbRef.current()
     }

@@ -159,7 +159,6 @@ export default function Catalog () {
       }
       const registries = (await registriesResponse.json()).registries
       catalogItems = catalogItems.map(item => mapCatalogItem(item, registries))
-      console.log({ catalogItems })
       setCatalog(catalogItems)
       setRegistries(registries)
       setFetching(false)
@@ -232,7 +231,6 @@ export default function Catalog () {
       const reader = new window.FileReader()
 
       reader.onload = function (evt) {
-        console.log({ evt })
         try {
           const doc = yaml.safeLoad(evt.target.result)
           const [catalogItem, err] = parseCatalogItem(doc)
