@@ -30,25 +30,54 @@ const useStyles = makeStyles(theme => ({
     '& .MuiSvgIcon-root': {
       transform: 'rotate(-45deg)'
     },
-    width: '65px',
-    height: '65px'
-    // justifyContent: 'flex-start',
-    // alignItems: 'center'
+    width: '50px',
+    height: '50px',
+    fontSize: 24
   },
   mapWrapper: {
-    // boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12)',
-    // borderColor: theme.colors.aluminium,
     width: '155%',
     height: '100%',
     position: 'fixed',
     top: 0
+  },
+  selectedMarker: {
+    zIndex: 2,
+    width: '65px',
+    height: '65px',
+    fontSize: 32,
+    '& $erContainer': {
+      width: '25px',
+      height: '25px',
+      '& .MuiIcon-root': {
+        fontSize: 16
+      }
+    }
+  },
+  selectedMarkerTransform: {
+    zIndex: 2
+  },
+  erContainer: {
+    backgroundColor: tagColor,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '2px',
+    padding: '4px',
+    borderRadius: '100%',
+    zIndex: 3,
+    width: '20px',
+    height: '20px',
+    '& .MuiIcon-root': {
+      fontSize: 14
+    },
+    color: 'white'
   }
 }))
 
 export default function Map (props) {
   const classes = useStyles()
   const theme = useTheme()
-  const { controller, setAgent, loading } = props
+  const { controller, setAgent, loading, agent: selectedAgent } = props
   const { map, mapRef, hasValidCoordinates } = useMap()
 
   return (
@@ -64,19 +93,19 @@ export default function Map (props) {
             id={a.name}
             key={a.uuid}
             lat={a.latitude} lng={a.longitude}
-            className={classes.mapMarkerTransform}
+            className={[classes.mapMarkerTransform, selectedAgent && a.uuid === selectedAgent.uuid ? classes.selectedMarker : ''].join(' ')}
             onClick={() => setAgent(a)}
           >
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Avatar
                 style={{ '--markerColor': statusColor[a.daemonStatus] }}
-                className={classes.mapMarker}
+                className={[classes.mapMarker, selectedAgent && a.uuid === selectedAgent.uuid ? classes.selectedMarker : ''].join(' ')}
               >
                 {/* <MemoryIcon style={{ fontSize: 32 }} /> */}
                 <div style={{ transform: 'rotate(45deg)' }}>{[...a.name.split('-').map(e => e[0])].join('').toUpperCase()}</div>
               </Avatar>
               <div style={{ display: 'flex', position: 'absolute', bottom: -8 }}>
-                {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div style={{ backgroundColor: tagColor, margin: '2px', padding: '4px', borderRadius: '100%' }}><Icon title={t.display.name || t.name} key={t.display.name || t.name} style={{ fontSize: 16, color: 'white', marginBottom: -3 }}>{t.display.icon}</Icon></div> : null) : null)}
+                {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div className={classes.erContainer}><Icon title={t.display.name || t.name} key={t.display.name || t.name}>{t.display.icon}</Icon></div> : null) : null)}
               </div>
 
             </div>
@@ -89,7 +118,7 @@ export default function Map (props) {
             style={{ '--markerColor': theme.colors.purple }}
             className={classes.mapMarker}
           >
-            <CtrlIcon />
+            <CtrlIcon style={{ fontSize: 32 }} />
           </Avatar>}
       </GoogleMapReact>
     </div>
