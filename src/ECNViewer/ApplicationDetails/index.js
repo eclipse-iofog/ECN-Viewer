@@ -238,13 +238,13 @@ export default function ApplicationDetails ({ application: selectedApplication, 
                       {p.name}
                     </TableCell>
                     <TableCell>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                         <Status status={from.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
                         <span className={from.notFound ? '' : classes.action} onClick={() => from.notFound ? null : selectMicroservice(from)}>{from.name}</span>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                         <Status status={to.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
                         <span className={to.notFound ? '' : classes.action} onClick={() => to.notFound ? null : selectMicroservice(to)}>{to.name}</span>
                       </div>
