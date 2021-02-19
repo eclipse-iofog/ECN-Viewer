@@ -40,6 +40,9 @@ const useStyles = makeStyles(theme => ({
     fontSize: '17px',
     fontWeight: '700',
     color: theme.colors.neutral
+  },
+  textColorInherit: {
+    opacity: '.51'
   }
 }))
 
@@ -73,7 +76,7 @@ export default function SimpleTabs (props) {
                 >
                   {children.map((child, idx) => {
                     return (
-                      child && <Tab key={child.id || idx} classes={{ wrapper: classes.wrapper }} id={child.id || idx} label={child.props.title} />
+                      child && <Tab key={child.id || idx} classes={{ wrapper: classes.wrapper, textColorInherit: classes.textColorInherit }} id={child.id || idx} label={child.props.title} />
                     )
                   })}
                 </Tabs>
