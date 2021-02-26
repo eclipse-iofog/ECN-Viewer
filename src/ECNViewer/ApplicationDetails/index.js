@@ -1,7 +1,7 @@
 import React from 'react'
 
 import ReactJson from '../../Utils/ReactJson'
-import { Paper, Typography, makeStyles, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Table, TableBody, TableHead, TableRow, TableCell } from '@material-ui/core'
+import { Paper, Typography, makeStyles, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Table, TableBody, TableHead, TableRow, TableCell, useMediaQuery } from '@material-ui/core'
 
 import { useData } from '../../providers/Data'
 
@@ -34,6 +34,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
   const [openDeleteApplicationDialog, setOpenDeleteApplicationDialog] = React.useState(false)
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
   const [msvcFilter, setMsvcFilter] = React.useState('')
+  const isMediumScreen = useMediaQuery('(min-width: 768px)')
 
   const { applications, reducedAgents } = data
   const application = (applications || []).find(a => selectedApplication.name === a.name) || selectedApplication // Get live updates from data
@@ -140,26 +141,39 @@ export default function ApplicationDetails ({ application: selectedApplication, 
   const routes = application.routes || []
   if (!routes.length) { routes.push({}) }
 
+  const mainActions = (
+    <div className={classes.actions} style={{ minWidth: '100px' }}>
+      <icons.DeleteIcon onClick={() => setOpenDeleteApplicationDialog(true)} className={classes.action} title='Delete application' />
+      {application.isActivated
+        ? <icons.RestartIcon className={classes.action} onClick={() => restartApplication(application)} title='Restart application' />
+        : <icons.RestartIcon className={classes.disabledAction} title='Restart application' />}
+      {application.isActivated
+        ? <icons.StopIcon className={classes.action} onClick={() => toggleApplication(application)} title='Stop application' />
+        : <icons.PlayIcon className={classes.action} onClick={() => toggleApplication(application)} title='Start application' />}
+    </div>
+  )
+
+  const detailActions = (
+    <div className={classes.actions} style={{ minWidth: 0 }}>
+      <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
+    </div>
+  )
+
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
         <div className={[classes.section, 'paper-container-left', classes.bottomPad].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Status</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Status</span>
+            {!isMediumScreen && mainActions}
+          </Typography>
           <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><Status status={status} style={{ marginRight: '5px' }} />{status}</span>
         </div>
         <div className={classes.sectionDivider} />
-        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ paddingBottom: '15px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
-            <div className={classes.actions} style={{ minWidth: '100px' }}>
-              <icons.DeleteIcon onClick={() => setOpenDeleteApplicationDialog(true)} className={classes.action} title='Delete application' />
-              {application.isActivated
-                ? <icons.RestartIcon className={classes.action} onClick={() => restartApplication(application)} title='Restart application' />
-                : <icons.RestartIcon className={classes.disabledAction} title='Restart application' />}
-              {application.isActivated
-                ? <icons.StopIcon className={classes.action} onClick={() => toggleApplication(application)} title='Stop application' />
-                : <icons.PlayIcon className={classes.action} onClick={() => toggleApplication(application)} title='Start application' />}
-            </div>
+            {isMediumScreen && mainActions}
           </Typography>
           <span className={classes.text}>{application.description}</span>
         </div>
@@ -168,6 +182,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
         <div className={[classes.section, 'paper-container-left'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title} style={{ minWidth: '100%' }}>
             <span>Application Details</span>
+            {!isMediumScreen && detailActions}
           </Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Last Active</span>
@@ -182,19 +197,19 @@ export default function ApplicationDetails ({ application: selectedApplication, 
             <span className={classes.text}>{moment(application.createdAt).format(dateFormat)}</span>
           </div>
         </div>
-        <div className={[classes.section, 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title} style={{ justifyContent: 'flex-end' }}>
-            <div className={classes.actions} style={{ minWidth: 0 }}>
-              <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
-            </div>
-          </Typography>
-          {/* {application.routes.map((r, idx) =>
+        {isMediumScreen && (
+          <div className={[classes.section, 'paper-container-right'].join(' ')}>
+            <Typography variant='subtitle2' className={classes.title} style={{ justifyContent: 'flex-end' }}>
+              {detailActions}
+            </Typography>
+            {/* {application.routes.map((r, idx) =>
             <div key={r.name || idx} className={classes.subSection}>
               <span className={classes.subTitle}>{r.name}</span>
               <span className={classes.text}>{r.from}&nbsp;&#8594;&nbsp;{r.to}</span>
             </div>
           )} */}
-        </div>
+          </div>
+        )}
       </Paper>
       <Paper className='section' v>
         <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>

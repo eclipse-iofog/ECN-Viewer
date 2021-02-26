@@ -1,9 +1,10 @@
 .sidebar {
   padding-top: 0px !important;
-  max-width: 55%;
+  max-width: 100%;
   z-index: 9;
   position: relative;
   border-radius: 0 !important;
+  padding-right: 30px;
   // background: radial-gradient(circle at top left,rgba(200,200,200,1) 0%, rgba(255,255,255,0) 40%);
   // background: linear-gradient(to right,rgba(200,200,200,1) 0%, rgba(255,255,255,0) 40%);
   // min-height: 100vh;
@@ -24,6 +25,20 @@
       padding-right: 15px;
       // border-right: none;
     }
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .sidebar {
+    max-width: 80%;
+    padding-right: 0px;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .sidebar {
+    max-width: 55%;
+    padding-right: 0px;
   }
 }
 

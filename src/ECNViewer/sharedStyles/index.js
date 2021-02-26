@@ -19,7 +19,11 @@ export default function getStyle (theme) {
     multiSections: {
       display: 'flex',
       justifyContent: 'space-between',
-      alignItems: 'stretch'
+      alignItems: 'stretch',
+      flexDirection: 'column',
+      '@media screen and (min-width: 768px)': {
+        flexDirection: 'row'
+      }
     },
     section: {
       flex: '1 1 0px',
@@ -27,12 +31,21 @@ export default function getStyle (theme) {
       display: 'flex',
       flexDirection: 'column',
       paddingLeft: '15px',
+      paddingRight: '15px',
       // paddingBottom: '15px',
-      height: '100%'
+      height: '100%',
+      '@media screen and (min-width: 768px)': {
+        paddingRight: 0
+      }
     },
     sectionDivider: {
-      width: '1px',
-      backgroundColor: theme.colors.neutral_2
+      width: '100%',
+      height: '1px',
+      backgroundColor: theme.colors.neutral_2,
+      '@media screen and (min-width: 768px)': {
+        width: '1px',
+        height: 'unset'
+      }
     },
     subTitle: {
       fontSize: '15px',

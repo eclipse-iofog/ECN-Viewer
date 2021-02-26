@@ -1,7 +1,7 @@
 import React from 'react'
 import yaml from 'js-yaml'
 
-import { makeStyles, Paper } from '@material-ui/core'
+import { makeStyles, Paper, useMediaQuery } from '@material-ui/core'
 
 import ActiveResources from './ActiveResources'
 import AgentList from './AgentList'
@@ -42,6 +42,8 @@ const useStyles = makeStyles(theme => ({
   iconContainer: {
     height: '39px',
     width: '39px',
+    minHeight: '39px',
+    minWidth: '39px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
@@ -64,6 +66,8 @@ export default function Default ({ selectAgent, selectController, selectApplicat
   const classes = useStyles()
   const { request } = useController()
   const { pushFeedback } = useFeedback()
+  const showTabActions = useMediaQuery('(min-width: 576px)')
+  const isMediumScreen = useMediaQuery('(min-width: 768px)')
 
   const { controller, activeAgents, applications, activeMsvcs, msvcsPerAgent } = data
 
@@ -149,6 +153,14 @@ export default function Default ({ selectAgent, selectController, selectApplicat
     readApplicationFile(e.target)
   }
 
+  const actionBarWidth = isMediumScreen ? '400px' : '150px'
+  const dragAndDropContent = (
+    <span style={{ fontSize: '14px' }}>
+      {isMediumScreen ? 'To deploy an app, drag a YAML file or ' : 'Drag or '}
+      <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
+    </span>
+  )
+
   return (
     <>
       <ActiveResources {...{ activeAgents, applications, activeMsvcs, loading }} />
@@ -157,44 +169,43 @@ export default function Default ({ selectAgent, selectController, selectApplicat
         <SimpleTabs
           stickyHeader
           headers={(selectedTab) => {
-            return selectedTab === 0 ? (
-              <SearchBar onSearch={setFilter} style={{ marginRight: '5px' }} />
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <FileDrop {...{
-                  onHover:
+            return showTabActions ? (
+              selectedTab === 0 ? (
+                <SearchBar onSearch={setFilter} style={{ marginRight: '5px', maxWidth: isMediumScreen ? 'inherit' : '100px' }} />
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', flex: '1 1 0px', justifyContent: 'flex-end' }}>
+                  <FileDrop {...{
+                    onHover:
                     showSearchbar
                       ? <GetAppIcon style={{ margin: 'auto' }} />
                       : <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
-                  onDrop: readApplicationFile,
-                  loading: fileParsing,
-                  style:
+                    onDrop: readApplicationFile,
+                    loading: fileParsing,
+                    style:
                     showSearchbar
                       ? { padding: 0, height: '39px', width: '39px' }
-                      : { paddingLeft: '5px', width: '400px' }
-                }}
-                >
-                  {showSearchbar ? (
-                    <div className={classes.iconContainer} onClick={() => setShowSearchbar(false)} style={{ cursor: 'pointer' }}><PublishIcon style={{ marginLeft: '-2px' }} /></div>
-                  ) : (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                      <input onChange={handleFileInput} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
-                      <PublishIcon style={{ marginRight: '5px' }} />
-                      <span style={{ fontSize: '14px' }}>
-                        {'To deploy an app, drag a YAML file here or '}
-                        <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
-                      </span>
-                    </div>
-                  )}
-                </FileDrop>
-                {showSearchbar
-                  ? <SearchBar onSearch={setFilter} style={{ marginRight: '5px', marginLeft: '15px', width: '400px' }} />
-                  : <div className={[classes.iconContainer, classes.searchIconContainer].join(' ')} onClick={() => setShowSearchbar(true)} style={{ marginLeft: '15px', cursor: 'pointer' }}><SearchIcon /></div>}
-              </div>)
+                      : { paddingLeft: '5px', maxWidth: actionBarWidth }
+                  }}
+                  >
+                    {showSearchbar ? (
+                      <div className={classes.iconContainer} onClick={() => setShowSearchbar(false)} style={{ cursor: 'pointer' }}><PublishIcon style={{ marginLeft: '-2px' }} /></div>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <input onChange={handleFileInput} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+                        <PublishIcon style={{ marginRight: '5px' }} />
+                        {dragAndDropContent}
+                      </div>
+                    )}
+                  </FileDrop>
+                  {showSearchbar
+                    ? <SearchBar onSearch={setFilter} style={{ marginRight: '5px', marginLeft: '15px', maxWidth: actionBarWidth }} />
+                    : <div className={[classes.iconContainer, classes.searchIconContainer].join(' ')} onClick={() => setShowSearchbar(true)} style={{ marginLeft: '15px', cursor: 'pointer' }}><SearchIcon /></div>}
+                </div>))
+              : null
           }}
         >
           <AgentList title='Agents' {...{ deleteAgent, msvcsPerAgent, filter, loading, msvcs: controller.microservices, agents: controller.agents, agent: selectedElement, setAgent: selectAgent, controller: controller.info }} />
-          <ApplicationList title='Applications' {...{ applications, filter, loading, agents: controller.agents, selectApplication, application: selectedElement }} />
+          <ApplicationList title={showTabActions ? 'Applications' : 'Apps'} {...{ applications, filter, loading, agents: controller.agents, selectApplication, application: selectedElement }} />
         </SimpleTabs>
       </Paper>
     </>

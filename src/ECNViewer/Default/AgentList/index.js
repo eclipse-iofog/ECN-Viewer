@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
   },
   stickyHeader: {
     ...(getSharedStyle(theme).stickyHeaderCell),
-    top: '48px'
+    top: '78px'
   }
 }))
 

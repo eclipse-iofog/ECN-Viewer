@@ -12,6 +12,10 @@ const useStyle = makeStyles((theme) => ({
     borderRadius: '4px',
     '&:focus': {
       borderColor: theme.colors.neutral_2
+    },
+    maxWidth: '150px',
+    '@media screen and (min-width: 768px)': {
+      maxWidth: 'unset'
     }
     // boxShadow: 'inset 0 0 8px 0px rgba(0, 0, 0, 0.19)'
   }

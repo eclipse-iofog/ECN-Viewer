@@ -7,10 +7,14 @@ import { useData } from '../../providers/Data'
 const useStyles = makeStyles(theme => ({
   summary: {
     marginTop: '15px',
+    marginBottom: '15px',
+    gridGap: '15px',
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gridColumnGap: '15px',
-    textAlign: 'center'
+    gridTemplateColumns: 'repeat(1, 1fr)',
+    textAlign: 'center',
+    '@media (min-width: 1200px)': {
+      gridTemplateColumns: 'repeat(3, 1fr)'
+    }
   },
   container: {
     display: 'flex',

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import ReactJson from '../../Utils/ReactJson'
-import { Paper, Typography, makeStyles, Icon, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@material-ui/core'
+import { Paper, Typography, makeStyles, Icon, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, useMediaQuery } from '@material-ui/core'
 
 import { useData } from '../../providers/Data'
 import { dateFormat, MiBFactor, fogTypes, icons, prettyBytes } from '../utils'
@@ -30,6 +30,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
   const [openERDetailsModal, setOpenERDetailsModal] = React.useState(false)
   const [selectedER, setSelectedER] = React.useState({})
   const classes = useStyles()
+  const isMediumScreen = useMediaQuery('(min-width: 768px)')
 
   const { msvcsPerAgent, controller, applications } = data
   const agent = (controller.agents || []).find(a => selectedAgent.uuid === a.uuid) || selectedAgent // Get live updates from data
@@ -102,35 +103,52 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
     }
     return `See all ${application.application.microservices.lenght} Msvcs for this app >`
   }
+
+  const mainActions = (
+    <div className={classes.actions} style={{ minWidth: 'unset' }}>
+      <icons.DeleteIcon onClick={() => setOpenDeleteAgentDialog(true)} className={classes.action} title='Delete application' />
+    </div>
+  )
+
+  const detailActions = (
+    <div className={classes.actions} style={{ minWidth: 0 }}>
+      <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
+    </div>
+  )
+
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
         <div className={[classes.section, 'paper-container-left', classes.bottomPad].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Status</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Status</span>
+            {!isMediumScreen && mainActions}
+          </Typography>
           <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} style={{ marginRight: '5px' }} />{agent.daemonStatus}</span>
           {/* <span className={classes.subTitle} style={{ marginTop: '15px' }}>Last Active: <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span></span> */}
         </div>
         <div className={classes.sectionDivider} />
-        <div className={[classes.section].join(' ')} style={{ flex: '1 1 0px' }}>
+        <div className={[classes.section].join(' ')} style={{ paddingBottom: '15px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Last Active</span>
           </Typography>
-          <span className={classes.text} style={{ fontSize: '14px' }}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span>
+          <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span>
         </div>
         <div className={classes.sectionDivider} />
-        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ paddingBottom: '15px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
-            <div className={classes.actions}>
-              <icons.DeleteIcon onClick={() => setOpenDeleteAgentDialog(true)} className={classes.action} title='Delete application' />
-            </div>
+            {isMediumScreen && mainActions}
           </Typography>
           <span className={classes.text}>{agent.description}</span>
         </div>
       </Paper>
       <Paper className={`section ${classes.multiSections}`}>
         <div className={[classes.section, 'paper-container-left', classes.bottomPad].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Agent Details</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Agent Details</span>
+            {!isMediumScreen && detailActions}
+          </Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Version</span>
             <span className={classes.text}>{agent.version}</span>
@@ -140,8 +158,8 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
             <span className={classes.text}>{fogTypes[agent.fogTypeId]}</span>
           </div>
           <div className={classes.subSection}>
-            <span className={classes.subTitle}>IP Address</span>
-            <span className={classes.text}>{agent.ipAddressExternal}</span>
+            <span className={classes.subTitle}>Address</span>
+            <span className={classes.text}>{agent.host || agent.ipAddressExternal || agent.ipAddress}</span>
           </div>
           <div className={classes.subSection} style={{ paddingBottom: 0 }}>
             <span className={classes.subTitle}>Created</span>
@@ -165,12 +183,10 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
           </div>
         </div>
         <div className={classes.sectionDivider} />
-        <div className={[classes.section, 'paper-container-right'].join(' ')}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ paddingBottom: '15px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Edge Resources</span>
-            <div className={classes.actions} style={{ minWidth: 0 }}>
-              <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
-            </div>
+            {isMediumScreen && detailActions}
           </Typography>
           {agent.edgeResources.map(er => (
             <div key={`${er.name}_${er.version}`} className={classes.edgeResource}>

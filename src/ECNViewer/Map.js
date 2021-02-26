@@ -35,26 +35,29 @@ const useStyles = makeStyles(theme => ({
     fontSize: 24
   },
   mapWrapper: {
-    width: '155%',
+    width: '172%',
     height: '100%',
     position: 'fixed',
-    top: 0
+    top: 0,
+    '@media (min-width: 1200px)': {
+      width: '155%'
+    }
   },
   selectedMarker: {
     zIndex: 2,
-    width: '65px',
-    height: '65px',
     fontSize: 32,
+    width: '80px',
+    height: '80px'
+  },
+  selectedMarkerTransform: {
+    zIndex: 2,
     '& $erContainer': {
-      width: '25px',
-      height: '25px',
+      width: '30px',
+      height: '30px',
       '& .MuiIcon-root': {
         fontSize: 16
       }
     }
-  },
-  selectedMarkerTransform: {
-    zIndex: 2
   },
   erContainer: {
     backgroundColor: tagColor,
@@ -93,7 +96,7 @@ export default function Map (props) {
             id={a.name}
             key={a.uuid}
             lat={a.latitude} lng={a.longitude}
-            className={[classes.mapMarkerTransform, selectedAgent && a.uuid === selectedAgent.uuid ? classes.selectedMarker : ''].join(' ')}
+            className={[classes.mapMarkerTransform, selectedAgent && a.uuid === selectedAgent.uuid ? classes.selectedMarkerTransform : ''].join(' ')}
             onClick={() => setAgent(a)}
           >
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

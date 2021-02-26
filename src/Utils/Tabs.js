@@ -22,7 +22,16 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
-    height: '100%'
+    height: '100%',
+    '& .MuiTabs-scroller': {
+      paddingLeft: '15px'
+    },
+    '@media (min-width: 600px)': {
+      '& .MuiTab-root': {
+        minWidth: 'unset'
+      }
+    },
+    position: 'relative'
   },
   tabHeader: {
     display: 'flex',
@@ -33,6 +42,8 @@ const useStyles = makeStyles(theme => ({
   sticky: {
     position: 'sticky',
     top: 0,
+    left: 0,
+    width: '100%',
     backgroundColor: 'white',
     zIndex: 2
   },
@@ -73,6 +84,7 @@ export default function SimpleTabs (props) {
                   TabIndicatorProps={{ hidden: true }}
                   onChange={handleChange}
                   aria-labelledby={children.map((c, idx) => c.id || idx).join(' ')}
+                  style={{ flex: '1 1 0px' }}
                 >
                   {children.map((child, idx) => {
                     return (
@@ -83,7 +95,7 @@ export default function SimpleTabs (props) {
                 {props.headers && props.headers(value)}
                 {props.onSearch && <SearchBar onSearch={props.onSearch} style={{ marginRight: '5px' }} />}
               </div>
-              <TabContainer>{props.children[value]}</TabContainer>
+              {props.children[value]}
             </>)
       }
     </div>

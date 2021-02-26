@@ -7,6 +7,7 @@ import AgentDetails from './AgentDetails'
 import ApplicationDetails from './ApplicationDetails'
 import MicroserviceDetails from './MicroserviceDetails'
 import Navigation from './Navigation'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 
 // import logo from '../assets/logo.png'
 import './layout.scss'
@@ -29,6 +30,7 @@ export default function ECNViewer ({ returnHomeCBRef }) {
   const [selectedElement, selectElement] = React.useState(null)
   const [history, setHistory] = React.useState([])
   const [view, setView] = React.useState(views.DEFAULT)
+  const showMap = useMediaQuery('(min-width:992px)') // Bootstrap4 lg
 
   const saveHistory = () => {
     setHistory(h => [...h, { view, selectedElement, map }])
@@ -167,10 +169,12 @@ export default function ECNViewer ({ returnHomeCBRef }) {
         <Navigation {...{ view, selectedElement, views, back }} />
         {_getView(view)}
       </div>
-      <div className='map-grid-container'>
-        <Map {...{ controller: { ...controller, info: { location } }, agent: selectedElement, setAgent: selectAgent, msvcsPerAgent, loading }} />
-        <div className='map-overlay' />
-      </div>
+      {showMap && (
+        <div className='map-grid-container'>
+          <Map {...{ controller: { ...controller, info: { location } }, agent: selectedElement, setAgent: selectAgent, msvcsPerAgent, loading }} />
+          <div className='map-overlay' />
+        </div>
+      )}
     </div>
   )
 }

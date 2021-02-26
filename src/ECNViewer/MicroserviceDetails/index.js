@@ -15,7 +15,8 @@ import {
   TableHead,
   TableRow,
   TableBody,
-  TableCell
+  TableCell,
+  useMediaQuery
 } from '@material-ui/core'
 
 import { useData } from '../../providers/Data'
@@ -48,6 +49,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
   const [envFilter, setEnvFilter] = React.useState('')
   const [volumeFilter, setVolumeFilter] = React.useState('')
   const [hostFilter, sethostFilter] = React.useState('')
+  const isMediumScreen = useMediaQuery('(min-width: 768px)')
 
   const { microservices, reducedAgents, reducedApplications } = data
   const microservice = (microservices || []).find(a => selectedMicroservice.uuid === a.uuid) || selectedMicroservice // Get live updates from data
@@ -92,28 +94,44 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
 
   const application = reducedApplications.byName[microservice.application]
 
+  const mainActions = (
+    <div className={classes.actions} style={{ minWidth: 0 }}>
+      <icons.DeleteIcon onClick={() => setOpenDeleteMicroserviceDialog(true)} className={classes.action} title='Delete application' />
+    </div>
+  )
+
+  const detailActions = (
+    <div className={classes.actions} style={{ minWidth: 0 }}>
+      <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
+    </div>
+  )
+
   return (
     <>
       <Paper className={`section first ${classes.multiSections}`}>
         <div className={[classes.section, 'paper-container-left', classes.bottomPad].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Status</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Status</span>
+            {!isMediumScreen && mainActions}
+          </Typography>
           <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><MsvcStatus status={microservice.status.status} style={{ marginRight: '5px' }} />{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage}%)`}</span>
           {microservice.status.errorMessage && <span className={classes.subTitle}>Error: <span className={classes.text}>{microservice.status.errorMessage}</span></span>}
         </div>
         <div className={classes.sectionDivider} />
-        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ flex: '1 1 0px' }}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ paddingBottom: '15px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Description</span>
-            <div className={classes.actions}>
-              <icons.DeleteIcon onClick={() => setOpenDeleteMicroserviceDialog(true)} className={classes.action} title='Delete application' />
-            </div>
+            {isMediumScreen && mainActions}
           </Typography>
           <span className={classes.text}>{microservice.description}</span>
         </div>
       </Paper>
       <Paper className={`section ${classes.multiSections}`}>
         <div className={[classes.section, 'paper-container-left'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>Microservices Details</Typography>
+          <Typography variant='subtitle2' className={classes.title}>
+            <span>Microservices Details</span>
+            {!isMediumScreen && detailActions}
+          </Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>Image</span>
             <span className={classes.text}>{_getMicroserviceImage(microservice)}</span>
@@ -132,12 +150,10 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
           </div>
         </div>
         <div className={classes.sectionDivider} />
-        <div className={[classes.section, 'paper-container-right'].join(' ')}>
+        <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ paddingBottom: '15px' }}>
           <Typography variant='subtitle2' className={classes.title}>
             <span>Resources Utilization</span>
-            <div className={classes.actions} style={{ minWidth: 0 }}>
-              <icons.CodeIcon onClick={() => setOpenDetailsModal(true)} className={classes.action} title='Details' />
-            </div>
+            {isMediumScreen && detailActions}
           </Typography>
           <div className={classes.subSection}>
             <span className={classes.subTitle}>CPU Usage</span>
