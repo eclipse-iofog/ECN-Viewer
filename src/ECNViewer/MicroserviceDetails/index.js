@@ -31,23 +31,7 @@ import SearchBar from '../../Utils/SearchBar'
 import Modal from '../../Utils/Modal'
 
 const useStyles = makeStyles(theme => ({
-  ...getSharedStyle(theme),
-  stickyRight: {
-    position: 'sticky',
-    right: '15px',
-    maxWidth: '100px',
-    '@media (min-width: 568px)': {
-      maxWidth: 'inherit'
-    }
-  },
-  narrowSearchBar: {
-    height: '24px',
-    fontSize: '12px',
-    '& svg': {
-      height: '18px',
-      width: '18px'
-    }
-  }
+  ...getSharedStyle(theme)
 }))
 export default function MicroserviceDetails ({ microservice: selectedMicroservice, selectApplication, selectAgent }) {
   const { data } = useData()
@@ -177,7 +161,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <div className='section-container'>
           <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
             <Typography variant='subtitle2' className={classes.title}>
-              <span className='sticky-left'>Ports</span>
+              <span className={classes.stickyLeft}>Ports</span>
             </Typography>
           </div>
           <Table stickyHeader>
@@ -214,7 +198,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         <div className='section-container'>
           <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
             <Typography variant='subtitle2' className={classes.title}>
-              <span className='sticky-left'>Volumes</span>
+              <span className={classes.stickyLeft}>Volumes</span>
               <SearchBar onSearch={setVolumeFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
             </Typography>
           </div>
@@ -250,66 +234,70 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         </div>
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>
-            <span className='sticky-left'>Environment variables</span>
-            <SearchBar onSearch={setEnvFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
-          </Typography>
+        <div className='section-container'>
+          <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
+            <Typography variant='subtitle2' className={classes.title}>
+              <span className={classes.stickyLeft}>Environment variables</span>
+              <SearchBar onSearch={setEnvFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
+            </Typography>
+          </div>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px', maxWidth: '200px' }}>Key</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px', maxWidth: '200px' }}>Value</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {env
+                .map((p) => (
+                  <TableRow key={p.key} hover classes={{ hover: classes.tableRowHover }}>
+                    <TableCell component='th' scope='row' style={{ maxWidth: '200px' }}>
+                      {p.key}
+                    </TableCell>
+                    <TableCell style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
+                      {p.value}
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
         </div>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px', maxWidth: '200px' }}>Key</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px', maxWidth: '200px' }}>Value</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {env
-              .map((p) => (
-                <TableRow key={p.key} hover classes={{ hover: classes.tableRowHover }}>
-                  <TableCell component='th' scope='row' style={{ maxWidth: '200px' }}>
-                    {p.key}
-                  </TableCell>
-                  <TableCell style={{ maxWidth: '200px', wordWrap: 'break-word' }}>
-                    {p.value}
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>
-            <span className='sticky-left'>Extra hosts</span>
-            <SearchBar onSearch={sethostFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
-          </Typography>
+        <div className='section-container'>
+          <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
+            <Typography variant='subtitle2' className={classes.title}>
+              <span className={classes.stickyLeft}>Extra hosts</span>
+              <SearchBar onSearch={sethostFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
+            </Typography>
+          </div>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Name</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Address</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Value</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {extraHosts
+                .map((p) => (
+                  <TableRow key={p.name} hover classes={{ hover: classes.tableRowHover }}>
+                    <TableCell component='th' scope='row'>
+                      {p.name}
+                    </TableCell>
+                    <TableCell>
+                      {p.address}
+                    </TableCell>
+                    <TableCell>
+                      {p.value}
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
         </div>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Name</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Address</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Value</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {extraHosts
-              .map((p) => (
-                <TableRow key={p.name} hover classes={{ hover: classes.tableRowHover }}>
-                  <TableCell component='th' scope='row'>
-                    {p.name}
-                  </TableCell>
-                  <TableCell>
-                    {p.address}
-                  </TableCell>
-                  <TableCell>
-                    {p.value}
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
       </Paper>
       <Dialog
         open={openDeleteMicroserviceDialog}

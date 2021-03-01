@@ -144,6 +144,35 @@ export default function getStyle (theme) {
     },
     bottomPad: {
       paddingBottom: '15px'
+    },
+    narrowSearchBar: {
+      height: '24px',
+      fontSize: '12px',
+      '& svg': {
+        height: '18px',
+        width: '18px'
+      }
+    },
+    stickyLeft: {
+      position: 'sticky',
+      left: '15px',
+      maxWidth: '100px',
+      '@media screen and (min-width: 576px)': {
+        maxWidth: 'unset'
+      }
+    },
+    stickyRight: {
+      position: 'sticky',
+      right: '15px',
+      maxWidth: '100px',
+      '@media screen and (min-width: 576px)': {
+        maxWidth: 'unset'
+      }
+    },
+    textEllipsis: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
     }
   }
 }

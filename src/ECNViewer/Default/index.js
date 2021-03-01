@@ -176,15 +176,15 @@ export default function Default ({ selectAgent, selectController, selectApplicat
                 <div style={{ display: 'flex', alignItems: 'center', flex: '1 1 0px', justifyContent: 'flex-end', position: 'sticky', right: '15px' }}>
                   <FileDrop {...{
                     onHover:
-                    showSearchbar
-                      ? <GetAppIcon style={{ margin: 'auto' }} />
-                      : <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
+                      showSearchbar
+                        ? <GetAppIcon style={{ margin: 'auto' }} />
+                        : <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
                     onDrop: readApplicationFile,
                     loading: fileParsing,
                     style:
-                    showSearchbar
-                      ? { padding: 0, height: '39px', width: '39px' }
-                      : { paddingLeft: '5px', maxWidth: actionBarWidth }
+                      showSearchbar
+                        ? { padding: 0, height: '39px', width: '39px' }
+                        : { paddingLeft: '5px', maxWidth: actionBarWidth }
                   }}
                   >
                     {showSearchbar ? (
@@ -201,7 +201,22 @@ export default function Default ({ selectAgent, selectController, selectApplicat
                     ? <SearchBar onSearch={setFilter} style={{ marginRight: '5px', marginLeft: '15px', maxWidth: actionBarWidth }} />
                     : <div className={[classes.iconContainer, classes.searchIconContainer].join(' ')} onClick={() => setShowSearchbar(true)} style={{ marginLeft: '15px', cursor: 'pointer' }}><SearchIcon /></div>}
                 </div>))
-              : null
+              : (selectedTab === 1
+                ? (
+                  <FileDrop {...{
+                    onHover: <GetAppIcon style={{ margin: 'auto' }} />,
+                    onDrop: readApplicationFile,
+                    loading: fileParsing,
+                    style: { padding: 0, height: '39px', width: '39px', position: 'sticky', right: '15px' }
+                  }}
+                  >
+                    <>
+                      <input onChange={handleFileInput} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+                      <label for='file'><div className={classes.iconContainer} style={{ cursor: 'pointer' }}><PublishIcon style={{ marginLeft: '-2px' }} /></div></label>
+                    </>
+                  </FileDrop>
+                )
+                : null)
           }}
         >
           <AgentList title='Agents' {...{ deleteAgent, msvcsPerAgent, filter, loading, msvcs: controller.microservices, agents: controller.agents, agent: selectedElement, setAgent: selectAgent, controller: controller.info }} />

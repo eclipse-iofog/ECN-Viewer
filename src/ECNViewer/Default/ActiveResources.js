@@ -29,14 +29,22 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     fontWeight: '400',
     fontSize: '60px',
-    marginRight: '5px',
-    color: theme.colors.neutral_3
+    marginRight: '15px',
+    color: theme.colors.neutral_3,
+    flex: '2 1 0px',
+    '@media (min-width: 1200px)': {
+      flex: 'unset'
+    }
   },
   detailsContainer: {
     display: 'flex',
     flexDirection: 'column',
     textAlign: 'left',
-    color: theme.colors.neutral_3
+    color: theme.colors.neutral_3,
+    flex: '4 1 0px',
+    '@media (min-width: 1200px)': {
+      flex: 'unset'
+    }
   },
   unitType: {
     fontSize: '14px',

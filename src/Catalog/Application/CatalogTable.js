@@ -85,30 +85,51 @@ export default function CatalogTable (props) {
           onSearch: setFilter,
           style: {
             marginRight: '15px',
+            minWidth: '100px',
             maxWidth: isSmallScreen ? 'inherit' : '200px'
           }
         }}
         />
-        {isSmallScreen && (
-          <div>
+        {isSmallScreen
+          ? (
+            <div>
+              <FileDrop {...{
+                onDrop: readCatalogItemFile,
+                onHover: <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
+                style: { paddingLeft: '5px' },
+                loading: uploading
+              }}
+              >
+                <div className={classes.flexColumn}>
+                  <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+                  <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                    <PublishIcon style={{ marginRight: '5px' }} />
+                    {dragAndDropContent}
+                    <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
+                  </div>
+                </div>
+              </FileDrop>
+            </div>
+          )
+          : (
+
             <FileDrop {...{
+              onHover: <GetAppIcon style={{ margin: 'auto' }} />,
               onDrop: readCatalogItemFile,
-              onHover: <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
-              style: { paddingLeft: '5px' },
-              loading: uploading
+              loading: uploading,
+              style: { padding: 0, height: '39px', minWidth: '39px', position: 'sticky', right: '15px', display: 'flex', justifyContent: 'center' }
             }}
             >
-              <div className={classes.flexColumn}>
+              <>
                 <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
-                <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
-                  <PublishIcon style={{ marginRight: '5px' }} />
-                  {dragAndDropContent}
-                  <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
-                </div>
-              </div>
+                <label for='file' style={{ display: 'flex', justifyContent: 'center' }}>
+                  <div className={classes.iconContainer} style={{ cursor: 'pointer' }}>
+                    <PublishIcon style={{ marginLeft: '-2px' }} />
+                  </div>
+                </label>
+              </>
             </FileDrop>
-          </div>
-        )}
+          )}
       </div>
       <TableContainer>
         <Table className={classes.table} stickyHeader aria-label='simple table'>

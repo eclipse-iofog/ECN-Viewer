@@ -203,8 +203,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
           <div className='section-container'>
             <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
               <Typography variant='subtitle2' className={classes.title}>
-                <span className='sticky-left'>{applicationName}</span>
-                {/* <span className='sticky-left'>long name with spaces</span> */}
+                <span className={[classes.stickyLeft, classes.textEllipsis].join(' ')} title={applicationName}>{applicationName}</span>
                 <div className={[classes.actions, 'sticky-right'].join(' ')} style={{ minWidth: '100px' }}>
                   <icons.DeleteIcon className={classes.action} title='Delete application' onClick={() => { setSelectedApplication(applicationsByName[applicationName].application); setOpenDeleteApplicationDialog(true) }} />
                   {applicationsByName[applicationName].application.isActivated

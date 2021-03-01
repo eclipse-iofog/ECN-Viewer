@@ -211,64 +211,68 @@ export default function ApplicationDetails ({ application: selectedApplication, 
           </div>
         )}
       </Paper>
-      <Paper className='section' v>
-        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>
-            <span>Microservices</span>
-            <SearchBar onSearch={setMsvcFilter} classes={{ root: classes.narrowSearchBar }} />
-          </Typography>
+      <Paper className='section'>
+        <div className='section-container'>
+          <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
+            <Typography variant='subtitle2' className={classes.title}>
+              <span className={[classes.stickyLeft, classes.textEllipsis].join(' ')}>Microservices</span>
+              <SearchBar onSearch={setMsvcFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
+            </Typography>
+          </div>
+          <MicroservicesTable
+            selectAgent={selectAgent}
+            application={application}
+            selectMicroservice={selectMicroservice}
+            filter={msvcFilter}
+          />
         </div>
-        <MicroservicesTable
-          selectAgent={selectAgent}
-          application={application}
-          selectMicroservice={selectMicroservice}
-          filter={msvcFilter}
-        />
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>
-            <span>Routes</span>
-          </Typography>
+        <div className='section-container'>
+          <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
+            <Typography variant='subtitle2' className={classes.title}>
+              <span className={classes.stickyLeft}>Routes</span>
+            </Typography>
+          </div>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Name</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>From</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>To</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {routes
+                .map((p, idx) => {
+                  if (!p.name) {
+                    return <TableRow key={idx}><TableCell colSpan={3} /></TableRow>
+                  }
+                  const from = application.microservices.find(m => m.name === p.from) || notFoundMsvc
+                  const to = application.microservices.find(m => m.name === p.to) || notFoundMsvc
+                  return (
+                    <TableRow key={p.name}>
+                      <TableCell component='th' scope='row'>
+                        {p.name}
+                      </TableCell>
+                      <TableCell>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                          <Status status={from.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
+                          <span className={from.notFound ? '' : classes.action} onClick={() => from.notFound ? null : selectMicroservice(from)}>{from.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
+                          <Status status={to.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
+                          <span className={to.notFound ? '' : classes.action} onClick={() => to.notFound ? null : selectMicroservice(to)}>{to.name}</span>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+            </TableBody>
+          </Table>
         </div>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>Name</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>From</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '44px' }}>To</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {routes
-              .map((p, idx) => {
-                if (!p.name) {
-                  return <TableRow key={idx}><TableCell colSpan={3} /></TableRow>
-                }
-                const from = application.microservices.find(m => m.name === p.from) || notFoundMsvc
-                const to = application.microservices.find(m => m.name === p.to) || notFoundMsvc
-                return (
-                  <TableRow key={p.name}>
-                    <TableCell component='th' scope='row'>
-                      {p.name}
-                    </TableCell>
-                    <TableCell>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                        <Status status={from.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
-                        <span className={from.notFound ? '' : classes.action} onClick={() => from.notFound ? null : selectMicroservice(from)}>{from.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
-                        <Status status={to.status.status} size={10} style={{ marginRight: '5px', '--pulse-size': '5px' }} />
-                        <span className={to.notFound ? '' : classes.action} onClick={() => to.notFound ? null : selectMicroservice(to)}>{to.name}</span>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-          </TableBody>
-        </Table>
       </Paper>
       <Paper className='section' style={{ maxHeight: '800px', paddingBottom: '15px' }}>
         <div className={[classes.section, 'paper-container-left', 'paper-container-right'].join(' ')}>
