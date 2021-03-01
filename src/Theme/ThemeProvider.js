@@ -17,6 +17,7 @@ export const colors = {
   primary: '#26D6F1',
   secondary: '#FF585D',
   purple: '#5064EC',
+  green: '#4CE1B6',
   neutral: '#506279',
   neutral_3: '#7d90a9',
   neutral_2: '#D0D6DD',

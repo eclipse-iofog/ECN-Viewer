@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Paper, Typography, Button } from '@material-ui/core'
+import { Modal, Paper, Button } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 
 import { makeStyles } from '@material-ui/styles'
@@ -8,10 +8,15 @@ const useStyles = makeStyles(theme => ({
     // backgroundColor: theme.colors.carbon,
     borderRadius: '4px 4px 0 0',
     // color: 'white',
-    padding: '25px 50px',
+    padding: '25px 15px',
     display: 'flex',
+    fontSize: '24px',
+    fontWeight: '700',
     justifyContent: 'space-between',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    '@media screen and (min-width: 992px)': {
+      padding: '25px 50px'
+    }
   },
   modal: {
     position: 'relative',
@@ -23,20 +28,38 @@ const useStyles = makeStyles(theme => ({
     }
   },
   lg: {
-    width: '60%'
+    width: '90%',
+    '@media screen and (min-width: 768px)': {
+      width: '75%'
+    },
+    '@media screen and (min-width: 992px)': {
+      width: '60%'
+    }
   },
   sm: {
-    width: '40%'
+    width: '90%',
+    '@media screen and (min-width: 768px)': {
+      width: '60%'
+    },
+    '@media screen and (min-width: 992px)': {
+      width: '40%'
+    }
   },
   xl: {
-    width: '80%'
+    width: '90%',
+    '@media screen and (min-width: 992px)': {
+      width: '80%'
+    }
   },
   modalContent: {
     maxHeight: '600px',
     overflowY: 'auto',
-    padding: '50px',
+    padding: '15px',
     paddingTop: '0px',
-    paddingBottom: '25px'
+    paddingBottom: '25px',
+    '@media screen and (min-width: 992px)': {
+      padding: '50px'
+    }
   },
   modalActions: {
     display: 'flex',
@@ -62,7 +85,7 @@ export default function _Modal (props) {
     >
       <Paper className={classNames}>
         <div className={classes.modalTitle}>
-          <Typography variant='h5'>{title}</Typography>
+          <div>{title}</div>
           <CloseIcon style={{ cursor: 'pointer' }} onClick={onClose} />
         </div>
         <div className={classes.modalContent}>

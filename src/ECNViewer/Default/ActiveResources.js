@@ -19,23 +19,22 @@ const useStyles = makeStyles(theme => ({
   container: {
     display: 'flex',
     height: '100px',
+    paddingLeft: '15px',
+    paddingRight: '15px',
     alignItems: 'center'
   },
   mainNumber: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: '2 1 0px',
     fontWeight: '400',
     fontSize: '60px',
-    paddingLeft: '15px',
-    paddingRight: '5px',
+    marginRight: '5px',
     color: theme.colors.neutral_3
   },
   detailsContainer: {
     display: 'flex',
     flexDirection: 'column',
-    flex: '4 1 0px',
     textAlign: 'left',
     color: theme.colors.neutral_3
   },
@@ -92,36 +91,60 @@ export default function ActiveResources () {
     stopped: 0,
     error: 0
   })
+
+  const _getMainNumberFontSize = (number) => {
+    if (number >= 10000) {
+      return '30px'
+    }
+    if (number >= 1000) {
+      return '40px'
+    }
+    if (number >= 100) {
+      return '50px'
+    }
+    return '60px'
+  }
+
+  const NbOfAgents = loading ? 0 : agents.length
+  const NbOfApps = loading ? 0 : applications.length
+  const NbOfMsvcs = loading ? 0 : microservices.length
+  // const NbOfAgents = 999
+  // const NbOfApps = 9999
+  // const NbOfMsvcs = 99999
+
   return (
     <div>
       <div className={classes.summary}>
         <Paper className={classes.container}>
-          <div className={classes.mainNumber}>
-            <div>{loading ? 0 : agents.length}</div>
+          <div className={classes.mainNumber} style={{ fontSize: _getMainNumberFontSize(NbOfAgents) }}>
+            <div>{NbOfAgents}</div>
           </div>
           <div className={classes.detailsContainer}>
             <div className={classes.unitType}>Agents</div>
-            <div className={classes.detailsText}>{agentCount.running} running &bull; {agentCount.unknown} unknown</div>
+            <div className={classes.detailsText}>{agentCount.running} running</div>
+            <div className={classes.detailsText}>{agentCount.unknown} unknown</div>
             {/* <div className={[classes.detailsText, classes.errorText].join(' ')}>{agentCount.alert} alerts</div> */}
           </div>
         </Paper>
         <Paper className={classes.container}>
-          <div className={classes.mainNumber}>
-            <div>{loading ? 0 : applications.length}</div>
+          <div className={classes.mainNumber} style={{ fontSize: _getMainNumberFontSize(NbOfApps) }}>
+            <div>{NbOfApps}</div>
           </div>
           <div className={classes.detailsContainer}>
             <div className={classes.unitType}>Applications</div>
-            <div className={classes.detailsText}>{applicationCount.running} running &bull; {applicationCount.stopped} stopped</div>
+            <div className={classes.detailsText}>{applicationCount.running} running</div>
+            <div className={classes.detailsText}>{applicationCount.stopped} stopped</div>
             {/* <div className={[classes.detailsText, classes.errorText].join(' ')}>{applicationCount.error} errors</div> */}
           </div>
         </Paper>
         <Paper className={classes.container}>
-          <div className={classes.mainNumber}>
-            <div>{loading ? 0 : microservices.length}</div>
+          <div className={classes.mainNumber} style={{ fontSize: _getMainNumberFontSize(NbOfMsvcs) }}>
+            <div>{NbOfMsvcs}</div>
           </div>
           <div className={classes.detailsContainer}>
             <div className={classes.unitType}>Microservices</div>
-            <div className={classes.detailsText}>{microserviceCount.running} running &bull; {microserviceCount.stopped} stopped</div>
+            <div className={classes.detailsText}>{microserviceCount.running} running</div>
+            <div className={classes.detailsText}>{microserviceCount.stopped} stopped</div>
             <div className={[classes.detailsText, classes.errorText].join(' ')}>{microserviceCount.error} errors</div>
           </div>
         </Paper>

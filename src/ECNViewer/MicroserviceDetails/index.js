@@ -32,6 +32,14 @@ import Modal from '../../Utils/Modal'
 
 const useStyles = makeStyles(theme => ({
   ...getSharedStyle(theme),
+  stickyRight: {
+    position: 'sticky',
+    right: '15px',
+    maxWidth: '100px',
+    '@media (min-width: 568px)': {
+      maxWidth: 'inherit'
+    }
+  },
   narrowSearchBar: {
     height: '24px',
     fontSize: '12px',
@@ -166,82 +174,86 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
         </div>
       </Paper>
       <Paper className='section'>
-        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>
-            <span>Ports</span>
-          </Typography>
-        </div>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Internal</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>External</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Protocol</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>PublicLink</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {ports.map((p) => (
-              <TableRow key={p.external} hover classes={{ hover: classes.tableRowHover }}>
-                <TableCell component='th' scope='row'>
-                  {p.internal}
-                </TableCell>
-                <TableCell>
-                  {p.external}
-                </TableCell>
-                <TableCell>
-                  {p.protocol ? (p.protocol === 'udp' ? p.protocol : 'tcp') : ''}
-                </TableCell>
-                <TableCell>
-                  <a className={classes.link} href={p.publicLink} target='_blank' rel='noopener noreferrer'>{p.publicLink}</a>
-                </TableCell>
+        <div className='section-container'>
+          <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
+            <Typography variant='subtitle2' className={classes.title}>
+              <span className='sticky-left'>Ports</span>
+            </Typography>
+          </div>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Internal</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>External</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Protocol</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>PublicLink</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper>
-      <Paper className='section'>
-        <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
-          <Typography variant='subtitle2' className={classes.title}>
-            <span>Volumes</span>
-            <SearchBar onSearch={setVolumeFilter} classes={{ root: classes.narrowSearchBar }} />
-          </Typography>
-        </div>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Host</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Container</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Acces Mode</TableCell>
-              <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Type</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {volumes
-              .map((p) => (
-                <TableRow key={p.containerDestination} hover classes={{ hover: classes.tableRowHover }}>
+            </TableHead>
+            <TableBody>
+              {ports.map((p) => (
+                <TableRow key={p.external} hover classes={{ hover: classes.tableRowHover }}>
                   <TableCell component='th' scope='row'>
-                    {p.hostDestination}
+                    {p.internal}
                   </TableCell>
                   <TableCell>
-                    {p.containerDestination}
+                    {p.external}
                   </TableCell>
                   <TableCell>
-                    {p.accessMode}
+                    {p.protocol ? (p.protocol === 'udp' ? p.protocol : 'tcp') : ''}
                   </TableCell>
                   <TableCell>
-                    {p.fogTypeId}
+                    <a className={classes.link} href={p.publicLink} target='_blank' rel='noopener noreferrer'>{p.publicLink}</a>
                   </TableCell>
                 </TableRow>
               ))}
-          </TableBody>
-        </Table>
+            </TableBody>
+          </Table>
+        </div>
+      </Paper>
+      <Paper className='section'>
+        <div className='section-container'>
+          <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
+            <Typography variant='subtitle2' className={classes.title}>
+              <span className='sticky-left'>Volumes</span>
+              <SearchBar onSearch={setVolumeFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
+            </Typography>
+          </div>
+          <Table stickyHeader>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Host</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Container</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Acces Mode</TableCell>
+                <TableCell className={classes.tableTitle} classes={{ stickyHeader: classes.stickyHeaderCell }} style={{ top: '54px' }}>Type</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {volumes
+                .map((p) => (
+                  <TableRow key={p.containerDestination} hover classes={{ hover: classes.tableRowHover }}>
+                    <TableCell component='th' scope='row'>
+                      {p.hostDestination}
+                    </TableCell>
+                    <TableCell>
+                      {p.containerDestination}
+                    </TableCell>
+                    <TableCell>
+                      {p.accessMode}
+                    </TableCell>
+                    <TableCell>
+                      {p.fogTypeId}
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </div>
       </Paper>
       <Paper className='section'>
         <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
-            <span>Environment variables</span>
-            <SearchBar onSearch={setEnvFilter} classes={{ root: classes.narrowSearchBar }} />
+            <span className='sticky-left'>Environment variables</span>
+            <SearchBar onSearch={setEnvFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
           </Typography>
         </div>
         <Table stickyHeader>
@@ -269,8 +281,8 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
       <Paper className='section'>
         <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
           <Typography variant='subtitle2' className={classes.title}>
-            <span>Extra hosts</span>
-            <SearchBar onSearch={sethostFilter} classes={{ root: classes.narrowSearchBar }} />
+            <span className='sticky-left'>Extra hosts</span>
+            <SearchBar onSearch={sethostFilter} inputClasses={{ root: classes.narrowSearchBar }} classes={{ root: classes.stickyRight }} />
           </Typography>
         </div>
         <Table stickyHeader>

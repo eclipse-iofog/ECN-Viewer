@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/styles'
 import PublishIcon from '@material-ui/icons/Publish'
 
 import Skeleton from 'react-loading-skeleton'
-import { Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
+import { Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination, useMediaQuery } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
 import lget from 'lodash/get'
@@ -50,6 +50,8 @@ export default function CatalogTable (props) {
   const [filter, setFilter] = React.useState('')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const isLargeScreen = useMediaQuery('(min-width: 992px)')
+  const isSmallScreen = useMediaQuery('(min-width: 576px)')
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -68,6 +70,12 @@ export default function CatalogTable (props) {
   }
 
   const filteredCatalog = catalog.filter(filterItem)
+  const dragAndDropContent = (
+    <span style={{ fontSize: '14px' }}>
+      {isLargeScreen ? 'To add a template, drag a YAML file here or ' : 'Drag or '}
+      <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
+    </span>
+  )
 
   const emptyRows = loading ? 0 : rowsPerPage - Math.min(rowsPerPage, filteredCatalog.length - page * rowsPerPage)
   return (
@@ -76,28 +84,31 @@ export default function CatalogTable (props) {
         <SearchBar {...{
           onSearch: setFilter,
           style: {
-            width: '400px'
+            marginRight: '15px',
+            maxWidth: isSmallScreen ? 'inherit' : '200px'
           }
         }}
         />
-        <div>
-          <FileDrop {...{
-            onDrop: readCatalogItemFile,
-            onHover: <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
-            style: { paddingLeft: '5px', width: '400px' },
-            loading: uploading
-          }}
-          >
-            <div className={classes.flexColumn}>
-              <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
-              <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
-                <PublishIcon style={{ marginRight: '5px' }} />
-                <span>To add a template, drag a YAML file here or&nbsp;</span>
-                <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
+        {isSmallScreen && (
+          <div>
+            <FileDrop {...{
+              onDrop: readCatalogItemFile,
+              onHover: <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
+              style: { paddingLeft: '5px' },
+              loading: uploading
+            }}
+            >
+              <div className={classes.flexColumn}>
+                <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+                <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                  <PublishIcon style={{ marginRight: '5px' }} />
+                  {dragAndDropContent}
+                  <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
+                </div>
               </div>
-            </div>
-          </FileDrop>
-        </div>
+            </FileDrop>
+          </div>
+        )}
       </div>
       <TableContainer>
         <Table className={classes.table} stickyHeader aria-label='simple table'>

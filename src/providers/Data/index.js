@@ -145,13 +145,13 @@ export const DataProvider = ({
       application.microservices = newMicroservices
       // microservices = microservices.concat(application.microservices)
     }
-    if (loading) {
-      setLoading(false)
-    }
     if (error) {
       setError(false)
     }
     dispatch({ type: actions.UPDATE, data: { agents, applications, microservices } })
+    if (loading) {
+      setLoading(false)
+    }
   }
 
   useRecursiveTimeout(update, timeout)

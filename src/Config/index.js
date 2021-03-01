@@ -1,5 +1,5 @@
 import React from 'react'
-import { TextField, Grid, Button, InputAdornment, Divider } from '@material-ui/core'
+import { TextField, Grid, Button, InputAdornment, Divider, useMediaQuery } from '@material-ui/core'
 import { makeStyles } from '@material-ui/styles'
 
 import { ControllerContext } from '../ControllerProvider'
@@ -16,7 +16,9 @@ export default function Config (props) {
   const { pushFeedback } = React.useContext(FeedbackContext)
   const { user, refresh, updateController } = React.useContext(ControllerContext)
   const [data, setData] = React.useState({ user, refresh })
+  const isLargeScreen = useMediaQuery('(min-width: 992px)')
 
+  const padding = isLargeScreen ? 10 : 25
   const save = async () => {
     try {
       await updateController(data)
@@ -35,8 +37,8 @@ export default function Config (props) {
   }
   return (
     <>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+      <Grid container spacing={2} style={{ paddingBottom: (padding + 5) + 'px' }}>
+        <Grid item xs={12} lg={6}>
           <TextField
             id='email'
             label='Email'
@@ -48,7 +50,7 @@ export default function Config (props) {
             variant='outlined'
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} lg={6}>
           <TextField
             id='password'
             label='Password'
@@ -64,8 +66,8 @@ export default function Config (props) {
         </Grid>
       </Grid>
       <Divider />
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+      <Grid container spacing={2} style={{ paddingTop: padding + 'px', paddingBottom: padding + 'px' }}>
+        <Grid item xs={12} lg={6}>
           <TextField
             id='refresh'
             label='Update Frequency'

@@ -25,7 +25,23 @@
       padding-right: 15px;
       // border-right: none;
     }
+
+    .section-container {
+      min-width: 100%;
+      width: max-content;
+    }
+
+    .sticky-right {
+      position: sticky;
+      right: 15px;
+    }
+
+    .sticky-left {
+      position: sticky;
+      left: 15px;
+    }
   }
+
 }
 
 @media screen and (min-width: 992px) {

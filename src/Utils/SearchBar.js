@@ -35,7 +35,7 @@ const useSearchBarStyle = makeStyles((theme) => ({
   }
 }))
 
-export default function SearchBar ({ style, onSearch, classes: _classes }) {
+export default function SearchBar ({ style, onSearch, classes: _classes, inputClasses }) {
   const [value, setValue] = React.useState('')
   const classes = useSearchBarStyle()
   const customClasses = useStyle()
@@ -69,8 +69,9 @@ export default function SearchBar ({ style, onSearch, classes: _classes }) {
       onChange={handleChange}
       variant='outlined'
       className={customClasses.searchBar}
+      classes={_classes}
       InputProps={{
-        classes: { ...classes, ..._classes },
+        classes: { ...classes, ...inputClasses },
         ...ornaments
       }}
     />

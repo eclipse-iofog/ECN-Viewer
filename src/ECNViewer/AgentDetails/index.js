@@ -199,44 +199,47 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
         </div>
       </Paper>
       {Object.keys(applicationsByName).map(applicationName => (
-        <Paper key={applicationName} className='section' style={{ paddingBottom: 0, maxHeight: '800px' }}>
-          <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
-            <Typography variant='subtitle2' className={classes.title}>
-              <span>{applicationName}</span>
-              <div className={classes.actions} style={{ minWidth: '100px' }}>
-                <icons.DeleteIcon className={classes.action} title='Delete application' onClick={() => { setSelectedApplication(applicationsByName[applicationName].application); setOpenDeleteApplicationDialog(true) }} />
-                {applicationsByName[applicationName].application.isActivated
-                  ? <icons.RestartIcon className={classes.action} onClick={() => restartApplication(applicationsByName[applicationName].application)} title='Restart application' />
-                  : <icons.RestartIcon className={classes.disabledAction} title='Restart application' />}
-                {applicationsByName[applicationName].application.isActivated
-                  ? <icons.StopIcon className={classes.action} onClick={() => toggleApplication(applicationsByName[applicationName].application)} title='Stop application' />
-                  : <icons.PlayIcon className={classes.action} onClick={() => toggleApplication(applicationsByName[applicationName].application)} title='Start application' />}
-              </div>
-            </Typography>
-          </div>
-          <MicroservicesTable
-            nameTitle='Msvc Name'
-            application={applicationsByName[applicationName]}
-            selectMicroservice={selectMicroservice}
-            showVolumes
-          />
-          <div
-            style={{
-              width: '100%',
-              textAlign: 'right',
-              fontSize: '16px',
-              fontWeight: '300',
-              paddingTop: '30px',
-              paddingBottom: '15px',
-              fontStyle: 'italic',
-              position: 'sticky',
-              bottom: '0',
-              zIndex: 6,
-              backgroundColor: 'white'
-            }}
-            className='paper-container-right'
-          >
-            <span className={classes.action} onClick={() => selectApplication(applicationsByName[applicationName].application)}>{_getSeeDetailsMessage(applicationsByName[applicationName])}</span>
+        <Paper key={applicationName} className='section' style={{ paddingBottom: 0 }}>
+          <div className='section-container'>
+            <div className={[classes.section, classes.cardTitle, 'paper-container-left', 'paper-container-right'].join(' ')}>
+              <Typography variant='subtitle2' className={classes.title}>
+                <span className='sticky-left'>{applicationName}</span>
+                {/* <span className='sticky-left'>long name with spaces</span> */}
+                <div className={[classes.actions, 'sticky-right'].join(' ')} style={{ minWidth: '100px' }}>
+                  <icons.DeleteIcon className={classes.action} title='Delete application' onClick={() => { setSelectedApplication(applicationsByName[applicationName].application); setOpenDeleteApplicationDialog(true) }} />
+                  {applicationsByName[applicationName].application.isActivated
+                    ? <icons.RestartIcon className={classes.action} onClick={() => restartApplication(applicationsByName[applicationName].application)} title='Restart application' />
+                    : <icons.RestartIcon className={classes.disabledAction} title='Restart application' />}
+                  {applicationsByName[applicationName].application.isActivated
+                    ? <icons.StopIcon className={classes.action} onClick={() => toggleApplication(applicationsByName[applicationName].application)} title='Stop application' />
+                    : <icons.PlayIcon className={classes.action} onClick={() => toggleApplication(applicationsByName[applicationName].application)} title='Start application' />}
+                </div>
+              </Typography>
+            </div>
+            <MicroservicesTable
+              nameTitle='Msvc Name'
+              application={applicationsByName[applicationName]}
+              selectMicroservice={selectMicroservice}
+              showVolumes
+            />
+            <div
+              style={{
+                textAlign: 'right',
+                fontSize: '16px',
+                fontWeight: '300',
+                paddingTop: '30px',
+                paddingBottom: '15px',
+                fontStyle: 'italic',
+                position: 'sticky',
+                bottom: '0',
+                right: '15px',
+                float: 'right',
+                zIndex: 6,
+                backgroundColor: 'white'
+              }}
+            >
+              <span className={classes.action} onClick={() => selectApplication(applicationsByName[applicationName].application)}>{_getSeeDetailsMessage(applicationsByName[applicationName])}</span>
+            </div>
           </div>
         </Paper>
       ))}

@@ -165,15 +165,15 @@ export default function Default ({ selectAgent, selectController, selectApplicat
     <>
       <ActiveResources {...{ activeAgents, applications, activeMsvcs, loading }} />
 
-      <Paper className='section' style={{ maxHeight: '80vh', padding: 0 }}>
+      <Paper className='section' style={{ maxHeight: '80vh', padding: 0, overflow: 'auto' }}>
         <SimpleTabs
           stickyHeader
           headers={(selectedTab) => {
             return showTabActions ? (
               selectedTab === 0 ? (
-                <SearchBar onSearch={setFilter} style={{ marginRight: '5px', maxWidth: isMediumScreen ? 'inherit' : '100px' }} />
+                <SearchBar onSearch={setFilter} style={{ marginRight: '5px', position: 'sticky', right: '15px', maxWidth: isMediumScreen ? 'inherit' : '100px' }} />
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', flex: '1 1 0px', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', alignItems: 'center', flex: '1 1 0px', justifyContent: 'flex-end', position: 'sticky', right: '15px' }}>
                   <FileDrop {...{
                     onHover:
                     showSearchbar

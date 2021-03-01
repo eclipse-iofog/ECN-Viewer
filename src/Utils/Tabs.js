@@ -22,7 +22,9 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper,
-    height: '100%',
+    // height: '100%',
+    width: 'max-content',
+    minWidth: '100%',
     '& .MuiTabs-scroller': {
       paddingLeft: '15px'
     },
