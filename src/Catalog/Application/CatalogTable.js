@@ -105,7 +105,6 @@ export default function CatalogTable (props) {
                   <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
                     <PublishIcon style={{ marginRight: '5px' }} />
                     {dragAndDropContent}
-                    <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
                   </div>
                 </div>
               </FileDrop>

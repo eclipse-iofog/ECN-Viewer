@@ -167,7 +167,7 @@ export default function ApplicationDetails ({ application: selectedApplication, 
             <span>Status</span>
             {!isMediumScreen && mainActions}
           </Typography>
-          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><Status status={status} style={{ marginRight: '5px' }} />{status}</span>
+          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><Status status={status} style={{ marginRight: '5px', marginTop: '-3px' }} />{status}</span>
         </div>
         <div className={classes.sectionDivider} />
         <div className={[classes.section, 'paper-container-right'].join(' ')} style={{ paddingBottom: '15px' }}>

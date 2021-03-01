@@ -124,7 +124,7 @@ export default function AgentDetails ({ agent: selectedAgent, selectApplication,
             <span>Status</span>
             {!isMediumScreen && mainActions}
           </Typography>
-          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} style={{ marginRight: '5px' }} />{agent.daemonStatus}</span>
+          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><Status status={agent.daemonStatus} style={{ marginRight: '5px', marginTop: '-3px' }} />{agent.daemonStatus}</span>
           {/* <span className={classes.subTitle} style={{ marginTop: '15px' }}>Last Active: <span className={classes.text}>{agent.lastStatusTime ? moment(agent.lastStatusTime).format(dateFormat) : '--'}</span></span> */}
         </div>
         <div className={classes.sectionDivider} />
