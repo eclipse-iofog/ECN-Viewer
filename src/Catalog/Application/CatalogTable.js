@@ -101,7 +101,7 @@ export default function CatalogTable (props) {
               }}
               >
                 <div className={classes.flexColumn}>
-                  <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+                  <input onChange={(e) => readCatalogItemFile(e.target)} type='file' name='files[]' id='file' className={classes.hiddenInput} />
                   <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
                     <PublishIcon style={{ marginRight: '5px' }} />
                     {dragAndDropContent}
@@ -120,7 +120,7 @@ export default function CatalogTable (props) {
             }}
             >
               <>
-                <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+                <input onChange={(e) => readCatalogItemFile(e.target)} type='file' name='files[]' id='file' className={classes.hiddenInput} />
                 <label for='file' style={{ display: 'flex', justifyContent: 'center' }}>
                   <div className={classes.iconContainer} style={{ cursor: 'pointer' }}>
                     <PublishIcon style={{ marginLeft: '-2px' }} />

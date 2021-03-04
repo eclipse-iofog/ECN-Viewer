@@ -108,7 +108,7 @@ export default function Map (props) {
                 <div style={{ transform: 'rotate(45deg)' }}>{[...a.name.split('-').map(e => e[0])].join('').toUpperCase()}</div>
               </Avatar>
               <div style={{ display: 'flex', position: 'absolute', bottom: -8 }}>
-                {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div className={classes.erContainer}><Icon title={t.display.name || t.name} key={t.display.name || t.name}>{t.display.icon}</Icon></div> : null) : null)}
+                {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div key={`${t.name}${t.version}`} className={classes.erContainer}><Icon title={t.display.name || t.name} key={t.display.name || t.name}>{t.display.icon}</Icon></div> : null) : null)}
               </div>
 
             </div>

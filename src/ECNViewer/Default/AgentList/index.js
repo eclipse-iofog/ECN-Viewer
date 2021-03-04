@@ -126,7 +126,7 @@ export default function AgentList (props) {
                 <TableCell classes={{ root: classes.tableCell }}>{fogTypes[a.fogTypeId]}</TableCell>
                 <TableCell classes={{ root: classes.tableCell }}>
                   {edgeResources.map((er) => {
-                    return er.display && er.display.icon ? <Icon title={er.display.name || er.name} style={{ color: theme.colors.neutral_3 }} className={classes.erIcon}>{er.display.icon}</Icon> : null
+                    return er.display && er.display.icon ? <Icon key={`${er.name}${er.version}`} title={er.display.name || er.name} style={{ color: theme.colors.neutral_3 }} className={classes.erIcon}>{er.display.icon}</Icon> : null
                   })}
                 </TableCell>
                 <TableCell classes={{ root: classes.tableCell }}>

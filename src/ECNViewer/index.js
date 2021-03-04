@@ -12,9 +12,10 @@ import useMediaQuery from '@material-ui/core/useMediaQuery'
 // import logo from '../assets/logo.png'
 import './layout.scss'
 
-import { ControllerContext } from '../ControllerProvider'
 import { useMap } from '../providers/Map'
 import { useData } from '../providers/Data'
+import { useConfig } from '../providers/Config'
+import { ControllerContext } from '../ControllerProvider'
 
 const views = {
   DEFAULT: 1,
@@ -25,12 +26,17 @@ const views = {
 
 export default function ECNViewer ({ returnHomeCBRef }) {
   const { data, loading } = useData()
-  const { location } = React.useContext(ControllerContext)
+  const { config } = useConfig()
+  const { location: _location } = React.useContext(ControllerContext)
   const { setMap, map, restoreMapToState } = useMap()
   const [selectedElement, selectElement] = React.useState(null)
   const [history, setHistory] = React.useState([])
   const [view, setView] = React.useState(views.DEFAULT)
   const showMap = useMediaQuery('(min-width:992px)') // Bootstrap4 lg
+
+  const location = config.controllerLocationInfo || _location
+  location.lat = +location.lat
+  location.lon = +location.lon
 
   const saveHistory = () => {
     setHistory(h => [...h, { view, selectedElement, map }])
@@ -163,6 +169,7 @@ export default function ECNViewer ({ returnHomeCBRef }) {
   }
 
   const { controller, msvcsPerAgent } = data
+  console.log({ location, controller, config })
   return (
     <div className='viewer-layout-container'>
       <div className='box sidebar'>

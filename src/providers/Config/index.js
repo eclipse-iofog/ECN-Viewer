@@ -7,7 +7,12 @@ export const ConfigContext = React.createContext()
 export const useConfig = () => React.useContext(ConfigContext)
 
 const _initConfig = {
-  tags: {}
+  tags: {},
+  controllerLocationInfo: {
+    lat: 'Unknown',
+    lon: 'Unknown',
+    query: ''
+  }
 }
 
 const defaultTagColor = theme.colors.cobalt
@@ -17,8 +22,8 @@ const ecnViewerConfigKey = 'ecn-viewer-config'
 export const ConfigProvider = ({
   children
 }) => {
-  const { request } = useController()
-  const [config, setConfig] = React.useState(_initConfig)
+  const { request, location } = useController()
+  const [config, setConfig] = React.useState({ ..._initConfig, controllerLocation: location })
 
   const _fetchConfig = async () => {
     try {

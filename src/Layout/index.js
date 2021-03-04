@@ -151,7 +151,12 @@ export default function Layout () {
         {...{
           open: settingsOpen,
           title: 'Configuration',
-          onClose: () => setSettingsOpen(false)
+          onClose: () => setSettingsOpen(false),
+          style: {
+            modalContent: {
+              paddingTop: 0
+            }
+          }
         }}
       >
         {/* <SimpleTabs> */}

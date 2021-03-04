@@ -75,6 +75,8 @@ export default function _Modal (props) {
   const classes = useStyles()
   const { title, open, onClose } = props
   const classNames = [classes.modal, classes[props.size] || classes.sm].join(' ')
+
+  const customStyle = props.style || {}
   return (
     <Modal
       aria-labelledby={`${title} modal`}
@@ -88,7 +90,7 @@ export default function _Modal (props) {
           <div>{title}</div>
           <CloseIcon style={{ cursor: 'pointer' }} onClick={onClose} />
         </div>
-        <div className={classes.modalContent}>
+        <div className={classes.modalContent} style={{ ...customStyle.modalContent }}>
           {props.children}
         </div>
         {props.actions && !!props.actions.length &&
