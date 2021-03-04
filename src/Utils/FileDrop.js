@@ -53,7 +53,7 @@ export default function FileDrop (props) {
 
   return props.loading
     ? (
-      <div className={className} style={{ ...props.style, display: 'flex', alignItems: 'center' }}><CircularProgress color='default' size={24} /></div>
+      <div className={className} style={{ ...props.style, display: 'flex', alignItems: 'center' }}><CircularProgress color='primary' size={24} /></div>
     )
     : (
       <div className={className} ref={drop} style={props.style}>
