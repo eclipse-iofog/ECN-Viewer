@@ -1,0 +1,86 @@
+{
+  "name": "@iofog/ecn-viewer",
+  "version": "1.0.5",
+  "description": "Edgeworx ioFog Edge Cloud Network Viewer project  \\nCopyright (c) 2020 Edgeworx, Inc.",
+  "main": "index.js",
+  "author": "Alexandre de Wergifosse",
+  "contributors": [
+    "Serge Radinovic"
+  ],
+  "license": "EPL-2.0",
+  "homepage": "https://www.edgeworx.org",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Edgeworx/ECN-viewer.git"
+  },
+  "dependencies": {
+    "@material-ui/core": "4.9.5",
+    "@material-ui/icons": "4.9.1",
+    "@material-ui/styles": "4.9.0",
+    "@mdi/js": "^5.6.55",
+    "downshift": "5.0.4",
+    "google-map-react": "1.1.6",
+    "js-yaml": "3.13.1",
+    "leaflet": "^1.7.1",
+    "leaflet.chinatmsproviders": "^3.0.4",
+    "lodash": "4.17.15",
+    "react": "16.13.0",
+    "react-dnd": "10.0.2",
+    "react-dnd-html5-backend": "10.0.2",
+    "react-dom": "16.13.0",
+    "react-json-view": "1.19.1",
+    "react-leaflet": "^3.0.5",
+    "react-loading-skeleton": "2.0.1",
+    "react-router": "5.1.2",
+    "react-router-dom": "5.1.2"
+  },
+  "proxy": "http://localhost:5555",
+  "scripts": {
+    "start": "npm run build && npm run prod",
+    "start-dev": "cp controller_dev.json ./src/ControllerProvider/controller.json && concurrently 'PORT=5555 nodemon server/index.js' 'react-scripts start'",
+    "prod": "node server/index.js",
+    "build": "cp controller_default.json ./src/ControllerProvider/controller.json && react-scripts build",
+    "test": "CI=true react-scripts test",
+    "eject": "react-scripts eject",
+    "standard": "standard"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "resolutions": {
+    "caniuse-lite": "1.0.30000984"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.8.7",
+    "@babel/preset-react": "^7.8.3",
+    "@testing-library/jest-dom": "^5.1.1",
+    "@testing-library/react": "^9.5.0",
+    "concurrently": "^5.1.0",
+    "enzyme": "^3.11.0",
+    "enzyme-adapter-react-16": "^1.15.2",
+    "jest": "^24.9.0",
+    "jest-enzyme": "^7.1.2",
+    "node-sass": "^4.13.1",
+    "nodemon": "^2.0.2",
+    "react-scripts": "^3.4.0",
+    "react-test-renderer": "^16.13.0",
+    "sass-loader": "^8.0.2",
+    "sinon": "^9.0.1",
+    "standard": "14.3.1"
+  },
+  "bugs": {
+    "url": "https://github.com/Edgeworx/ECN-viewer/issues"
+  }
+}
