@@ -67,5 +67,6 @@ The configuration JSON file contains the informations required to connect to you
 }
 ```
 this document for replace leaflet;
- 
- myleafflet.js is main replace react-leaflet 
+ change map document:https://leafletjs.com/examples/layers-control/
+
+

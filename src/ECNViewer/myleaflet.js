@@ -11,72 +11,59 @@ export function MapContainer(props) {
   const [initFlag, setInitFlag] = useState(true)
   const flag = React.useRef(null)
   const [newlayer, setNewlayer] = useState(0)
-//props camefrom  the father component
+  //props camefrom  the father component
   console.log(props)
-  let layer = {}
-  const mc = document.createElement('div')
-  //mymap is leaflet example
-  let mymap = L.map(mc, {
-    center: props.center,
-    zoom: props.zoom,
-    zoomDelta: 0.5,
-    fullscreenControl: false,
-    zoomControl: true,
-    attributionControl: false
-  });
-  // setPosation(props.posation)
   //this useEffect replace componentDidUpdate
+  console.log(props.position)
   React.useEffect(() => {
     if (!flag.current) {
       flag.current = true
     } else {
       if (!initFlag) {
-        let mpurl = props.mymapurl.filter(a => {
-          if (a != undefined) {
-            console.error(a)
-            return a
-          }
-        })
-        console.log(mpurl[0])
-        // console.log(newlayer)
-        mymap.removeLayer(newlayer);
-        mymap.eachLayer(function (layer) {
-          console.log(layer)
-        });
-        L.tileLayer(mpurl[0].url, {
-          attribution: 'OSM',
-          subdomains: mpurl[0].subdomains
-        }).addTo(mymap);
-        mymap.invalidateSize()
-        mymap.eachLayer(function (layer) {
-          console.log(layer)
-        });
       }
     }
   })
   //this useEffect replace componentDidmount
   useEffect(() => {
-    document.querySelector('#mapid').append(mc)
+
+    //change map document link https://leafletjs.com/examples/layers-control/
     console.log('!!!!!!')
-    layer = L.tileLayer("//mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}", {
-      attribution: 'OSM',
-      subdomains: ['a', 'b', 'c']
-    })
-    layer.addTo(mymap);
-    mymap.invalidateSize()
-    setNewlayer(layer)
-    if (!initFlag) {
-      console.error('myleaft')
-      console.error(props.position)
+    var container = L.DomUtil.get('map')
+    if (container != null) {
+      container._leaflet_id = null;
     }
-    setInitFlag(false)
-    // L.marker(props.position,{icon: iconInstance}).addTo(mymap);
-    // L.marker(props.position[0]).addTo(mymap);
-    props.getfun(mymap)
+    var container = L.DomUtil.get('map')
+    var allcity = props.position.map(a => {
+      return L.marker(a)
+    })
+    var cities = L.layerGroup(...allcity);
+    var grayscale = L.tileLayer("//mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}", { id: 'MapID', tileSize: 512, zoomOffset: -1, attribution: "Google" });
+    var Geoq = L.tileLayer("//map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/tile/{z}/{y}/{x}", { id: 'MapID', tileSize: 512, zoomOffset: -1, attribution: "Geoq" });
+    var streets = L.tileLayer("//{s}.tile.osm.org/{z}/{x}/{y}.png", { id: 'MapID', tileSize: 512, zoomOffset: -1, attribution: "osm" });
+    var map = L.map('map', {
+      center: props.center,
+      zoom: props.zoom,
+      layers: [grayscale, cities]
+    });
+    var baseMaps = {
+      "Google": grayscale,
+      "OSM": streets,
+      "Geoq":Geoq
+    };
+    var overlayMaps = {
+      "Cities": cities
+    };
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
+    var baseMaps = {
+      "<span style='color: gray'>Grayscale</span>": grayscale,
+      "Streets": streets
+    };
+    props.getfun(map)
     props.mcstate(true)
+    setInitFlag(false)
   }, [])
   return (
-    <div id='mapid' style={mymapcss}>
+    <div id='map' style={mymapcss}>
       {props.children}
     </div>
   )

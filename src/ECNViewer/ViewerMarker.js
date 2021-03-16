@@ -77,7 +77,11 @@ export default function ViewerMarker(props) {
     iconUrl: mIcon.getIconUrl(),
     iconSize: [25, 41],
   })
-  const Mymarker= L.marker(props.position,{icon: iconInstance}).addTo(props.mInstance);
-  return null
+//
+  var allcity = props.position.map(a => {
+    return L.marker(a)
+  })
+  var cities = L.layerGroup(...allcity);
+  return cities
     // <Mymarker icon={iconInstance} {...props} />
 }

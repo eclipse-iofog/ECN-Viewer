@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import GoogleMapReact from 'google-map-react'
 import { Badge, Avatar } from '@material-ui/core'
 import MemoryIcon from '@material-ui/icons/Memory'
 import CtrlIcon from '@material-ui/icons/DeveloperBoard'
@@ -15,7 +14,7 @@ import { MapContainer } from './myleaflet'
 
 // Default map provider name
 const defaultProvider = 'Google'
-export const { Provider, Consumer } = React.createContext("默认名称");
+export const { Provider, Consumer } = React.createContext("a");
 const useStyles = makeStyles(theme => ({
   mapMarkerTransform: {
     transform: 'translate(-50%, -100%)',
@@ -91,16 +90,17 @@ export default function Map(props) {
     } else {
       return (
         // componentDidmount is over Mymarker function can be mark on the map
-
         <Consumer>
           {(mymapobj) => {
             const Mymarker = L.marker(props.position).addTo(mymapobj);
+            // var allcity = L.layerGroup(...Mymarker).addTo(mymapobj);
           }
           }
         </Consumer>
       );
     }
   }
+  //change map center and zoom
   function SetViewOnClick({ coords }) {
     console.log(coords)
     if (mcstate == false) {
@@ -143,8 +143,8 @@ export default function Map(props) {
       <MapContainer
         {...map}
         position={propsdata}
-        getfun={getMapContainer}
-        mcstate={changemcstate}
+        getfun={getMapContainer}//get leaflet example
+        mcstate={changemcstate}//change react state
         mymapurl={mymapurls}
       >
         {console.log(mymap)}
@@ -162,22 +162,12 @@ export default function Map(props) {
               }}
               mType='agent'
               mInfo={a}
-            // className={classes.mapMarkerTransform}
             >
             </ViewerMarker>
           )}
         </Provider>
       </MapContainer>
-      <div className='provider-selector'>
-        <Select
-          value={providerName}
-          onChange={handleProviderChange}
-        >
-          {(loading ? [defaultProvider] : getAllProviderName()).map(pName =>
-            <MenuItem value={pName} key={pName}>{pName}</MenuItem>
-          )}
-        </Select>
-      </div>
+
     </div>
   )
 }
