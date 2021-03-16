@@ -157,9 +157,7 @@ export default function Catalog () {
     }
   }
 
-  React.useEffect(() => {
-    fetchCatalog()
-  }, [])
+  React.useEffect(fetchCatalog(), [])
 
   const addCatalogItem = async (item) => {
     const newItem = {

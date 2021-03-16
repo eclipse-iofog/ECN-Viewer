@@ -12,7 +12,6 @@ import ApplicationList from './ApplicationList'
 import Map from './Map'
 import SimpleTabs from '../Utils/Tabs'
 
-// import logo from '../assets/logo.png'
 import './layout.scss'
 
 import { ControllerContext } from '../ControllerProvider'
@@ -39,7 +38,7 @@ const initState = {
   activeAgents: [],
   activeMsvcs: [],
   msvcsPerAgent: [],
-  applications: []
+  applications: [],
 }
 
 export const actions = {
@@ -88,7 +87,7 @@ const reducer = (state, action) => {
   }
 }
 
-export default function ECNViewer () {
+export default function ECNViewer() {
   const classes = useStyles()
   const { updateTags } = useConfig()
   const [state, dispatch] = React.useReducer(reducer, initState)
@@ -128,7 +127,7 @@ export default function ECNViewer () {
       application.microservices = newMicroservices
     }
     if (loading) {
-      setMap(agents, controllerInfo, true)
+      setMap(agents, controllerInfo, true, this)
       setLoading(false)
     }
     if (error) {
@@ -145,16 +144,16 @@ export default function ECNViewer () {
   const selectAgent = (a) => {
     setAgent(a)
     if (isFinite(a.latitude) && isFinite(a.longitude)) {
-      setMap([a], controllerInfo, false)
+      setMap([a], controllerInfo, false, this)
     }
   }
 
   const selectController = () => {
-    setMap([], controllerInfo, true)
+    setMap([], controllerInfo, true, this)
   }
 
   const setAutozoom = () => {
-    setMap(state.controller.agents, controllerInfo, true)
+    setMap(state.controller.agents, controllerInfo, true, this)
   }
 
   const { controller, activeAgents, applications, activeMsvcs, agent, msvcsPerAgent } = state

@@ -1,10 +1,10 @@
 {
-  "ip": "192.168.1.106",
+  "ip": "34.83.89.255",
   "port": "51121",
   "refresh": 3000,
   "dev": true,
   "user": {
-    "email": "user@domain.com",
-    "password": "#Bugs4Fun"
+    "email": "orange@edgeworx.io",
+    "password": "0range#1234"
   }
 }
