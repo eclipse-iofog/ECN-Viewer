@@ -36,6 +36,9 @@ const useStyles = makeStyles(theme => ({
     overflow: 'hidden',
     position: 'absolute',
     zIndex: '-1'
+  },
+  underlignedBodyCell: {
+    borderBottom: `1px solid ${theme.colors.neutral_2}4D !important`
   }
 }))
 
@@ -77,7 +80,7 @@ export default function CatalogTable (props) {
     </span>
   )
 
-  const emptyRows = loading ? 0 : rowsPerPage - Math.min(rowsPerPage, filteredCatalog.length - page * rowsPerPage)
+  // const emptyRows = loading ? 0 : rowsPerPage - Math.min(rowsPerPage, filteredCatalog.length - page * rowsPerPage)
   return (
     <Paper>
       <div className={`${classes.tableActions} ${classes.pointer}`}>
@@ -146,22 +149,22 @@ export default function CatalogTable (props) {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(row => (
                 <TableRow key={row.name} hover classes={{ hover: classes.tableRowHover }} style={{ verticalAlign: 'baseline' }}>
-                  <TableCell component='th' scope='row' style={{ width: '800px' }}>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} component='th' scope='row' style={{ width: '800px' }}>
                     {row.name}
                   </TableCell>
-                  <TableCell style={{ width: '800px' }}>{row.description}</TableCell>
-                  <TableCell style={{ width: '800px', whiteSpace: 'pre' }}>{row.display.microservices.join('\n')}</TableCell>
-                  <TableCell style={{ width: '800px', whiteSpace: 'pre' }}>{row.display.variables.join('\n')}</TableCell>
-                  <TableCell className={classes.pointer} style={{ verticalAlign: 'middle' }}>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} style={{ width: '800px' }}>{row.description}</TableCell>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} style={{ width: '800px', whiteSpace: 'pre' }}>{row.display.microservices.join('\n')}</TableCell>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} style={{ width: '800px', whiteSpace: 'pre' }}>{row.display.variables.join('\n')}</TableCell>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} className={classes.pointer} style={{ verticalAlign: 'middle' }}>
                     <MoreIcon onClick={(e) => openMenu(row, e)} />
                   </TableCell>
                 </TableRow>
               ))}
-            {emptyRows > 0 && (
+            {/* {emptyRows > 0 && (
               <TableRow style={{ height: 53 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
-            )}
+            )} */}
           </TableBody>
         </Table>
       </TableContainer>
