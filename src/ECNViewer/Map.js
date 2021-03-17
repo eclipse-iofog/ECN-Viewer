@@ -62,26 +62,19 @@ export default function Map(props) {
   const [mcstate, setMcstate] = useState(false);
   const [mymap, setMymap] = useState(0);
   const [mymapurl, setMymapurl] = useState(0);
-  let that = this
   const theme = useTheme()
   const { controller, agent, setAgent, msvcsPerAgent, loading } = props
   const { map, mapRef, hasValidCoordinates } = useMap()
   const [providerName, setProviderName] = useState(defaultProvider)
 
   useEffect(() => {
-    console.log('Map has updated', controller)
+    console.log('Map has updated')
   })
   function getMapContainer(a) {
     setMymap(a)
-    console.log(a)
   }
   function changemcstate(a) {
     setMcstate(a)
-    console.log(a)
-  }
-  function changemymapurl(a) {
-    setMymapurl(a)
-    console.log(a)
   }
   function ViewerMarker(props) {
     //componentDidmount is not over so this component return null
@@ -102,17 +95,13 @@ export default function Map(props) {
   }
   //change map center and zoom
   function SetViewOnClick({ coords }) {
-    console.log(coords)
     if (mcstate == false) {
       return null
     } else {
       return (
-        //  
         <Consumer>
           {(mymapobj) => {
-            console.log(mymapobj)
             const map = mymapobj
-            console.log(map)
             map.setView(coords.center, coords.zoom);
           }
           }
@@ -120,22 +109,15 @@ export default function Map(props) {
       );
     }
   }
-  const handleProviderChange = (event) => {
-    const pName = event.target.value
-    setProviderName(pName)
-  }
-
   var propsdata = (controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
     [a.latitude, a.longitude]
   )
-
   var mymapurls = getAllProviderName().map(pName => {
     const pInfo = getProviderInfo(pName)
     if (providerName === pName) {
       return pInfo
     }
   })
-  // console.log(propsdata)
   return (
     <div className={classes.mapWrapper} ref={mapRef}>
       {
@@ -147,7 +129,6 @@ export default function Map(props) {
         mcstate={changemcstate}//change react state
         mymapurl={mymapurls}
       >
-        {console.log(mymap)}
         <Provider value={mymap}>
           <SetViewOnClick coords={map} />
           {(loading ? [] : controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>

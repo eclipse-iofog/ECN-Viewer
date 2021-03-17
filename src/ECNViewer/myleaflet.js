@@ -1,8 +1,6 @@
 import React from 'react'
 import L from 'leaflet'
 import { useState, useEffect } from 'react'
-// import { TileLayer } from './TileLayer'
-// import { Height } from '@material-ui/icons'
 const mymapcss = {
   height: "100vh"
 }
@@ -12,9 +10,7 @@ export function MapContainer(props) {
   const flag = React.useRef(null)
   const [newlayer, setNewlayer] = useState(0)
   //props camefrom  the father component
-  console.log(props)
   //this useEffect replace componentDidUpdate
-  console.log(props.position)
   React.useEffect(() => {
     if (!flag.current) {
       flag.current = true
@@ -25,9 +21,7 @@ export function MapContainer(props) {
   })
   //this useEffect replace componentDidmount
   useEffect(() => {
-
     //change map document link https://leafletjs.com/examples/layers-control/
-    console.log('!!!!!!')
     var container = L.DomUtil.get('map')
     if (container != null) {
       container._leaflet_id = null;
@@ -48,7 +42,7 @@ export function MapContainer(props) {
     var baseMaps = {
       "Google": grayscale,
       "OSM": streets,
-      "Geoq":Geoq
+      "Geoq": Geoq
     };
     var overlayMaps = {
       "Cities": cities

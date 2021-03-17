@@ -1,23 +1,18 @@
 import React, { useState } from 'react'
 import useRecursiveTimeout from '../hooks/useInterval'
 import { find, groupBy, get, isFinite } from 'lodash'
-
 import Divider from '@material-ui/core/Divider'
 import { makeStyles } from '@material-ui/styles'
-
 import ControllerInfo from './ControllerInfo'
 import ActiveResources from './ActiveResources'
 import AgentList from './AgentList'
 import ApplicationList from './ApplicationList'
 import Map from './Map'
 import SimpleTabs from '../Utils/Tabs'
-
 import './layout.scss'
-
 import { ControllerContext } from '../ControllerProvider'
 import { useConfig } from '../providers/Config'
 import { useMap } from '../providers/Map'
-
 const useStyles = makeStyles({
   divider: {
     margin: '15px 0'
@@ -40,12 +35,10 @@ const initState = {
   msvcsPerAgent: [],
   applications: [],
 }
-
 export const actions = {
   UPDATE: 'UPDATE',
   SET_AGENT: 'SET_AGENT'
 }
-
 const updateData = (state, newController) => {
   if (!newController) {
     return state
@@ -57,11 +50,9 @@ const updateData = (state, newController) => {
     flowActive: !!find(activeFlows, f => m.flowId === f.id)
   })), 'iofogUuid')
   const activeMsvcs = activeAgents.reduce((res, a) => res.concat(get(msvcsPerAgent, a.uuid, []).filter(m => !!find(activeFlows, f => f.id === m.flowId)) || []), [])
-
   if (!state.agent || !state.agent.uuid) {
     state.agent = newController.agents[0] || {}
   }
-
   return {
     ...state,
     controller: newController,

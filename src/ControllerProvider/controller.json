@@ -4,7 +4,7 @@
   "refresh": 3000,
   "dev": true,
   "user": {
-    "email": "orange@edgeworx.io",
-    "password": "0range#1234"
+    "email": "user@domain.com",
+    "password": "#Bugs4Fun"
   }
 }

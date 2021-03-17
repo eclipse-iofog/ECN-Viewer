@@ -1,6 +1,4 @@
 import React from 'react'
-
-import { Marker } from 'react-leaflet'
 import L from 'leaflet'
 
 // Import all images as a object
@@ -77,11 +75,11 @@ export default function ViewerMarker(props) {
     iconUrl: mIcon.getIconUrl(),
     iconSize: [25, 41],
   })
-//
+  //
   var allcity = props.position.map(a => {
     return L.marker(a)
   })
   var cities = L.layerGroup(...allcity);
   return cities
-    // <Mymarker icon={iconInstance} {...props} />
+  // <Mymarker icon={iconInstance} {...props} />
 }

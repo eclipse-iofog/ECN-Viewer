@@ -66,3 +66,4 @@ The configuration JSON file contains the informations required to connect to you
   }
 }
 ```
+you need run npm install leaflet at root folder
