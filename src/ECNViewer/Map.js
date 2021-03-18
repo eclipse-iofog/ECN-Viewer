@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Badge, Avatar } from '@material-ui/core'
-import MemoryIcon from '@material-ui/icons/Memory'
-import CtrlIcon from '@material-ui/icons/DeveloperBoard'
-import Icon from '@material-ui/core/Icon'
-import { makeStyles, useTheme } from '@material-ui/styles'
-import { MenuItem } from '@material-ui/core'
-import Select from '@material-ui/core/Select'
-import { statusColor, msvcStatusColor, tagColor } from './utils'
+import { makeStyles } from '@material-ui/styles'
 import { useMap } from '../providers/Map'
 import L from 'leaflet'
 import { getAllProviderName, getProviderInfo } from '../providers/providerInfo'
@@ -61,14 +54,11 @@ export default function Map(props) {
   //mcstate value will be true after componentDidmount
   const [mcstate, setMcstate] = useState(false);
   const [mymap, setMymap] = useState(0);
-  const [mymapurl, setMymapurl] = useState(0);
-  const theme = useTheme()
-  const { controller, agent, setAgent, msvcsPerAgent, loading } = props
+  const { controller, setAgent,loading } = props
   const { map, mapRef, hasValidCoordinates } = useMap()
-  const [providerName, setProviderName] = useState(defaultProvider)
+  const [providerName] = useState(defaultProvider)
 
-  useEffect(() => {
-    console.log('Map has updated')
+  useEffect(() => { 
   })
   function getMapContainer(a) {
     setMymap(a)
@@ -78,14 +68,14 @@ export default function Map(props) {
   }
   function ViewerMarker(props) {
     //componentDidmount is not over so this component return null
-    if (mcstate == false) {
+    if (mcstate === false) {
       return null
     } else {
       return (
         // componentDidmount is over Mymarker function can be mark on the map
         <Consumer>
           {(mymapobj) => {
-            const Mymarker = L.marker(props.position).addTo(mymapobj);
+           L.marker(props.position).addTo(mymapobj);
             // var allcity = L.layerGroup(...Mymarker).addTo(mymapobj);
           }
           }
@@ -95,7 +85,7 @@ export default function Map(props) {
   }
   //change map center and zoom
   function SetViewOnClick({ coords }) {
-    if (mcstate == false) {
+    if (mcstate === false) {
       return null
     } else {
       return (

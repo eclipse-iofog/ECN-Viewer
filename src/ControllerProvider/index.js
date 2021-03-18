@@ -101,7 +101,7 @@ const actions = {
 }
 
 const reducer = (state, action) => {
-  console.log({ state, action })
+  // console.log({ state, action })
   const newState = (() => {
     switch (action.type) {
       case actions.ERROR:

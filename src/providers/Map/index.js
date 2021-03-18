@@ -28,7 +28,6 @@ export const MapProvider = ({
     const bounds = new L.latLngBounds()
 
     const validAgents = agents.filter(a => hasValidCoordinates([a.latitude, a.longitude]))
-    console.log({ agents, validAgents })
 
     if (!validAgents.length) {
       newMap.center = [get(controllerInfo, 'location.lat', 0), get(controllerInfo, 'location.lon', 0)]

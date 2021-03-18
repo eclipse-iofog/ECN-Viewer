@@ -8,7 +8,6 @@ export function MapContainer(props) {
   // const [posation,setPosation] = useState([]);
   const [initFlag, setInitFlag] = useState(true)
   const flag = React.useRef(null)
-  const [newlayer, setNewlayer] = useState(0)
   //props camefrom  the father component
   //this useEffect replace componentDidUpdate
   React.useEffect(() => {
@@ -26,7 +25,6 @@ export function MapContainer(props) {
     if (container != null) {
       container._leaflet_id = null;
     }
-    var container = L.DomUtil.get('map')
     var allcity = props.position.map(a => {
       return L.marker(a)
     })
@@ -48,10 +46,7 @@ export function MapContainer(props) {
       "Cities": cities
     };
     L.control.layers(baseMaps, overlayMaps).addTo(map);
-    var baseMaps = {
-      "<span style='color: gray'>Grayscale</span>": grayscale,
-      "Streets": streets
-    };
+  
     props.getfun(map)
     props.mcstate(true)
     setInitFlag(false)
