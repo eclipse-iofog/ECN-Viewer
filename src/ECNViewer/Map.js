@@ -1,17 +1,13 @@
-import React from 'react'
-
-import GoogleMapReact from 'google-map-react'
-
-import { Avatar } from '@material-ui/core'
-
-import CtrlIcon from '@material-ui/icons/DeveloperBoard'
-import Icon from '@material-ui/core/Icon'
-
-import { makeStyles, useTheme } from '@material-ui/styles'
-
-import { statusColor, tagColor } from './utils'
+import React, { useEffect, useState } from 'react'
+import { makeStyles } from '@material-ui/styles'
 import { useMap } from '../providers/Map'
+import L from 'leaflet'
+import { getAllProviderName, getProviderInfo } from '../providers/providerInfo'
+import { MapContainer } from './myleaflet'
 
+// Default map provider name
+const defaultProvider = 'Google'
+export const { Provider, Consumer } = React.createContext("a");
 const useStyles = makeStyles(theme => ({
   mapMarkerTransform: {
     transform: 'translate(-50%, -100%)',
@@ -29,101 +25,120 @@ const useStyles = makeStyles(theme => ({
     transform: 'rotate(-45deg)',
     '& .MuiSvgIcon-root': {
       transform: 'rotate(-45deg)'
-    },
-    width: '50px',
-    height: '50px',
-    fontSize: 24
+    }
   },
   mapWrapper: {
-    width: '172%',
+    boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12)',
+    borderRadius: '4px',
+    width: '100%',
     height: '100%',
-    position: 'fixed',
-    top: 0,
-    '@media (min-width: 1200px)': {
-      width: '155%'
-    }
-  },
-  selectedMarker: {
-    zIndex: 2,
-    fontSize: 32,
-    width: '80px',
-    height: '80px'
-  },
-  selectedMarkerTransform: {
-    zIndex: 2,
-    '& $erContainer': {
-      width: '30px',
-      height: '30px',
-      '& .MuiIcon-root': {
-        fontSize: 16
+    maxHeight: '700px',
+    position: 'sticky',
+    top: '25px',
+    borderColor: theme.colors.aluminium,
+    '& div': {
+      borderRadius: '4px',
+      '& div': {
+        borderRadius: '4px'
       }
     }
-  },
-  erContainer: {
-    backgroundColor: tagColor,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '2px',
-    padding: '4px',
-    borderRadius: '100%',
-    zIndex: 3,
-    width: '20px',
-    height: '20px',
-    '& .MuiIcon-root': {
-      fontSize: 14
-    },
-    color: 'white'
   }
 }))
-
-export default function Map (props) {
+/**
+ * Renderer
+ * @description This component do not return ANYTHING for user interface, it is only used for updating MapContainer props dynamically
+ * @see https://stackoverflow.com/questions/65546744/not-able-to-change-center-dynamically-in-react-leaflet-v-3-x
+ */
+export default function Map(props) {
   const classes = useStyles()
-  const theme = useTheme()
-  const { controller, setAgent, loading, agent: selectedAgent } = props
+  //mcstate value will be true after componentDidmount
+  const [mcstate, setMcstate] = useState(false);
+  const [mymap, setMymap] = useState(0);
+  const { controller, setAgent,loading } = props
   const { map, mapRef, hasValidCoordinates } = useMap()
+  const [providerName] = useState(defaultProvider)
 
+  useEffect(() => { 
+  })
+  function getMapContainer(a) {
+    setMymap(a)
+  }
+  function changemcstate(a) {
+    setMcstate(a)
+  }
+  function ViewerMarker(props) {
+    //componentDidmount is not over so this component return null
+    if (mcstate === false) {
+      return null
+    } else {
+      return (
+        // componentDidmount is over Mymarker function can be mark on the map
+        <Consumer>
+          {(mymapobj) => {
+           L.marker(props.position).addTo(mymapobj);
+            // var allcity = L.layerGroup(...Mymarker).addTo(mymapobj);
+          }
+          }
+        </Consumer>
+      );
+    }
+  }
+  //change map center and zoom
+  function SetViewOnClick({ coords }) {
+    if (mcstate === false) {
+      return null
+    } else {
+      return (
+        <Consumer>
+          {(mymapobj) => {
+            const map = mymapobj
+            map.setView(coords.center, coords.zoom);
+          }
+          }
+        </Consumer>
+      );
+    }
+  }
+  var propsdata = (controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
+    [a.latitude, a.longitude]
+  )
+  var mymapurls = getAllProviderName().map(pName => {
+    const pInfo = getProviderInfo(pName)
+    if (providerName === pName) {
+      return pInfo
+    }
+  })
   return (
-    <div className={[classes.mapWrapper, 'mui-fixed'].join(' ')} ref={mapRef}>
-      <GoogleMapReact
+    <div className={classes.mapWrapper} ref={mapRef}>
+      {
+      }
+      <MapContainer
         {...map}
-        bootstrapURLKeys={{
-          key: 'AIzaSyChp_fUXiK05ulRl_ewRGKWsQ1k0ULIFkA'
-        }}
+        position={propsdata}
+        getfun={getMapContainer}//get leaflet example
+        mcstate={changemcstate}//change react state
+        mymapurl={mymapurls}
       >
-        {(loading ? [] : controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
-          <div
-            id={a.name}
-            key={a.uuid}
-            lat={a.latitude} lng={a.longitude}
-            className={[classes.mapMarkerTransform, selectedAgent && a.uuid === selectedAgent.uuid ? classes.selectedMarkerTransform : ''].join(' ')}
-            onClick={() => setAgent(a)}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Avatar
-                style={{ '--markerColor': statusColor[a.daemonStatus] }}
-                className={[classes.mapMarker, selectedAgent && a.uuid === selectedAgent.uuid ? classes.selectedMarker : ''].join(' ')}
-              >
-                {/* <MemoryIcon style={{ fontSize: 32 }} /> */}
-                <div style={{ transform: 'rotate(45deg)' }}>{[...a.name.split('-').map(e => e[0])].join('').toUpperCase()}</div>
-              </Avatar>
-              <div style={{ display: 'flex', position: 'absolute', bottom: -8 }}>
-                {a.tags && a.edgeResources.map(t => t.display ? (t.display.icon ? <div key={`${t.name}${t.version}`} className={classes.erContainer}><Icon title={t.display.name || t.name} key={t.display.name || t.name}>{t.display.icon}</Icon></div> : null) : null)}
-              </div>
+        <Provider value={mymap}>
+          <SetViewOnClick coords={map} />
+          {(loading ? [] : controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
+            <ViewerMarker
+              mInstance={MapContainer}
+              key={a.uuid}
+              position={[a.latitude, a.longitude]}
+              eventHandlers={{
+                click: () => {
+                  setAgent(a)
+                }
+              }}
+              mType='agent'
+              mInfo={a}
+            >
+            </ViewerMarker>
+          )}
+        </Provider>
+      </MapContainer>
 
-            </div>
-          </div>
-        )}
-        {!loading && controller.info && hasValidCoordinates([controller.info.location.lat, controller.info.location.lon]) &&
-          <Avatar
-            lat={controller.info.location.lat}
-            lng={controller.info.location.lon}
-            style={{ '--markerColor': theme.colors.purple }}
-            className={classes.mapMarker}
-          >
-            <CtrlIcon style={{ fontSize: 32 }} />
-          </Avatar>}
-      </GoogleMapReact>
     </div>
   )
 }

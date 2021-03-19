@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { Divider, TextField, Grid, Button } from '@material-ui/core'
-import { FeedbackContext } from '../../../Utils/FeedbackContext'
+import { FeedbackContext } from '../../Utils/FeedbackContext'
 
 import { makeStyles } from '@material-ui/styles'
-import { ControllerContext } from '../../../ControllerProvider'
+import { ControllerContext } from '../../ControllerProvider'
 const useStyles = makeStyles({
   divider: {
     margin: '5px'

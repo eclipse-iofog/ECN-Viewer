@@ -1,18 +1,18 @@
-import React from 'react'
+import { useEffect, useRef } from 'react'
 
 function useRecursiveTimeout (
   callback,
   delay
 ) {
-  const savedCallback = React.useRef(callback)
+  const savedCallback = useRef(callback)
 
   // Remember the latest callback.
-  React.useEffect(() => {
+  useEffect(() => {
     savedCallback.current = callback
   }, [callback])
 
   // Set up the timeout loop.
-  React.useEffect(() => {
+  useEffect(() => {
     let id
     function tick () {
       const ret = savedCallback.current()
@@ -30,7 +30,6 @@ function useRecursiveTimeout (
       }
     }
     if (delay !== null) {
-      (savedCallback.current || callback)()
       id = setTimeout(tick, delay)
       return () => id && clearTimeout(id)
     }

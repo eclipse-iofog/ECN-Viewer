@@ -58,9 +58,11 @@ const reducer = (state, action) => {
 export default function Context (props) {
   const [state, dispatch] = React.useReducer(reducer, initState)
   const setFeedbacks = (newFeedbacks) => {
+    console.log(' ---> SetFeedbacks ')
     dispatch({ type: actions.SET, data: newFeedbacks })
   }
   const pushFeedback = (newFeedback) => {
+    console.log(' ---> pushFeedback ')
     dispatch({ type: actions.ADD, data: newFeedback, dispatch })
     // Update current feedback array (same array will be used if multiple calls to pushFeedback in the same render loop)
     state.feedbacks.push(newFeedback)
@@ -69,13 +71,7 @@ export default function Context (props) {
   console.log('======> Updating feedback context')
 
   return (
-    <FeedbackContext.Provider value={{
-      // feedbacks: [...state.feedbacks, { message: 'test', type: 'warning' }],
-      feedbacks: state.feedbacks,
-      setFeedbacks,
-      pushFeedback
-    }}
-    >
+    <FeedbackContext.Provider value={{ feedbacks: state.feedbacks, setFeedbacks, pushFeedback }}>
       {props.children}
       <FeedbackContext.Consumer>
         {({ feedbacks, setFeedbacks }) =>

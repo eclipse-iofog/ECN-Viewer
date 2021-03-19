@@ -1,16 +1,16 @@
 import React from 'react'
-import ReactJson from '../../../Utils/ReactJson'
+import ReactJson from 'react-json-view'
 import get from 'lodash/get'
 
 import { Grid, Paper, Typography, TextField, Divider, Select, Input, Button, InputLabel, FormControl, FormControlLabel, Checkbox, MenuItem } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import SwapIcon from '@material-ui/icons/SwapHoriz'
 
-import Autocomplete from '../../../Utils/Autocomplete'
+import Autocomplete from '../../Utils/Autocomplete'
 
 import { makeStyles } from '@material-ui/styles'
-import { FeedbackContext } from '../../../Utils/FeedbackContext'
-import { ControllerContext } from '../../../ControllerProvider'
+import { FeedbackContext } from '../../Utils/FeedbackContext'
+import { ControllerContext } from '../../ControllerProvider'
 
 const useStyles = makeStyles({
   divider: {

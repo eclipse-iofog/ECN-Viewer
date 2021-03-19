@@ -1,7 +1,7 @@
 import React from 'react'
 import IconButton from '@material-ui/core/IconButton'
 import WarningIcon from '@material-ui/icons/Warning'
-import CheckCircleIcon from '@material-ui/icons/Check'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle'
 import ErrorIcon from '@material-ui/icons/Error'
 import InfoIcon from '@material-ui/icons/Info'
 import CloseIcon from '@material-ui/icons/Close'
@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.colors.danger
   },
   icon: {
-    fontSize: 25
+    fontSize: 20
   },
   iconVariant: {
     opacity: 0.9,
@@ -37,27 +37,20 @@ const useStyles = makeStyles(theme => ({
   },
   message: {
     display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-    justifyContent: 'center',
-    fontSize: 20
+    alignItems: 'center'
   },
   alert: {
-    borderRadius: 0,
-    height: '60px'
+    margin: '5px',
+    borderRadius: '4px',
+    boxShadow: `0 4px 6px 0 ${theme.colors.carbon}`
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
     position: 'fixed',
-    height: '60px',
-    left: '60px',
-    right: '0px',
-    top: '0px',
+    bottom: '10px',
+    left: '10px',
     zIndex: '9999'
-  },
-  snackMessage: {
-    flex: 1
   }
 }))
 
@@ -82,7 +75,6 @@ export default function Alert (props) {
                 {a.message}
               </span>
             }
-            classes={{ message: classes.snackMessage }}
             action={[
               <IconButton key='close' aria-label='Close' color='inherit' onClick={handleClick}>
                 <CloseIcon className={classes.icon} />

@@ -21,6 +21,7 @@
     "downshift": "5.0.4",
     "google-map-react": "1.1.6",
     "js-yaml": "3.13.1",
+    "leaflet": "^1.7.1",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
     "pretty-bytes": "^5.5.0",
@@ -37,7 +38,7 @@
   "proxy": "http://localhost:5555",
   "scripts": {
     "start": "npm run build && npm run prod",
-    "start-dev": "cp orange-config.js ./public/controller-config.js && concurrently 'PORT=5555 nodemon server/index.js' 'react-scripts start'",
+    "start-dev": "cp controller-config.dev.js ./public/controller-config.js && concurrently 'PORT=5555 nodemon server/index.js' 'react-scripts start'",
     "prod": "node server/index.js",
     "build": "cp controller-config.prod.js ./public/controller-config.js && react-scripts build",
     "test": "CI=true react-scripts test",

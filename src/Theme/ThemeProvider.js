@@ -4,36 +4,25 @@ import { createMuiTheme } from '@material-ui/core/styles'
 
 import customTheme from './theme.json'
 
-export const colors = {
+const colors = {
+  phosphorus: '#FF585D',
   cobalt: '#5064EC',
   gold: '#F5A623',
+  chromium: '#00C0A9',
   argon: '#7A3BFF',
-  carbon: '#00293E',
-  // carbon: '#1a2d45',
+  carbon: '#002E43',
   lead: '#57687D',
-  aluminium: '#D3D1D0',
+  aluminium: '#ACB5C6',
   silver: '#FAFCFF',
-  white: '#FFFFFF',
-  primary: '#26D6F1',
-  secondary: '#FF585D',
-  purple: '#5064EC',
-  green: '#4CE1B6',
-  neutral: '#506279',
-  neutral_3: '#7d90a9',
-  neutral_2: '#D0D6DD',
-  neutral_0: 'white',
-  neutral_1: '#ebedf0',
-  neutral_4: '#506279',
-  neutral_5: '#1a2d45'
-
+  white: '#FFFFFF'
 }
 
 export const theme = createMuiTheme({
   ...customTheme,
   colors: {
     ...colors,
-    success: colors.primary,
-    error: colors.secondary,
+    success: colors.chromium,
+    error: colors.phosphorus,
     danger: colors.gold
   }
 })
