@@ -19,6 +19,7 @@ const getIP = require('external-ip')()
 const PORT = process.env.PORT || 80
 
 const runServer = async () => {
+  console.log('!!')
   app.use('/api/controllerAPI', (req, res, next) => {
     proxy(req.headers['ecn-api-destination'])(req, res, next)
   })

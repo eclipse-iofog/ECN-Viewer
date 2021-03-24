@@ -3,6 +3,7 @@ import { isFinite, get } from 'lodash'
 import { fitBounds } from 'google-map-react/utils'
 
 import mapStyle from './mapStyle.json'
+import L from 'leaflet'
 
 export const MapContext = React.createContext()
 export const useMap = () => React.useContext(MapContext)
@@ -27,41 +28,39 @@ export const MapProvider = ({
 
   const setMap = (agents, controllerInfo, includeController) => {
     const newMap = {}
-    if (!window.google) {
-      return map
-    }
-    const bounds = new window.google.maps.LatLngBounds() // need handler incase `google` not yet available
+    const bounds = new L.latLngBounds()
 
     const validAgents = agents.filter(a => hasValidCoordinates([a.latitude, a.longitude]))
+    console.log({ agents, validAgents })
 
     if (!validAgents.length) {
       newMap.center = [get(controllerInfo, 'location.lat', 0), get(controllerInfo, 'location.lon', 0)]
-      newMap.zoom = 9
+      newMap.zoom = 15
       _setMap({ ...map, ...newMap })
       return
     } else if (validAgents.length === 1 && !includeController) {
       newMap.center = [get(validAgents[0], 'latitude', 0), get(validAgents[0], 'longitude', 0)]
-      newMap.zoom = 9
+      newMap.zoom = 15
       _setMap({ ...map, ...newMap })
       return
     }
 
     validAgents.forEach(marker => {
-      bounds.extend(new window.google.maps.LatLng(get(marker, 'latitude', 0), get(marker, 'longitude', 0)))
+      bounds.extend(L.latLng(get(marker, 'latitude', 0), get(marker, 'longitude', 0)))
     })
 
     if (includeController) {
-      bounds.extend(new window.google.maps.LatLng(get(controllerInfo, 'location.lat', 0), get(controllerInfo, 'location.lon', 0)))
+      bounds.extend(L.latLng(get(controllerInfo, 'location.lat', 0), get(controllerInfo, 'location.lon', 0)))
     }
 
     const newBounds = {
       ne: {
-        lat: bounds.getNorthEast().lat(),
-        lng: bounds.getNorthEast().lng()
+        lat: bounds.getNorthEast().lat,
+        lng: bounds.getNorthEast().lng
       },
       sw: {
-        lat: bounds.getSouthWest().lat(),
-        lng: bounds.getSouthWest().lng()
+        lat: bounds.getSouthWest().lat,
+        lng: bounds.getSouthWest().lng
       }
     }
 
@@ -70,9 +69,9 @@ export const MapProvider = ({
       height: get(mapRef, 'current.offsetHeight', 800)
     }
 
-    const { center } = fitBounds(newBounds, size)
-    newMap.center = center
-    newMap.zoom = 1
+    const { center, zoom } = fitBounds(newBounds, size)
+    newMap.center = [center.lat, center.lng]
+    newMap.zoom = zoom
     _setMap({ ...map, ...newMap })
   }
 
