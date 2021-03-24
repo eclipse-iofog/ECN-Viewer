@@ -91,24 +91,17 @@ export default function Map (props) {
   const { map, mapRef, hasValidCoordinates } = useMap()
   const [mcstate, setMcstate] = useState(false);
   const [mymap, setMymap] = useState(0);
-  // console.log(controller.agents)
   var propsdata = (controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
     [a.latitude, a.longitude]
   )
   function getMapContainer(a) {
     setMymap(a)
-    console.log(a)
+  
   }
   function changemcstate(a) {
     setMcstate(a)
-    console.log(a)
   }
-  // var mymapurls = getAllProviderName().map(pName => {
-  //   const pInfo = getProviderInfo(pName)
-  //   if (providerName === pName) {
-  //     return pInfo
-  //   }
-  // })
+
   function ViewerMarker(props) {
     //componentDidmount is not over so this component return null
     if (mcstate == false) {
@@ -127,7 +120,6 @@ export default function Map (props) {
     }
   }
   function SetViewOnClick({ coords }) {
-    console.log(coords)
     if (mcstate == false) {
       return null
     } else {
@@ -135,9 +127,7 @@ export default function Map (props) {
         //  
         <Consumer>
           {(mymapobj) => {
-            console.log(mymapobj)
             const map = mymapobj
-            console.log(map)
             map.setView(coords.center, coords.zoom);
           }
           }
