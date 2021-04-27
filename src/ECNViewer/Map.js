@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react'
 
 import GoogleMapReact from 'google-map-react'
-
 import { Avatar } from '@material-ui/core'
-
 import CtrlIcon from '@material-ui/icons/DeveloperBoard'
 import Icon from '@material-ui/core/Icon'
-
 import { makeStyles, useTheme } from '@material-ui/styles'
 import L from 'leaflet'
 import { statusColor, tagColor } from './utils'
 import { useMap } from '../providers/Map'
 import { MapContainer } from './myleaflet'
 
-
+sessionStorage.setItem("iscontrolready", "true");
 
 export const { Provider, Consumer } = React.createContext("a");
 
@@ -46,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     position: 'fixed',
     top: 0,
     '@media (min-width: 1200px)': {
-      width: '96%'//if the max width  > 96%  the leaflet controller will be hide
+      width: '156%'//if the max width  > 96%  the leaflet controller will be hide
     }
   },
   selectedMarker: {
@@ -144,6 +141,7 @@ export default function Map (props) {
         position={propsdata}
         getfun={getMapContainer}//get leaflet example
         mcstate={changemcstate}//change react state
+        isloading={loading}
       >
         <Provider value={mymap}>
           <SetViewOnClick coords={map} />

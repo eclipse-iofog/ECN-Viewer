@@ -1,11 +1,11 @@
 window.controllerConfig = {
-    ip: '0.0.0.0',
+    ip: '34.83.89.255',
     port: '51121',
     refresh: 5555 ,
     dev: true,
     user: {
-      email: '',
-      password: ''
+      email: 'orange@edgeworx.io',
+      password: '0range#1234'
     }
   }
   

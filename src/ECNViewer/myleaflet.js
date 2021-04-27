@@ -1,6 +1,7 @@
 import React from 'react'
 import L from 'leaflet'
 import { useState, useEffect } from 'react'
+import './myleaflet.css'
 const mymapcss = {
   height: "100vh"
 }
@@ -29,24 +30,39 @@ export function MapContainer(props) {
       return L.marker(a)
     })
     var cities = L.layerGroup(...allcity);
+    var streets = L.tileLayer("//{s}.tile.osm.org/{z}/{x}/{y}.png", { id: 'MapID', tileSize: 512, zoomOffset: -1, attribution: "osm" });
     var grayscale = L.tileLayer("//mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}", { id: 'MapID', tileSize: 512, zoomOffset: -1, attribution: "Google" });
     var Geoq = L.tileLayer("//map.geoq.cn/ArcGIS/rest/services/ChinaOnlineCommunity/MapServer/tile/{z}/{y}/{x}", { id: 'MapID', tileSize: 512, zoomOffset: -1, attribution: "Geoq" });
-    var streets = L.tileLayer("//{s}.tile.osm.org/{z}/{x}/{y}.png", { id: 'MapID', tileSize: 512, zoomOffset: -1, attribution: "osm" });
     var map = L.map('map', {
       center: props.center,
       zoom: props.zoom,
-      layers: [grayscale, cities]
+      layers: [streets, cities]
     });
     var baseMaps = {
-      "Google": grayscale,
       "OSM": streets,
+      "Google": grayscale,
       "Geoq": Geoq
     };
     var overlayMaps = {
       "Cities": cities
     };
-    L.control.layers(baseMaps, overlayMaps).addTo(map);
-  
+    var newcontrol= L.control.layers(baseMaps, overlayMaps).setPosition('bottomleft').addTo(map);
+    console.log(newcontrol.getContainer())
+    const navEl = document.querySelector('.latnav')
+    const lControlArray = navEl.querySelectorAll('.leaflet-control')
+    console.log('find lControl', lControlArray)
+    if (lControlArray){
+      lControlArray.forEach((el)=>{
+        el.remove()
+        console.log('Remove')
+      })
+    }
+    navEl.append(newcontrol.getContainer()) 
+    if(sessionStorage.getItem("iscontrolready")==="true"){
+      
+      sessionStorage.setItem("iscontrolready", "false");
+    }
+       
     props.getfun(map)
     props.mcstate(true)
     setInitFlag(false)
