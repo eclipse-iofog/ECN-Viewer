@@ -106,7 +106,7 @@ export default function MicroserviceDetails ({ microservice: selectedMicroservic
             <span>Status</span>
             {!isMediumScreen && mainActions}
           </Typography>
-          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><MsvcStatus status={microservice.status.status} style={{ marginRight: '5px', marginTop: '-3px' }} />{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage}%)`}</span>
+          <span className={classes.text} style={{ display: 'flex', alignItems: 'center' }}><MsvcStatus status={microservice.status.status} style={{ marginRight: '5px', marginTop: '-3px' }} />{microservice.status.status}{microservice.status.status === 'PULLING' && ` (${microservice.status.percentage.toFixed(2)}%)`}</span>
           {microservice.status.errorMessage && <span className={classes.subTitle}>Error: <span className={classes.text}>{microservice.status.errorMessage}</span></span>}
         </div>
         <div className={classes.sectionDivider} />
