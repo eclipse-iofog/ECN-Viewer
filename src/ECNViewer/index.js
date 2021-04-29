@@ -169,7 +169,7 @@ export default function ECNViewer ({ returnHomeCBRef }) {
   }
 
   const { controller, msvcsPerAgent } = data
-  // console.log({ location, controller, config })
+
   return (
     <div className='viewer-layout-container'>
       <div className='box sidebar'>

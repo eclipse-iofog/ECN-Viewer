@@ -10,7 +10,7 @@ import { dateFormat, icons } from '../utils'
 
 import moment from 'moment'
 import MicroservicesTable from '../MicroservicesTable'
-import yaml from 'js-yaml' 
+import yaml from 'js-yaml'
 
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/theme-monokai'
