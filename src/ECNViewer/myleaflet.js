@@ -47,22 +47,16 @@ export function MapContainer(props) {
       "Cities": cities
     };
     var newcontrol= L.control.layers(baseMaps, overlayMaps).setPosition('bottomleft').addTo(map);
-    console.log(newcontrol.getContainer())
+    // console.log(newcontrol.getContainer())
     const navEl = document.querySelector('.latnav')
     const lControlArray = navEl.querySelectorAll('.leaflet-control')
-    console.log('find lControl', lControlArray)
+    // console.log('find lControl', lControlArray)
     if (lControlArray){
       lControlArray.forEach((el)=>{
         el.remove()
-        console.log('Remove')
       })
     }
     navEl.append(newcontrol.getContainer()) 
-    if(sessionStorage.getItem("iscontrolready")==="true"){
-      
-      sessionStorage.setItem("iscontrolready", "false");
-    }
-       
     props.getfun(map)
     props.mcstate(true)
     setInitFlag(false)
