@@ -6,3 +6,4 @@ window.controllerConfig = {
     password: ''
   }
 }
+  
