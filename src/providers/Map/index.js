@@ -3,7 +3,6 @@ import { isFinite, get } from 'lodash'
 import { fitBounds } from 'google-map-react/utils'
 
 import mapStyle from './mapStyle.json'
-import MapComponent from './Map'
 
 export const MapContext = React.createContext()
 export const useMap = () => React.useContext(MapContext)
@@ -20,16 +19,20 @@ export const MapProvider = ({
     center: [0, 0],
     zoom: 15,
     options: {
-      styles: mapStyle
+      styles: mapStyle,
+      zoomControl: false,
+      fullscreenControl: false
     }
   })
 
   const setMap = (agents, controllerInfo, includeController) => {
     const newMap = {}
+    if (!window.google) {
+      return map
+    }
     const bounds = new window.google.maps.LatLngBounds() // need handler incase `google` not yet available
 
     const validAgents = agents.filter(a => hasValidCoordinates([a.latitude, a.longitude]))
-    console.log({ agents, validAgents })
 
     if (!validAgents.length) {
       newMap.center = [get(controllerInfo, 'location.lat', 0), get(controllerInfo, 'location.lon', 0)]
@@ -67,13 +70,11 @@ export const MapProvider = ({
       height: get(mapRef, 'current.offsetHeight', 800)
     }
 
-    const { center, zoom } = fitBounds(newBounds, size)
+    const { center } = fitBounds(newBounds, size)
     newMap.center = center
-    newMap.zoom = zoom
+    newMap.zoom = 1
     _setMap({ ...map, ...newMap })
   }
-
-  const RenderedMapComponent = <MapComponent {...{ map, mapRef, hasValidCoordinates }} />
 
   return (
     <MapContext.Provider
@@ -82,7 +83,7 @@ export const MapProvider = ({
         mapRef,
         hasValidCoordinates,
         setMap,
-        RenderedMapComponent
+        restoreMapToState: _setMap
       }}
     >
       {children}

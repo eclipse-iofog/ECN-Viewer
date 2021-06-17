@@ -5,6 +5,8 @@
 
 .footer {
   grid-area: footer;
+  z-index: 2;
+  padding: 20px;
 }
 
 .content {
@@ -34,16 +36,16 @@
 
 .wrapper {
     width: 100%;
-    max-width: 2048px;
+    // max-width: 2048px;
     margin: auto;
     display: grid;
     min-height: 100vh;
-    grid-gap: 10px;
+    grid-gap: 0px;
     grid-template-columns: 60px 1fr;
     grid-template-rows: 60px minmax(calc(100vh - 120px), 1fr) 60px;
     grid-row-gap: 0;
     grid-template-areas:
-      "logo topnav"
+      "logo content"
       "latnav content"
       "latnav footer";
 }
@@ -51,6 +53,6 @@
 
 .box {
   border-radius: 5px;
-  padding: 30px;
+  padding-left: 30px;
   font-size: 150%;
 }

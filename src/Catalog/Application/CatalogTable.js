@@ -1,25 +1,44 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
+import PublishIcon from '@material-ui/icons/Publish'
 
 import Skeleton from 'react-loading-skeleton'
-import { TextField, InputAdornment, Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
+import { Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination, useMediaQuery } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
-import SearchIcon from '@material-ui/icons/Search'
-import ClearIcon from '@material-ui/icons/Clear'
 import lget from 'lodash/get'
+import SearchBar from '../../Utils/SearchBar'
+import getSharedStyles from '../../ECNViewer/sharedStyles'
+import FileDrop from '../../Utils/FileDrop'
+import GetAppIcon from '@material-ui/icons/GetApp'
 
 const useStyles = makeStyles(theme => ({
+  ...getSharedStyles(theme),
   pointer: {
     cursor: 'pointer'
   },
-  avatarContainer: {
-    backgroundColor: theme.colors.chromium
-  },
   tableActions: {
-    marginBottom: '10px',
+    padding: '15px',
     display: 'flex',
     justifyContent: 'space-between'
+  },
+  link: {
+    color: theme.palette.text.primary,
+    cursor: 'pointer',
+    '&:hover': {
+      textDecoration: 'underline'
+    }
+  },
+  hiddenInput: {
+    width: '0.1px',
+    height: '0.1px',
+    opacity: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    zIndex: '-1'
+  },
+  underlignedBodyCell: {
+    borderBottom: `1px solid ${theme.colors.neutral_2}4D !important`
   }
 }))
 
@@ -30,10 +49,12 @@ const filterFields = [
 
 export default function CatalogTable (props) {
   const classes = useStyles()
-  const { loading, openMenu, catalog } = props
+  const { loading, uploading, openMenu, catalog, readCatalogItemFile } = props
   const [filter, setFilter] = React.useState('')
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
+  const isLargeScreen = useMediaQuery('(min-width: 992px)')
+  const isSmallScreen = useMediaQuery('(min-width: 576px)')
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage)
@@ -52,63 +73,98 @@ export default function CatalogTable (props) {
   }
 
   const filteredCatalog = catalog.filter(filterItem)
+  const dragAndDropContent = (
+    <span style={{ fontSize: '14px' }}>
+      {isLargeScreen ? 'To add a template, drag a YAML file here or ' : 'Drag or '}
+      <label for='file' className={classes.link} style={{ marginRight: '5px', textDecoration: 'underline' }}>upload</label>
+    </span>
+  )
 
-  const emptyRows = loading ? 0 : rowsPerPage - Math.min(rowsPerPage, filteredCatalog.length - page * rowsPerPage)
+  // const emptyRows = loading ? 0 : rowsPerPage - Math.min(rowsPerPage, filteredCatalog.length - page * rowsPerPage)
   return (
-    <>
+    <Paper>
       <div className={`${classes.tableActions} ${classes.pointer}`}>
-        <TextField
-          className={classes.margin}
-          id='input-with-icon-textfield'
-          label='Filter'
-          value={filter}
-          onChange={(e) => setFilter(e.target.value.toLowerCase())}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment className={classes.pointer} position='start'>
-                <ClearIcon onClick={() => setFilter('')} />
-              </InputAdornment>
-            )
-          }}
+        <SearchBar {...{
+          onSearch: setFilter,
+          style: {
+            marginRight: '15px',
+            minWidth: '100px',
+            maxWidth: isSmallScreen ? 'inherit' : '200px'
+          }
+        }}
         />
+        {isSmallScreen
+          ? (
+            <div>
+              <FileDrop {...{
+                onDrop: readCatalogItemFile,
+                onHover: <div style={{ display: 'flex', alignItems: 'center', fontSize: '14px' }}><GetAppIcon style={{ marginRight: '5px' }} /> Release to drop</div>,
+                style: { paddingLeft: '5px' },
+                loading: uploading
+              }}
+              >
+                <div className={classes.flexColumn}>
+                  <input onChange={(e) => readCatalogItemFile(e.target)} type='file' name='files[]' id='file' className={classes.hiddenInput} />
+                  <div style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                    <PublishIcon style={{ marginRight: '5px' }} />
+                    {dragAndDropContent}
+                  </div>
+                </div>
+              </FileDrop>
+            </div>
+          )
+          : (
+
+            <FileDrop {...{
+              onHover: <GetAppIcon style={{ margin: 'auto' }} />,
+              onDrop: readCatalogItemFile,
+              loading: uploading,
+              style: { padding: 0, height: '39px', minWidth: '39px', position: 'sticky', right: '15px', display: 'flex', justifyContent: 'center' }
+            }}
+            >
+              <>
+                <input onChange={(e) => readCatalogItemFile(e.target)} type='file' name='files[]' id='file' className={classes.hiddenInput} />
+                <label for='file' style={{ display: 'flex', justifyContent: 'center' }}>
+                  <div className={classes.iconContainer} style={{ cursor: 'pointer' }}>
+                    <PublishIcon style={{ marginLeft: '-2px' }} />
+                  </div>
+                </label>
+              </>
+            </FileDrop>
+          )}
       </div>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table className={classes.table} stickyHeader aria-label='simple table'>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align='right'>Description</TableCell>
-              <TableCell align='right'>Microservices</TableCell>
-              <TableCell align='right'>Variables</TableCell>
-              <TableCell align='right' />
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }}>Name</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }}>Description</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }}>Microservices</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }}>Variables</TableCell>
+              <TableCell classes={{ stickyHeader: classes.stickyHeaderCell, root: classes.headerCell }} />
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? <TableRow><TableCell colSpan={7}><Skeleton height={50} count={5} /></TableCell></TableRow> : filteredCatalog
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map(row => (
-                <TableRow key={row.name}>
-                  <TableCell component='th' scope='row'>
+                <TableRow key={row.name} hover classes={{ hover: classes.tableRowHover }} style={{ verticalAlign: 'baseline' }}>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} component='th' scope='row' style={{ width: '800px' }}>
                     {row.name}
                   </TableCell>
-                  <TableCell align='right'>{row.description}</TableCell>
-                  <TableCell align='right'>{row.display.microservices.join(', ')}</TableCell>
-                  <TableCell align='right'>{row.display.variables.join(', ')}</TableCell>
-                  <TableCell align='right' className={classes.pointer}>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} style={{ width: '800px' }}>{row.description}</TableCell>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} style={{ width: '800px', whiteSpace: 'pre' }}>{row.display.microservices.join('\n')}</TableCell>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} style={{ width: '800px', whiteSpace: 'pre' }}>{row.display.variables.join('\n')}</TableCell>
+                  <TableCell classes={{ root: classes.underlignedBodyCell }} className={classes.pointer} style={{ verticalAlign: 'middle' }}>
                     <MoreIcon onClick={(e) => openMenu(row, e)} />
                   </TableCell>
                 </TableRow>
               ))}
-            {emptyRows > 0 && (
+            {/* {emptyRows > 0 && (
               <TableRow style={{ height: 53 * emptyRows }}>
                 <TableCell colSpan={6} />
               </TableRow>
-            )}
+            )} */}
           </TableBody>
         </Table>
       </TableContainer>
@@ -121,6 +177,6 @@ export default function CatalogTable (props) {
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
-    </>
+    </Paper>
   )
 }

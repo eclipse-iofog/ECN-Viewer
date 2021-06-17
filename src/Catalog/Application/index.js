@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
-import ReactJson from 'react-json-view'
+import ReactJson from '../../Utils/ReactJson'
 import yaml from 'js-yaml'
 import { Menu, MenuItem, Divider } from '@material-ui/core'
 
@@ -9,7 +9,7 @@ import { FeedbackContext } from '../../Utils/FeedbackContext'
 import Modal from '../../Utils/Modal'
 import CatalogTable from './CatalogTable'
 import Confirm from '../../Utils/Confirm'
-import FileDrop from '../../Utils/FileDrop'
+import DeployApplicationTemplate from './DeployApplicationTemplate'
 
 import lget from 'lodash/get'
 import { parseMicroservice } from '../../Utils/ApplicationParser'
@@ -17,9 +17,6 @@ import { parseMicroservice } from '../../Utils/ApplicationParser'
 const useStyles = makeStyles(theme => ({
   pointer: {
     cursor: 'pointer'
-  },
-  avatarContainer: {
-    backgroundColor: theme.colors.chromium
   },
   container: {
     padding: '10px 50px 10px 30px'
@@ -64,6 +61,7 @@ const parseApplicationTemplate = async (doc) => {
 export default function Catalog () {
   const classes = useStyles()
   const [openDetailsModal, setOpenDetailsModal] = React.useState(false)
+  const [openDeployModal, setOpenDeployModal] = React.useState(false)
   const [openRemoveConfirm, setOpenRemoveConfirm] = React.useState(false)
   const [fetching, setFetching] = React.useState(true)
   const [loading, setLoading] = React.useState(false)
@@ -80,6 +78,10 @@ export default function Catalog () {
   }
   const openDetails = () => {
     setOpenDetailsModal(true)
+    handleCloseMenu()
+  }
+  const openDeploy = () => {
+    setOpenDeployModal(true)
     handleCloseMenu()
   }
   const openRemove = () => {
@@ -107,7 +109,6 @@ export default function Catalog () {
         return
       }
       const catalogItems = (await catalogItemsResponse.json()).applicationTemplates
-      console.log({ catalogItems })
       setCatalog(catalogItems.map(item => mapApplicationTemplate(item)))
       setFetching(false)
     } catch (e) {
@@ -167,7 +168,6 @@ export default function Catalog () {
       const reader = new window.FileReader()
 
       reader.onload = async function (evt) {
-        console.log({ evt })
         try {
           const doc = yaml.safeLoad(evt.target.result)
           const [catalogItem, err] = await parseApplicationTemplate(doc)
@@ -198,28 +198,32 @@ export default function Catalog () {
   return (
     <>
       <div className={classes.container}>
-        <CatalogTable {...{ loading: fetching, openMenu, catalog }} />
-        <div>
-          <FileDrop {...{ onDrop: readCatalogItemFile }}>
-            <div className={classes.flexColumn}>
-              <span>Drag a file here to update the catalog</span>
-            </div>
-          </FileDrop>
-        </div>
+        <CatalogTable {...{ loading: fetching, uploading: loading, openMenu, catalog, readCatalogItemFile }} />
       </div>
       <Modal
         {...{
           open: openDetailsModal,
           title: `${selectedItem.name} details`,
-          onClose: () => setOpenDetailsModal(false)
+          onClose: () => setOpenDetailsModal(false),
+          size: 'lg'
         }}
       >
         <ReactJson title='Application template' src={getDetails(selectedItem)} name={false} />
+      </Modal>
+      <Modal
+        {...{
+          open: openDeployModal,
+          title: `Deploy ${selectedItem.name}`,
+          onClose: () => setOpenDeployModal(false)
+        }}
+      >
+        <DeployApplicationTemplate template={selectedItem} close={() => setOpenDeployModal(false)} />
       </Modal>
       <Confirm
         open={openRemoveConfirm}
         title={`Delete Application template ${selectedItem.name} ?`}
         onClose={() => setOpenRemoveConfirm(false)}
+        confirmColor='secondary'
         onConfirm={() => {
           removeCatalogItem(selectedItem)
           setOpenRemoveConfirm(false)
@@ -234,6 +238,7 @@ export default function Catalog () {
         open={Boolean(menuAnchorEl)}
         onClose={handleCloseMenu}
       >
+        <MenuItem onClick={openDeploy}>Deploy</MenuItem>
         <MenuItem onClick={openDetails}>Details</MenuItem>
         <Divider />
         <MenuItem onClick={openRemove}>Remove item</MenuItem>

@@ -2,19 +2,15 @@ import React from 'react'
 import { makeStyles } from '@material-ui/styles'
 
 import Skeleton from 'react-loading-skeleton'
-import { TextField, InputAdornment, Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
+import { Paper, Table, TableRow, TableCell, TableContainer, TableHead, TableBody, TablePagination } from '@material-ui/core'
 
 import MoreIcon from '@material-ui/icons/MoreVert'
-import SearchIcon from '@material-ui/icons/Search'
-import ClearIcon from '@material-ui/icons/Clear'
 import lget from 'lodash/get'
+import SearchBar from '../../Utils/SearchBar'
 
 const useStyles = makeStyles(theme => ({
   pointer: {
     cursor: 'pointer'
-  },
-  avatarContainer: {
-    backgroundColor: theme.colors.chromium
   },
   tableActions: {
     marginBottom: '10px',
@@ -61,23 +57,9 @@ export default function CatalogTable (props) {
   return (
     <>
       <div className={`${classes.tableActions} ${classes.pointer}`}>
-        <TextField
-          className={classes.margin}
-          id='input-with-icon-textfield'
-          label='Filter'
-          value={filter}
-          onChange={(e) => setFilter(e.target.value.toLowerCase())}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position='start'>
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment className={classes.pointer} position='start'>
-                <ClearIcon onClick={() => setFilter('')} />
-              </InputAdornment>
-            )
+        <SearchBar
+          {...{
+            onSearch: setFilter
           }}
         />
       </div>
@@ -86,12 +68,12 @@ export default function CatalogTable (props) {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell align='right'>Description</TableCell>
-              <TableCell align='right'>Supported platforms</TableCell>
-              <TableCell align='right'>Publisher</TableCell>
-              <TableCell align='right'>Registry</TableCell>
-              <TableCell align='right'>Category</TableCell>
-              <TableCell align='right' />
+              <TableCell >Description</TableCell>
+              <TableCell >Supported platforms</TableCell>
+              <TableCell >Publisher</TableCell>
+              <TableCell >Registry</TableCell>
+              <TableCell >Category</TableCell>
+              <TableCell  />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -102,12 +84,12 @@ export default function CatalogTable (props) {
                   <TableCell component='th' scope='row'>
                     {row.name}
                   </TableCell>
-                  <TableCell align='right'>{row.description}</TableCell>
-                  <TableCell align='right'>{row.supportedPlatforms.join(', ')}</TableCell>
-                  <TableCell align='right'>{row.publisher}</TableCell>
-                  <TableCell align='right'>{row.registry.url}</TableCell>
-                  <TableCell align='right'>{row.category}</TableCell>
-                  <TableCell align='right' className={classes.pointer}>
+                  <TableCell >{row.description}</TableCell>
+                  <TableCell >{row.supportedPlatforms.join(', ')}</TableCell>
+                  <TableCell >{row.publisher}</TableCell>
+                  <TableCell >{row.registry.url}</TableCell>
+                  <TableCell >{row.category}</TableCell>
+                  <TableCell  className={classes.pointer}>
                     <MoreIcon onClick={(e) => openMenu(row, e)} />
                   </TableCell>
                 </TableRow>

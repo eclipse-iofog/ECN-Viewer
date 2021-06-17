@@ -16,10 +16,10 @@ export default function Confirm (props) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color='primary'>
+        <Button onClick={onClose}>
         Cancel
         </Button>
-        <Button onClick={onConfirm} color='primary' autoFocus>
+        <Button onClick={onConfirm} color={props.confirmColor || 'primary'} autoFocus>
         Confirm
         </Button>
       </DialogActions>

@@ -1,8 +1,8 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/styles'
-import ReactJson from 'react-json-view'
+import ReactJson from '../../Utils/ReactJson'
 import yaml from 'js-yaml'
-import { Avatar, Menu, MenuItem, Divider } from '@material-ui/core'
+import { Menu, MenuItem, Divider } from '@material-ui/core'
 
 import { ControllerContext } from '../../ControllerProvider'
 import { FeedbackContext } from '../../Utils/FeedbackContext'
@@ -18,9 +18,6 @@ const useStyles = makeStyles(theme => ({
   pointer: {
     cursor: 'pointer'
   },
-  avatarContainer: {
-    backgroundColor: theme.colors.chromium
-  },
   container: {
     padding: '10px 50px 10px 30px'
   },
@@ -30,6 +27,21 @@ const useStyles = makeStyles(theme => ({
   },
   titleRow: {
     marginBottom: '30px'
+  },
+  link: {
+    color: theme.palette.text.primary,
+    cursor: 'pointer',
+    '&:hover': {
+      textDecoration: 'underline'
+    }
+  },
+  hiddenInput: {
+    width: '0.1px',
+    height: '0.1px',
+    opacity: 0,
+    overflow: 'hidden',
+    position: 'absolute',
+    zIndex: '-1'
   }
 }))
 
@@ -147,7 +159,6 @@ export default function Catalog () {
       }
       const registries = (await registriesResponse.json()).registries
       catalogItems = catalogItems.map(item => mapCatalogItem(item, registries))
-      console.log({ catalogItems })
       setCatalog(catalogItems)
       setRegistries(registries)
       setFetching(false)
@@ -220,7 +231,6 @@ export default function Catalog () {
       const reader = new window.FileReader()
 
       reader.onload = function (evt) {
-        console.log({ evt })
         try {
           const doc = yaml.safeLoad(evt.target.result)
           const [catalogItem, err] = parseCatalogItem(doc)
@@ -250,9 +260,11 @@ export default function Catalog () {
         <div>
           <FileDrop {...{ onDrop: readCatalogItemFile }}>
             <div className={classes.flexColumn}>
-              <span>Drag a file here</span>
-              <span>---</span>
-              <Avatar style={{ margin: 'auto' }} className={`${classes.avatarContainer} ${classes.pointer}`} onClick={() => setOpenAddCatalogItemModal(true)}>+</Avatar>
+              <input onChange={(e) => readCatalogItemFile(e.target)} class='box__file' type='file' name='files[]' id='file' className={classes.hiddenInput} />
+              <span>
+                <label for='file' className={classes.link} style={{ marginRight: '5px' }}>Choose a file</label>
+    or Drag a file here to update the catalog
+              </span>
             </div>
           </FileDrop>
         </div>
