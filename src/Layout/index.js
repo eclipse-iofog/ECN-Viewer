@@ -142,7 +142,7 @@ export default function Layout () {
           <div className={`${classes.footerContainer} footer`}>
             <span className={classes.footer}>
               <span>Controller v{status.versions.controller} - ECN Viewer v{status.versions.ecnViewer}</span>
-              <a style={{ margin: 'auto' }} href='http://www.eclipse.org/legal/copyright.php'>© 2021 Eclipse Foundation, Inc.</a>
+              <a style={{ margin: 'auto' }} href='http://www.eclipse.org/legal/copyright.php'>© {new Date().getFullYear()} Eclipse Foundation, Inc.</a>
             </span>
           </div>
         </div>
