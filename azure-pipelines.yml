@@ -15,11 +15,11 @@ stages:
   jobs:
   - job: Build
     pool:
-      vmImage: 'Ubuntu-16.04'
+      vmImage: 'Ubuntu-20.04'
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '12.x'
+          versionSpec: '16.x'
         displayName: 'Install Node.js'
 
       - script: |
@@ -37,10 +37,10 @@ stages:
   jobs:
   - template: azure-templates/test.yml
     parameters:
-      nodeVersion: '8'
-  - template: azure-templates/test.yml
-    parameters:
-      nodeVersion: '10'
-  - template: azure-templates/test.yml
-    parameters:
       nodeVersion: '12'
+  - template: azure-templates/test.yml
+    parameters:
+      nodeVersion: '14'
+  - template: azure-templates/test.yml
+    parameters:
+      nodeVersion: '16'
