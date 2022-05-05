@@ -15,7 +15,6 @@ const useStyles = makeStyles({
     color: theme.colors.cobalt
   }
 })
-
 export default function Config (props) {
   const classes = useStyles()
   const { config, saveConfig } = useConfig()

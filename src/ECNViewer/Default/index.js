@@ -9,9 +9,7 @@ import ApplicationList from './ApplicationList'
 import SimpleTabs from '../../Utils/Tabs'
 import FileDrop from '../../Utils/FileDrop'
 import { API_VERSIONS } from '../../Utils/constants'
-
 import { parseMicroservice } from '../../Utils/ApplicationParser'
-
 import { useData } from '../../providers/Data'
 import getSharedStyles from '../sharedStyles'
 import { get as lget } from 'lodash'
