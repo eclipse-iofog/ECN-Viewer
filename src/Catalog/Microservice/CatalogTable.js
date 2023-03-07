@@ -68,12 +68,12 @@ export default function CatalogTable (props) {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell >Description</TableCell>
-              <TableCell >Supported platforms</TableCell>
-              <TableCell >Publisher</TableCell>
-              <TableCell >Registry</TableCell>
-              <TableCell >Category</TableCell>
-              <TableCell  />
+              <TableCell>Description</TableCell>
+              <TableCell>Supported platforms</TableCell>
+              <TableCell>Publisher</TableCell>
+              <TableCell>Registry</TableCell>
+              <TableCell>Category</TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -84,12 +84,12 @@ export default function CatalogTable (props) {
                   <TableCell component='th' scope='row'>
                     {row.name}
                   </TableCell>
-                  <TableCell >{row.description}</TableCell>
-                  <TableCell >{row.supportedPlatforms.join(', ')}</TableCell>
-                  <TableCell >{row.publisher}</TableCell>
-                  <TableCell >{row.registry.url}</TableCell>
-                  <TableCell >{row.category}</TableCell>
-                  <TableCell  className={classes.pointer}>
+                  <TableCell>{row.description}</TableCell>
+                  <TableCell>{row.supportedPlatforms.join(', ')}</TableCell>
+                  <TableCell>{row.publisher}</TableCell>
+                  <TableCell>{row.registry.url}</TableCell>
+                  <TableCell>{row.category}</TableCell>
+                  <TableCell className={classes.pointer}>
                     <MoreIcon onClick={(e) => openMenu(row, e)} />
                   </TableCell>
                 </TableRow>

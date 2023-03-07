@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react' // eslint-disable-line no-unused-vars
 import L from 'leaflet'
 
 // Import all images as a object
@@ -20,11 +20,11 @@ const iconSourceNameList = {
   controller: {
     work: 'controller',
     not_work: 'controller_uk'
-  },
+  }
 }
 
 // Define a class to manage our customize icon
-function MarkerIcon(props) {
+function MarkerIcon (props) {
   this.type = props.mType
   this.info = props.mInfo
 }
@@ -69,17 +69,18 @@ MarkerIcon.prototype.getStatus = function () {
  * @param {object} props
  * @return {reactDOM} marker
  */
-export default function ViewerMarker(props) {
+export default function ViewerMarker (props) {
   const mIcon = new MarkerIcon(props)
-  const iconInstance = L.icon({
+
+  const iconInstance = L.icon({ // eslint-disable-line no-unused-vars
     iconUrl: mIcon.getIconUrl(),
-    iconSize: [25, 41],
+    iconSize: [25, 41]
   })
   //
   var allcity = props.position.map(a => {
     return L.marker(a)
   })
-  var cities = L.layerGroup(...allcity);
+  var cities = L.layerGroup(...allcity)
   return cities
   // <Mymarker icon={iconInstance} {...props} />
 }

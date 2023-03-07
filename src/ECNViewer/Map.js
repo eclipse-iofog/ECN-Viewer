@@ -1,19 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
-import GoogleMapReact from 'google-map-react'
-import { Avatar } from '@material-ui/core'
-import CtrlIcon from '@material-ui/icons/DeveloperBoard'
-import Icon from '@material-ui/core/Icon'
-import { makeStyles, useTheme } from '@material-ui/styles'
-import L from 'leaflet'
-import { statusColor, tagColor } from './utils'
+import { makeStyles } from '@material-ui/styles'
+import { tagColor } from './utils'
 import { useMap } from '../providers/Map'
 import { MapContainer } from './myleaflet'
 
-sessionStorage.setItem("iscontrolready", "true");
+sessionStorage.setItem('iscontrolready', 'true') // eslint-disable-line no-undef
 
-export const { Provider, Consumer } = React.createContext("a");
-
+export const { Provider, Consumer } = React.createContext('a')
 
 const useStyles = makeStyles(theme => ({
   mapMarkerTransform: {
@@ -43,7 +37,7 @@ const useStyles = makeStyles(theme => ({
     position: 'fixed',
     top: 0,
     '@media (min-width: 1200px)': {
-      width: '156%'//if the max width  > 96%  the leaflet controller will be hide
+      width: '156%'// if the max width  > 96%  the leaflet controller will be hide
     }
   },
   selectedMarker: {
@@ -80,67 +74,61 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-
 export default function Map (props) {
   const classes = useStyles()
-  const theme = useTheme()
-  const { controller, setAgent, loading, agent: selectedAgent } = props
+  const { controller, setAgent, loading } = props
   const { map, mapRef, hasValidCoordinates } = useMap()
-  const [mcstate, setMcstate] = useState(false);
-  const [mymap, setMymap] = useState(0);
+  const [mcstate, setMcstate] = useState(false)
+  const [mymap, setMymap] = useState(0)
   var propsdata = (controller.agents).filter(a => hasValidCoordinates([a.latitude, a.longitude])).map(a =>
     [a.latitude, a.longitude]
   )
-  function getMapContainer(a) {
+  function getMapContainer (a) {
     setMymap(a)
-  
   }
-  function changemcstate(a) {
+  function changemcstate
+  (a) {
     setMcstate(a)
   }
 
-  function ViewerMarker(props) {
-    //componentDidmount is not over so this component return null
-    if (mcstate == false) {
+  function ViewerMarker (props) {
+    // componentDidmount is not over so this component return null
+    if (mcstate === false) {
       return null
     } else {
       return (
         // componentDidmount is over Mymarker function can be mark on the map
         <Consumer>
           {(mymapobj) => {
-            const Mymarker = L.marker(props.position).addTo(mymapobj);
             // var allcity = L.layerGroup(...Mymarker).addTo(mymapobj);
-          }
-          }
+          }}
         </Consumer>
-      );
+      )
     }
   }
-  function SetViewOnClick({ coords }) {
-    if (mcstate == false) {
+  function SetViewOnClick ({ coords }) {
+    if (mcstate === false) {
       return null
     } else {
       return (
-        //  
+        //
         <Consumer>
           {(mymapobj) => {
             const map = mymapobj
-            map.setView(coords.center, coords.zoom);
-          }
-          }
+            map.setView(coords.center, coords.zoom)
+          }}
         </Consumer>
-      );
+      )
     }
   }
 
-
   return (
     <div className={[classes.mapWrapper, 'mui-fixed'].join(' ')} ref={mapRef}>
-       <MapContainer
+      <MapContainer
         {...map}
         position={propsdata}
-        getfun={getMapContainer}//get leaflet example
-        mcstate={changemcstate}//change react state
+        getfun={getMapContainer}// get leaflet example
+        mcstate={changemcstate}// change react state
         isloading={loading}
       >
         <Provider value={mymap}>
@@ -157,11 +145,10 @@ export default function Map (props) {
               }}
               mType='agent'
               mInfo={a}
-            >
-            </ViewerMarker>
+            />
           )}
         </Provider>
-          </MapContainer>
+      </MapContainer>
 
     </div>
   )
