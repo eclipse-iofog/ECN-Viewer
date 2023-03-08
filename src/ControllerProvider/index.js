@@ -28,8 +28,8 @@ const IPLookUp = 'http://ip-api.com/json/'
 
 // If dev mode, use proxy
 // Otherwise assume you are running on the Controller
-const getBaseUrl = () => controllerJson.url || `${window.location.protocol}//${[window.location.hostname, controllerJson.port].join(':')}`;
-const getUrl = (path) => controllerJson.dev ? `/api/controllerApi${path}` : `${getBaseUrl()}${path}`;
+const getBaseUrl = () => controllerJson.url || `${window.location.protocol}//${[window.location.hostname, controllerJson.port].join(':')}`
+const getUrl = (path) => controllerJson.dev ? `/api/controllerApi${path}` : `${getBaseUrl()}${path}`
 const getHeaders = (headers) => controllerJson.dev
   ? ({
     ...headers,

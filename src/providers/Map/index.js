@@ -28,7 +28,7 @@ export const MapProvider = ({
 
   const setMap = (agents, controllerInfo, includeController) => {
     const newMap = {}
-    const bounds = new L.latLngBounds()
+    const bounds = new L.latLngBounds() // eslint-disable-line new-cap
 
     const validAgents = agents.filter(a => hasValidCoordinates([a.latitude, a.longitude]))
 
