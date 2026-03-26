@@ -7,7 +7,7 @@
 # Import our helper functions
 . scripts/utils.sh
 
-VERSION="v3.7.0-beta.0"
+VERSION="v3.7.0"
 
 prettyTitle "Eclipse ioFog ECN Viewer Packaging"
 echoInfo "Beginning packaging process"
@@ -41,11 +41,7 @@ tar -czvf ${DISTRO_NAME} \
     -T distro-list.txt
 
 
-if echo "$VERSION" | rg -q '-'; then
-  npm publish "${DISTRO_NAME}" --access public --tag beta
-else
-  npm publish "${DISTRO_NAME}" --access public
-fi
+npm publish ${DISTRO_NAME} --access public
 
 
 echoInfo "Distro packaging complete!"

@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-iofog/ecn-viewer-server",
-  "version": "v3.7.0-beta.0",
+  "version": "v3.7.0",
   "description": "Eclipse ioFog Edge Cloud Network Viewer project  \\nCopyright (c) 2023 Contributors to the Eclipse ioFog Project",
   "main": "./index.js",
   "author": "Alexandre de Wergifosse",
@@ -19,7 +19,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@eclipse-iofog/ecn-viewer": "v3.7.0-beta.0",
+    "@eclipse-iofog/ecn-viewer": "v3.7.0",
     "express": "4.21.1",
     "express-http-proxy": "2.1.1",
     "external-ip": "2.3.1"
