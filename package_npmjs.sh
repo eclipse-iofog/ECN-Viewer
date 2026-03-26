@@ -44,7 +44,11 @@ tar -czvf ${DISTRO_NAME} \
     -T distro-list.txt
 
 
-npm publish ${DISTRO_NAME} --access public
+if echo "$VERSION" | rg -q '-'; then
+  npm publish "${DISTRO_NAME}" --access public --tag beta
+else
+  npm publish "${DISTRO_NAME}" --access public
+fi
 
 
 echoInfo "Distro packaging complete!"
