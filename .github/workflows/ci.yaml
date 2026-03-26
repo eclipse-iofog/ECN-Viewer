@@ -1,0 +1,76 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+    tags: [v*]
+    paths-ignore:
+      - README.md
+      - CHANGELOG.md
+      - LICENSE
+  pull_request:
+    # Sequence of patterns matched against refs/heads
+    branches:
+      - main
+    paths-ignore:
+      - README.md
+      - CHANGELOG.md
+      - LICENSE
+env:
+  IMAGE_NAME: 'ecn-viewer'
+
+
+jobs:
+  Build-Publish-Github:
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: write
+      checks: write
+      contents: write
+      deployments: write
+      id-token: write
+      issues: write
+      discussions: write
+      packages: write
+      pages: write
+      pull-requests: write
+      repository-projects: write
+      security-events: write
+      statuses: write 
+    name: Publish ECN-Viewer
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        registry-url: 'https://npm.pkg.github.com'
+        scope: '@eclipse-iofog'
+    - run: sh ${GITHUB_WORKSPACE}/package.sh
+      env: 
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  Build-Publish-NPM:
+    runs-on: ubuntu-22.04
+    permissions:
+      actions: write
+      checks: write
+      contents: write
+      deployments: write
+      id-token: write
+      issues: write
+      discussions: write
+      packages: write
+      pages: write
+      pull-requests: write
+      repository-projects: write
+      security-events: write
+      statuses: write 
+    name: Publish ECN-Viewer to NPM
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        registry-url: 'https://registry.npmjs.org'
+    - run: sh ${GITHUB_WORKSPACE}/package_npmjs.sh
+      env: 
+        NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
