@@ -1,193 +1,185 @@
-import React from 'react'
+import React from "react";
+import { useAuth } from "../auth";
+import { useFeedback } from "../Utils/FeedbackContext";
 
-const controllerJson = window.controllerConfig
+const controllerJson = window.controllerConfig;
+const IPLookUp = "http://ip-api.com/json/";
 
-const initControllerState = (() => {
-  const localUser = window.localStorage.getItem('iofogUser')
-  if ((!controllerJson.user || !controllerJson.user.email) && localUser) {
-    controllerJson.user = JSON.parse(localUser)
+const getBaseUrl = () =>
+  controllerJson.url ||
+  `${window.location.protocol}//${[window.location.hostname, controllerJson.port].join(":")}`;
+
+const getUrl = (path) =>
+  controllerJson.dev ? `/api/controllerApi${path}` : `${getBaseUrl()}${path}`;
+
+const getHeaders = (headers) => {
+  if (controllerJson.dev) {
+    return {
+      ...headers,
+      "ECN-Api-Destination": `http://${controllerJson.ip}:${controllerJson.port}/`,
+    };
   }
-  return {
-    ...controllerJson,
-    api: `${window.location.protocol}//${controllerJson.ip}:${controllerJson.port || 80}/`,
-    location: {
-      lat: 'Unknown',
-      lon: 'Unknown',
-      query: controllerJson.ip
-    },
-    status: {
-      versions: {
-        controller: '',
-        ecnViewer: ''
-      }
-    }
+  return headers;
+};
+
+export const ControllerContext = React.createContext();
+export const useController = () => React.useContext(ControllerContext);
+
+const initState = {
+  user: null,
+  status: null,
+  refresh: null,
+  location: null,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "UPDATE":
+      return { ...state, ...action.data };
+    default:
+      return state;
   }
-})()
-
-const IPLookUp = 'http://ip-api.com/json/'
-
-// If dev mode, use proxy
-// Otherwise assume you are running on the Controller
-const getBaseUrl = () => controllerJson.url || `${window.location.protocol}//${[window.location.hostname, controllerJson.port].join(':')}`;
-const getUrl = (path) => controllerJson.dev ? `/api/controllerApi${path}` : `${getBaseUrl()}${path}`;
-const getHeaders = (headers) => controllerJson.dev
-  ? ({
-    ...headers,
-    'ECN-Api-Destination': controllerJson.dev ? `http://${controllerJson.ip}:${controllerJson.port}/` : ''
-  }) : headers
-
-export const ControllerContext = React.createContext({
-  controller: {
-    status: {}
-  },
-  updateController: () => {}
-})
-
-export const useController = () => React.useContext(ControllerContext)
+};
 
 const lookUpControllerInfo = async (ip) => {
-  if (!ip) {
-    ip = window.location.host.split(':')[0] // Get only ip, not port
-  }
-  const localhost = new RegExp('(0\.0\.0\.0|localhost|127\.0\.0\.1|192\.168\.)') // eslint-disable-line no-useless-escape
-  const lookupIP = localhost.test(ip) ? '8.8.8.8' : ip
-  const response = await window.fetch(IPLookUp + lookupIP)
+  if (!ip) ip = window.location.host.split(":")[0];
+
+  const localhost = /(0\.0\.0\.0|localhost|127\.0\.0\.1|192\.168\.)/;
+  const lookupIP = localhost.test(ip) ? "8.8.8.8" : ip;
+
+  const response = await fetch(
+    IPLookUp + lookupIP.replace("http://", "").replace("https://", ""),
+  );
   if (response.ok) {
-    return response.json()
-  } else {
-    throw new Error(response.statusText)
+    return response.json();
   }
-}
+  throw new Error(response.statusText);
+};
 
-const getControllerStatus = async (api) => {
-  const response = await await window.fetch(getUrl('/api/v3/status'), {
-    headers: getHeaders({})
-  })
-  if (response.ok) {
-    return response.json()
-  } else {
-    console.log('Controller status unreachable', { status: response.statusText })
-  }
-}
+const getControllerStatus = async () => {
+  const response = await fetch(getUrl("/api/v3/status"), {
+    headers: getHeaders({}),
+  });
+  if (response.ok) return response.json();
+  console.log("Controller status unreachable", { status: response.statusText });
+  return null;
+};
 
-export default function Context (props) {
-  // const [token, setToken] = React.useState(null)
-  const tokenRef = React.useRef(null)
-  const [controllerUser, setControllerUser] = React.useState(initControllerState.user)
-  const [controllerLocation, setControllerLocation] = React.useState(initControllerState.location)
-  const [controllerStatus, setControllerStatus] = React.useState(initControllerState.status)
-  const [error, setError] = React.useState(null)
-  const [refresh, setRefresh] = React.useState(window.localStorage.getItem('iofogRefresh') || 3000)
+export const ControllerProvider = ({ children }) => {
+  const [state, dispatch] = React.useReducer(reducer, initState);
+  const auth = useAuth();
+  const feedbackContext = useFeedback();
+  const pushFeedback = feedbackContext?.pushFeedback;
 
-  const setToken = (newToken) => {
-    tokenRef.current = newToken
-  }
-  React.useEffect(() => {
-    // Grab controller location informations
-    const effect = async () => {
-      let ipInfo = {}
-      try {
-        ipInfo = await lookUpControllerInfo(controllerJson.ip)
-      } catch (e) {
-        ipInfo = {
-          lat: 'Unknown',
-          lon: 'Unknown',
-          query: controllerJson.ip
-        }
-      }
-      setControllerLocation(ipInfo)
+  // Keep a ref so request() always uses the latest token at call time (e.g. YAML/Deploy
+  // save after the drawer has been open and the token was refreshed).
+  const authRef = React.useRef(auth);
+  authRef.current = auth;
+
+  const updateController = (data) => {
+    dispatch({ type: "UPDATE", data });
+  };
+
+  const request = async (path, options = {}) => {
+    const headers = {
+      ...options.headers,
+    };
+    const token = authRef.current?.token;
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
     }
-    effect()
-  }, [])
 
-  React.useEffect(() => {
-    const effect = async () => {
-      // Everytime user is updated, try to grab status
-      const status = await getControllerStatus()
-      setControllerStatus(status)
-    }
-    effect()
-  }, [controllerUser])
-
-  const authenticate = async (user) => {
-    const response = await window.fetch(getUrl('/api/v3/user/login'), {
-      method: 'POST',
-      headers: getHeaders({
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      }),
-      body: JSON.stringify(user || controllerUser)
-    })
-    if (response.ok) {
-      const token = (await response.json()).accessToken
-      setToken(token)
-      setError(null)
-      return token
-    } else {
-      setToken(null)
-      throw new Error(response.statusText)
-    }
-  }
-
-  // Wrapper around window.fetch to add proxy and authorization headers
-  const request = React.useMemo(() => async (path, options = {}) => {
     try {
-      let t = tokenRef.current
-      if (!t) {
-        t = await authenticate()
-      }
-      if (options.body && typeof options.body === typeof {}) {
-        options.body = JSON.stringify(options.body)
-        options.headers = {
-          ...options.headers,
-          'Content-Type': 'application/json'
-        }
-      }
-      const response = await window.fetch(getUrl(path), {
+      const response = await fetch(getUrl(path), {
         ...options,
-        headers: getHeaders({
-          ...options.headers,
-          Authorization: t
-        })
-      })
-      if (error) {
-        setError(null)
-      }
-      return response
-    } catch (err) {
-      setError(err)
-      return ({
-        ok: false,
-        statusText: err.message || 'Could not reach controller'
-      })
-    }
-  }, [tokenRef.current, error])
+        headers,
+      });
 
-  const updateController = async ({ user, refresh }) => {
-    window.localStorage.setItem('iofogUser', JSON.stringify(user))
-    window.localStorage.setItem('iofogRefresh', refresh)
-    setControllerUser(user)
-    setRefresh(refresh)
-    try {
-      await authenticate(user)
-    } catch (e) {
-      setError(e)
-      throw e
+      if (!response.ok) {
+        const status = response.status;
+        let errorData;
+
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          // If response is not JSON, create a basic error object
+          errorData = {
+            message: response.statusText || "An error occurred",
+          };
+        }
+
+        // Check for authorization errors (401 Unauthorized or 403 Forbidden)
+        if ((status === 401 || status === 403) && pushFeedback) {
+          const errorMessage =
+            errorData.message ||
+            (status === 401
+              ? "Unauthorized: You don't have permission to access this resource"
+              : "Forbidden: Access to this resource is denied");
+
+          pushFeedback({
+            message: errorMessage,
+            type: "error",
+          });
+        }
+
+        // Return error object with status and ok properties for backward compatibility
+        return {
+          ...errorData,
+          ok: false,
+          status: status,
+          statusText: response.statusText,
+        };
+      }
+
+      return response;
+    } catch (error) {
+      console.error("Request failed:", error);
+      return null;
     }
-  }
+  };
+
+  React.useEffect(() => {
+    const effect = async () => {
+      try {
+        const ipInfo = await lookUpControllerInfo(controllerJson.ip);
+        dispatch({ type: "UPDATE", data: { location: ipInfo } });
+      } catch (e) {
+        dispatch({
+          type: "UPDATE",
+          data: {
+            location: {
+              lat: "40.935",
+              lon: "28.97",
+              query: controllerJson.ip,
+            },
+          },
+        });
+      }
+    };
+    effect();
+  }, []);
+
+  React.useEffect(() => {
+    const effect = async () => {
+      const status = await getControllerStatus();
+      dispatch({ type: "UPDATE", data: { status } });
+    };
+
+    if (auth.isAuthenticated) {
+      dispatch({ type: "UPDATE", data: { user: auth.user } });
+      effect();
+    }
+  }, [auth.user, auth.isAuthenticated]);
 
   return (
-    <ControllerContext.Provider value={{
-      refresh,
-      location: controllerLocation,
-      status: controllerStatus,
-      user: controllerUser,
-      error,
-      updateController,
-      request
-    }}
+    <ControllerContext.Provider
+      value={{
+        ...state,
+        updateController,
+        request,
+      }}
     >
-      {props.children}
+      {children}
     </ControllerContext.Provider>
-  )
-}
+  );
+};
