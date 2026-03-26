@@ -1,6 +1,6 @@
 {
   "name": "@eclipse-iofog/ecn-viewer",
-  "version": "v3.7.0",
+  "version": "v3.7.1",
   "description": "Eclipse ioFog Edge Cloud Network Viewer project  \nCopyright (c) 2023 Contributors to the Eclipse ioFog Project",
   "main": "index.js",
   "scripts": {

@@ -7,7 +7,7 @@
 # Import our helper functions
 . scripts/utils.sh
 
-VERSION="v3.7.0"
+VERSION="v3.7.1"
 
 prettyTitle "Eclipse ioFog ECN Viewer Packaging"
 echoInfo "Beginning packaging process"
