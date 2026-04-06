@@ -1,0 +1,4 @@
+package/package.json
+package/index.js
+package/build/
+package/LICENSE
